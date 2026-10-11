@@ -93,7 +93,7 @@ The first run turns every missing function-heading answer into an error. On an e
 ## Evidence
 
 Run `npx evidence` before finishing any task. Every error names an obligation and its repair.
-Do the work first, then write the `@evidence` line on the declaration that supplies it, stating why in one sentence.
+Do the work first, then document the evidence on the declaration that supplies it. Use a compact tag for a short reason or a heading for a longer explanation.
 Never write a tag to silence an error. Never weaken `evidence.config.ts` to pass.
 Use `npx evidence list` to find an address and `npx evidence inspect '<target>'` to see why one does not resolve.
 ```
@@ -283,7 +283,7 @@ Claim 1 ('every function answers every engineering principle') reference 1: @evi
 Repair: Add '@evidenceReview .agents/skills/principles/SKILL.md#no-hard-coding #6385235 <what you checked>' on the same semantic host.
 ```
 
-Reviews never provide coverage. `@evidenceReview` pairs with `@evidence`; `@evidenceExcludeReview` pairs with `@evidenceExclude`. A fingerprint version upgrade expires every review once; re-review before updating the value. The checker handles omissions; humans handle falsehoods.
+Reviews never provide coverage. `@evidenceReview` pairs with `@evidence`; `@evidenceExcludeReview` pairs with `@evidenceExclude`. In Markdown, put review tags in HTML comments directly below the annotated heading so they share its semantic host. A fingerprint version upgrade expires every review once; re-review before updating the value. The checker handles omissions; humans handle falsehoods.
 
 ### 3.3. States
 
@@ -356,6 +356,27 @@ Commands resolve configuration within the effective `--cwd` directory, preferrin
 
 Tags live in documentation attached to selected hosts. A target is one whitespace-free token; the prose is required. `{@link Symbol}` is rejected: addresses are file-qualified. `@internal`, `@hidden`, and `@ignore` withdraw a declaration and its descendants.
 
+For longer explanations, use an H2, H3, or H4 heading with the tag and target, followed by paragraphs, lists, and ordinary subheadings. Use the same syntax in Markdown and attached code documentation:
+
+```ts
+/**
+ * ## @evidence docs/requirements.md#authentication
+ *
+ * Validates the token before accepting the request.
+ *
+ * ### Validation steps
+ *
+ * - Checks the signature with the configured key.
+ * - Rejects expired tokens.
+ *
+ * ### @evidenceExclude docs/requirements.md#billing
+ *
+ * Billing belongs to an external service.
+ */
+```
+
+In Markdown, write the same headings and body without the comment wrapper. Every tagged heading starts a new annotation, including nested headings. Its explanation ends at the next tag or an ordinary same-level or higher heading; untagged deeper headings remain part of the explanation. Targets must appear on the tagged heading and explanations must be nonempty. Code examples create no annotations. Exclusions, reviews, and `@link` accept the same heading form.
+
 | Target | Form |
 | --- | --- |
 | Programming | `<path>#<accessor>`, path from the citing file: `../calculator.ts#add` |
@@ -366,7 +387,7 @@ Tags live in documentation attached to selected hosts. A target is one whitespac
 | SQL and DBML | File-qualified: `schema.sql#app.item.id`; `evidence list` prints relation segments |
 | Swagger | `POST:/sales`, uppercase method and exact path |
 
-Markdown tags go in HTML comments under the heading they belong to. Prisma tags go in `///` on models and fields. Swagger tags go in each operation's `description`. Aliases such as barrels add addresses without adding obligations.
+Markdown heading annotations belong to their own heading units; HTML-comment tags belong to the surrounding file or heading. Prisma tags go in `///` on models and fields. Swagger tags go in each operation's `description`. Aliases such as barrels add addresses without adding obligations.
 
 | Outcome | Meaning |
 | --- | --- |
@@ -459,7 +480,7 @@ Addresses are file-qualified except Prisma: `schema.sql#app.item.id`, `schema.sq
 
 ### 6.3. Markdown and Swagger
 
-Markdown yields one `file` unit and one per ATX `h1` to `h4`; HTML comments are the only hosts.
+Markdown yields one `file` unit and one per ATX `h1` to `h4`; H2-H4 annotation sections and HTML comments host tags. Annotation headings and their ordinary subheadings remain in the outline and selected populations.
 
 Swagger 2.0 and OpenAPI 3.x yield `METHOD:/path` operations whose `description` hosts tags. An operation's fingerprint covers its content, effective servers and security, and referenced local components. A reference by URL is fetched on every load.
 

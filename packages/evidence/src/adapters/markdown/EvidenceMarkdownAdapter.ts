@@ -7,7 +7,7 @@ import type { IEvidenceInventory } from "../../structures/IEvidenceInventory";
 import type { IEvidenceSourceSnapshot } from "../../structures/IEvidenceSourceSnapshot";
 
 /**
- * Extracts Markdown file and heading units with HTML-comment annotation hosts.
+ * Extracts Markdown units with HTML-comment and H2-H4 annotation hosts.
  *
  * Every supplied source is interpreted as Markdown regardless of its extension.
  * EvidenceMarkdownScanner owns heading hierarchy, fenced-content boundaries,

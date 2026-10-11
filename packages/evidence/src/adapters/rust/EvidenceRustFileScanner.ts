@@ -840,7 +840,7 @@ export class EvidenceRustFileScanner {
   }
 
   private annotation(raw: string): boolean {
-    return /(?:^|[\r\n])[ \t]*@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
+    return /(?:^|[\r\n])[ \t]*(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
       raw,
     );
   }

@@ -432,13 +432,13 @@ export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
   }
 
   private annotation(text: string): boolean {
-    return /(?:^|\n)[ \t]*(?:[/*]+[ \t]*)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
+    return /(?:^|\n)[ \t]*(?:[/*]+[ \t]*)?(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
       text,
     );
   }
 
   private claimAnnotation(text: string): boolean {
-    return /(?:^|\n)[ \t]*(?:[/*]+[ \t]*)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
+    return /(?:^|\n)[ \t]*(?:[/*]+[ \t]*)?(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
       text,
     );
   }
@@ -453,7 +453,7 @@ export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
     for (const line of run.text.split("\n")) {
       const trimmed = line.trim();
       if (
-        /^@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
+        /^(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
           trimmed,
         )
       ) {
@@ -462,7 +462,7 @@ export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
       }
       const exposed = trimmed.replace(/^[/*]+[ \t]*/u, "");
       if (
-        /^@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
+        /^(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
           exposed,
         )
       ) {

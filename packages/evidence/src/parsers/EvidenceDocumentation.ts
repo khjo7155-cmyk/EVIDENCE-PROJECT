@@ -48,7 +48,11 @@ export namespace EvidenceDocumentation {
       const until = newline < 0 || newline >= end ? end : newline;
       let from = cursor;
       const prefix = syntax.linePrefix;
-      if (prefix !== undefined && prefix !== "") {
+      // A line-run opening already consumed its first prefix. Removing another
+      // one would turn Python or Ruby '# ##' documentation into an H1 heading.
+      const consumedPrefix: boolean =
+        cursor === start && syntax.closing === "" && syntax.opening === prefix;
+      if (prefix !== undefined && prefix !== "" && !consumedPrefix) {
         while (
           from < until &&
           (content[from] === " " || content[from] === "\t")

@@ -1,8 +1,11 @@
 import { EvidenceDocumentation } from "../../parsers/EvidenceDocumentation";
 import { EvidenceTagParser } from "../../parsers/EvidenceTagParser";
 import type { IEvidenceHost } from "../../structures/IEvidenceHost";
+import type { IEvidenceDocumentation } from "../../structures/IEvidenceDocumentation";
+import type { IEvidenceTagParseResult } from "../../structures/IEvidenceTagParseResult";
 import type { IEvidenceInventory } from "../../structures/IEvidenceInventory";
 import type { IEvidenceSourceFile } from "../../structures/IEvidenceSourceFile";
+import type { IEvidenceSourceAddress } from "../../structures/IEvidenceSourceAddress";
 import type { IEvidenceUnit } from "../../structures/IEvidenceUnit";
 import type { IEvidenceUnitSite } from "../../structures/IEvidenceUnitSite";
 import type { IEvidenceMarkdownComment } from "./IEvidenceMarkdownComment";
@@ -14,8 +17,8 @@ import { EvidenceSourceText } from "../../internal/EvidenceSourceText";
 /**
  * Materializes one Markdown source as a file unit and its heading units.
  *
- * The scanner also maps HTML-comment annotations while excluding rendered and
- * example content that must remain ordinary Markdown text.
+ * The scanner maps HTML-comment and visible heading annotations while keeping
+ * example regions inert. Annotation headings retain their semantic units.
  */
 export class EvidenceMarkdownScanner {
   /**
@@ -131,6 +134,14 @@ export class EvidenceMarkdownScanner {
   private readonly unitSites = new Map<string, string>();
 
   /**
+   * Lines already interpreted as supported visible annotation headings.
+   *
+   * Rendered-prose diagnostics skip these carriers even when their annotation
+   * is malformed, because the shared parser supplies the precise failure.
+   */
+  private readonly annotationHeadings: Set<number> = new Set();
+
+  /**
    * Binds the destination inventory and one physical Markdown source.
    *
    * Scan mutates only the supplied inventory with units, hosts, and diagnostics
@@ -156,6 +167,7 @@ export class EvidenceMarkdownScanner {
     this.materializeUnits();
     this.assignContent();
     this.materializeComments();
+    this.materializeHeadingAnnotations();
     this.reportRenderedAnnotations();
   }
 
@@ -582,16 +594,7 @@ export class EvidenceMarkdownScanner {
         ? "Rename the Markdown file so its relative path can form an evidence target."
         : undefined;
     for (let index = 0; index < this.lineStarts.length; ++index) {
-      const authored: IEvidenceMarkdownHeading | undefined =
-        this.fenced[index] === true ||
-        this.rendered[index] === true ||
-        this.commentOnly[index] === true
-          ? undefined
-          : EvidenceMarkdownSyntax.heading(this.line(index));
-      const heading: IEvidenceMarkdownHeading | undefined =
-        authored === undefined || (this.commentMasks[index]?.length ?? 0) === 0
-          ? authored
-          : EvidenceMarkdownSyntax.heading(this.visibleLine(index));
+      const heading: IEvidenceMarkdownHeading | undefined = this.heading(index);
       if (heading !== undefined) {
         hostUnit = undefined;
         hostSite = undefined;
@@ -764,10 +767,123 @@ export class EvidenceMarkdownScanner {
   }
 
   /**
+   * Parses visible H2-H4 annotation sections as carriers of their heading
+   * units.
+   *
+   * Each carrier ends before the next tagged heading or structural section
+   * boundary. Masking examples, HTML comments, and unsupported prose tags
+   * prevents the common parser from granting them Markdown ownership.
+   */
+  private materializeHeadingAnnotations(): void {
+    const characters: string[] = this.source.content.split("");
+    const headings: Array<IEvidenceMarkdownHeading | undefined> = [];
+    for (let index: number = 0; index < this.lineStarts.length; ++index) {
+      const line: string = this.maskedLine(index);
+      const inert: boolean =
+        this.fenced[index] === true ||
+        this.rendered[index] === true ||
+        this.commentOnly[index] === true ||
+        EvidenceMarkdownSyntax.indentedCode(line);
+      const authored: IEvidenceMarkdownHeading | undefined =
+        this.heading(index);
+      const visible: IEvidenceMarkdownHeading | undefined =
+        EvidenceMarkdownSyntax.heading(line);
+      const heading: IEvidenceMarkdownHeading | undefined =
+        authored === undefined ? undefined : visible;
+      headings.push(heading);
+      const proseTag: boolean =
+        EvidenceMarkdownSyntax.annotation(line) !== undefined;
+      // Replacing a comment with whitespace must not fabricate a marker such
+      // as '##<!-- --> @evidence' inside an otherwise valid reason.
+      const fabricated: boolean =
+        authored === undefined && visible !== undefined;
+      const masked: string =
+        inert || proseTag || fabricated ? " ".repeat(line.length) : line;
+      const start: number = this.lineStarts[index] ?? 0;
+      for (let column: number = 0; column < masked.length; ++column)
+        characters[start + column] = masked[column] ?? " ";
+    }
+    for (let index: number = 0; index < headings.length; ++index) {
+      const heading: IEvidenceMarkdownHeading | undefined = headings[index];
+      if (
+        heading === undefined ||
+        heading.level < 2 ||
+        heading.level > 4 ||
+        EvidenceMarkdownSyntax.annotation(heading.title) === undefined
+      )
+        continue;
+      this.annotationHeadings.add(index);
+      let boundary: number = index + 1;
+      while (boundary < headings.length) {
+        const next: IEvidenceMarkdownHeading | undefined = headings[boundary];
+        if (
+          next !== undefined &&
+          (next.level <= heading.level ||
+            EvidenceMarkdownSyntax.annotation(next.title) !== undefined)
+        )
+          break;
+        ++boundary;
+      }
+      const unitId: string | undefined = this.hostUnits[index];
+      const siteId: string | undefined = this.hostSites[index];
+      const attached: boolean = unitId !== undefined && siteId !== undefined;
+      const host: IEvidenceHost = {
+        id: `markdown:${this.source.id}:heading:${this.lineStarts[index] ?? 0}`,
+        file: this.source.physicalPath,
+        range: this.text.range(
+          this.lineStarts[index] ?? 0,
+          this.lineStarts[boundary] ?? this.source.content.length,
+        ),
+        origins: this.source.addresses.map(
+          (address: IEvidenceSourceAddress): string => address.absolute,
+        ),
+        unitIds: unitId !== undefined && attached ? [unitId] : [],
+        attachment: attached ? "attached" : "unsupported",
+        ...(siteId !== undefined && attached ? { siteId } : {}),
+        ...(!attached
+          ? {
+              problem:
+                this.hostProblems[index] ??
+                "Give the annotation heading a resolvable Markdown address.",
+            }
+          : {}),
+      };
+      this.inventory.hosts.push(host);
+      const documentation: IEvidenceDocumentation = EvidenceDocumentation.read(
+        this.source.content,
+        host.id,
+        host.range,
+        {
+          opening: "",
+          closing: "",
+          tagBoundaries: false,
+          allowWithdrawal: false,
+        },
+      );
+      documentation.text = documentation.offsets
+        .slice(0, -1)
+        .map((offset: number): string => characters[offset] ?? " ")
+        .join("");
+      const parsed: IEvidenceTagParseResult = EvidenceTagParser.parse(
+        this.source.content,
+        host,
+        documentation,
+      );
+      this.inventory.declarations.push(...parsed.declarations);
+      this.inventory.reviews.push(...parsed.reviews);
+      this.inventory.diagnostics.push(...parsed.diagnostics);
+      this.inventory.annotationRanges.push({
+        file: host.file,
+        range: host.range,
+      });
+    }
+  }
+
+  /**
    * Diagnoses annotation markers rendered as ordinary Markdown prose.
    *
-   * A visible marker is not an Evidence annotation until wrapped in an HTML
-   * comment.
+   * Visible markers require a supported H2-H4 heading or an HTML-comment
+   * carrier. Other rendered spellings remain actionable findings.
    */
   private reportRenderedAnnotations(): void {
     for (let index = 0; index < this.lineStarts.length; ++index) {
@@ -776,10 +892,15 @@ export class EvidenceMarkdownScanner {
         this.fenced[index] === true ||
         this.rendered[index] === true ||
         this.commentOnly[index] === true ||
+        this.annotationHeadings.has(index) ||
         EvidenceMarkdownSyntax.indentedCode(line)
       )
         continue;
-      const marker = EvidenceMarkdownSyntax.annotation(line);
+      const heading: IEvidenceMarkdownHeading | undefined =
+        EvidenceMarkdownSyntax.heading(line);
+      const marker: string | undefined = EvidenceMarkdownSyntax.annotation(
+        heading?.title ?? line,
+      );
       if (marker === undefined) continue;
       const at = line.indexOf(marker);
       const start = (this.lineStarts[index] ?? 0) + Math.max(0, at);
@@ -787,7 +908,7 @@ export class EvidenceMarkdownScanner {
         code: "unsupported-annotation-host",
         severity: "error",
         message: `${marker} is rendered as Markdown prose, so it is not an Evidence annotation.`,
-        repair: `Wrap it in an HTML comment such as '<!-- ${marker} <target> ${marker.endsWith("Review") ? "<what you checked>" : "<reason>"} -->'.`,
+        repair: `Use an H2-H4 annotation heading such as '## ${marker} <target>' with an explanation below, or an HTML comment such as '<!-- ${marker} <target> ${marker.endsWith("Review") ? "<what you checked>" : "<reason>"} -->'.`,
         location: {
           file: this.source.physicalPath,
           range: this.text.range(start, this.lineEnds[index] ?? start),
@@ -813,6 +934,27 @@ export class EvidenceMarkdownScanner {
       if (id !== undefined) return id;
     }
     return fileId;
+  }
+
+  /**
+   * Reads a real heading without letting removed comments fabricate its marker.
+   *
+   * Outline discovery and annotation attachment share this decision so the
+   * latter cannot claim a heading that owns no semantic unit.
+   */
+  private heading(index: number): IEvidenceMarkdownHeading | undefined {
+    if (
+      this.fenced[index] === true ||
+      this.rendered[index] === true ||
+      this.commentOnly[index] === true
+    )
+      return undefined;
+    const authored: IEvidenceMarkdownHeading | undefined =
+      EvidenceMarkdownSyntax.heading(this.line(index));
+    return authored === undefined ||
+      (this.commentMasks[index]?.length ?? 0) === 0
+      ? authored
+      : EvidenceMarkdownSyntax.heading(this.visibleLine(index));
   }
 
   /**

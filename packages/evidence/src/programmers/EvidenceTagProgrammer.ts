@@ -1,6 +1,8 @@
 import type { IEvidenceTagContext } from "../contexts/IEvidenceTagContext";
 import { EvidenceTargetBody } from "../internal/EvidenceTargetBody";
 import { EvidenceDocumentationExamples } from "../parsers/EvidenceDocumentationExamples";
+import { EvidenceDocumentationHeading } from "../parsers/EvidenceDocumentationHeading";
+import type { IEvidenceDocumentationHeading } from "../parsers/IEvidenceDocumentationHeading";
 import type { IEvidenceDocumentationFence } from "../parsers/IEvidenceDocumentationFence";
 import type { IEvidenceSourceLocation } from "../structures/IEvidenceSourceLocation";
 import type { IEvidenceTagParseResult } from "../structures/IEvidenceTagParseResult";
@@ -24,10 +26,10 @@ export namespace EvidenceTagProgrammer {
    * block.
    *
    * The function consumes no text outside
-   * {@link IEvidenceTagContext.documentation}. It preserves multiline tag
-   * bodies, ignores apparent tags inside fenced code or HTML comments, and
-   * flushes a pending annotation at every boundary that makes continuation
-   * impossible. Invalid tags become diagnostics rather than aborting sibling
+   * {@link IEvidenceTagContext.documentation}. It preserves multiline tag bodies
+   * in compact tags and H2-H4 sections, ignores apparent tags inside examples
+   * or HTML comments, and ends heading explanations at structural section
+   * boundaries. Invalid tags become diagnostics rather than aborting sibling
    * tags.
    */
   export function parse(context: IEvidenceTagContext): IEvidenceTagParseResult {
@@ -38,24 +40,26 @@ export namespace EvidenceTagProgrammer {
       context.documentation.text,
     );
     const input: string = characters.join("");
+    const code: readonly boolean[] =
+      EvidenceDocumentationExamples.markdownCode(input);
     const lines: string[] = input.split("\n");
     const documentBaseline: number =
       EvidenceDocumentationExamples.baseline(input);
-    let cursor = 0;
+    let cursor: number = 0;
     for (const rawLine of lines) {
-      const line = rawLine.trim();
+      const line: string = rawLine.trim();
       // Coordinates must point at trimmed annotation text while cursor advances
       // across the untrimmed mapped documentation, including blank-line bytes.
-      const start = cursor + rawLine.indexOf(line);
-      const end = start + line.length;
+      const start: number = cursor + rawLine.indexOf(line);
+      const end: number = start + line.length;
       cursor += rawLine.length + 1;
       const delimiter: IEvidenceDocumentationFence | undefined =
         EvidenceDocumentationExamples.fence(rawLine, documentBaseline);
       if (delimiter !== undefined) {
         if (context.fence === "") {
-          // An opening fence ends prose continuation before example text can
-          // satisfy or alter an annotation's reason or review description.
-          flush(context);
+          // Legacy tags end at a fence. Heading sections resume their prose
+          // after the example without letting code supply a missing reason.
+          if (context.pending?.headingLevel === undefined) flush(context);
           context.fence = delimiter.marker;
           context.fenceLength = delimiter.length;
         } else if (
@@ -69,13 +73,20 @@ export namespace EvidenceTagProgrammer {
         continue;
       }
       if (context.fence !== "") continue;
-      const marker =
+      if (code[start] === true) continue;
+      const heading: IEvidenceDocumentationHeading | undefined =
+        EvidenceDocumentationHeading.parse(line);
+      const supported: boolean =
+        heading !== undefined && heading.level >= 2 && heading.level <= 4;
+      const annotation: string =
+        supported && heading !== undefined ? heading.title : line;
+      const marker: RegExpExecArray | null =
         /^@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)(?:[ \t]|$)/.exec(
-          line,
+          annotation,
         );
       if (marker !== null) {
         flush(context);
-        const kind = marker[1];
+        const kind: string | undefined = marker[1];
         if (
           kind === "evidenceExcludeReview" ||
           kind === "evidenceReview" ||
@@ -85,10 +96,28 @@ export namespace EvidenceTagProgrammer {
         )
           context.pending = {
             kind,
-            body: line.slice(marker[0].length).trim(),
+            body: annotation.slice(marker[0].length).trim(),
             start,
             end,
+            ...(supported && heading !== undefined
+              ? { headingLevel: heading.level }
+              : {}),
           };
+        // A section must name its target in the heading. Body prose cannot
+        // repair an empty header by becoming an accidental target token.
+        if (
+          context.pending?.headingLevel !== undefined &&
+          context.pending.body === ""
+        )
+          flush(context);
+        continue;
+      }
+      if (
+        heading !== undefined &&
+        context.pending?.headingLevel !== undefined &&
+        heading.level <= context.pending.headingLevel
+      ) {
+        flush(context);
         continue;
       }
       const hidden = /^@(internal|hidden|ignore)(?:[ \t]|$)/.exec(line);

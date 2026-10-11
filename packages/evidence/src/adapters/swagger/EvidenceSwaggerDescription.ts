@@ -1,3 +1,7 @@
+import { EvidenceDocumentationExamples } from "../../parsers/EvidenceDocumentationExamples";
+import { EvidenceDocumentationHeading } from "../../parsers/EvidenceDocumentationHeading";
+import type { IEvidenceDocumentationHeading } from "../../parsers/IEvidenceDocumentationHeading";
+
 const TAG =
   /^@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)(?:[ \t]|$)/u;
 
@@ -14,8 +18,8 @@ export namespace EvidenceSwaggerDescription {
    * Directive-looking lines inside fenced examples remain semantic prose.
    */
   export function semantic(text: string): string {
-    const lines = text.split("\n");
-    const index = boundary(lines);
+    const lines: string[] = text.split("\n");
+    const index: number = boundary(text);
     return lines
       .slice(0, index < 0 ? lines.length : index)
       .join("\n")
@@ -29,36 +33,36 @@ export namespace EvidenceSwaggerDescription {
    * documentation carrier even when the visible prose is empty.
    */
   export function hasMetadata(text: string): boolean {
-    return boundary(text.split("\n")) >= 0;
+    return boundary(text) >= 0;
   }
 }
 
 /**
- * Finds the first directive line outside fenced Markdown examples.
+ * Finds the first directive line outside Markdown examples and HTML comments.
  *
- * Fence tracking prevents an example annotation from changing operation review
- * metadata merely because it begins with a recognized tag.
+ * Shared example masking keeps semantic description boundaries consistent with
+ * the parser that reads the corresponding mapped documentation.
  */
-function boundary(lines: string[]): number {
-  let fence = "";
-  let fenceLength = 0;
+function boundary(text: string): number {
+  const characters: string[] = text.split("");
+  EvidenceDocumentationExamples.maskHtmlComments(characters, text);
+  const input: string = characters.join("");
+  const code: readonly boolean[] =
+    EvidenceDocumentationExamples.markdownCode(input);
+  const lines: string[] = input.split("\n");
+  let cursor: number = 0;
   for (const [index, raw] of lines.entries()) {
-    const line = raw.trim();
-    const delimiter = /^(`{3,}|~{3,})(.*)$/u.exec(line);
-    if (delimiter !== null) {
-      const marker = delimiter[1] ?? "";
-      if (fence === "") {
-        fence = marker[0] ?? "";
-        fenceLength = marker.length;
-      } else if (
-        marker[0] === fence &&
-        marker.length >= fenceLength &&
-        (delimiter[2] ?? "").trim() === ""
-      )
-        fence = "";
-      continue;
-    }
-    if (fence === "" && TAG.test(line)) return index;
+    const line: string = raw.trim();
+    const start: number = cursor + raw.indexOf(line);
+    cursor += raw.length + 1;
+    if (code[start] === true) continue;
+    const heading: IEvidenceDocumentationHeading | undefined =
+      EvidenceDocumentationHeading.parse(line);
+    const annotation: string =
+      heading !== undefined && heading.level >= 2 && heading.level <= 4
+        ? heading.title
+        : line;
+    if (TAG.test(annotation)) return index;
   }
   return -1;
 }
