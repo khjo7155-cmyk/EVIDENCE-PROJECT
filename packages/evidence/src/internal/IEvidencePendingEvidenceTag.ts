@@ -18,6 +18,15 @@ export interface IEvidencePendingEvidenceTag {
     | "evidenceExclude"
     | "evidenceReview"
     | "evidenceExcludeReview";
+
+  /**
+   * Depth of the heading that opened a section-style annotation.
+   *
+   * Omission preserves legacy line-tag continuation. A same-level or higher
+   * heading ends a section, while any new supported tag starts another one.
+   */
+  headingLevel?: number;
+
   /**
    * Continued body text without the tag marker.
    *

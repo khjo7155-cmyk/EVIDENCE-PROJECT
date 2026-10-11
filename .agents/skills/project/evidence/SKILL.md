@@ -33,6 +33,8 @@ Claims may select the same host files and then read the same annotations. A clai
 
 Require a target and nonempty prose. Parse supported documentation spans attached to eligible hosts, not arbitrary source text. Swagger operation descriptions are eligible documentation; other strings and fenced examples create no acknowledgements. Unsupported or unattached declarations inside configured populations need actionable findings.
 
+Tags also accept H2-H4 ATX headings such as `## @evidence <target>` with multiline explanation below, in Markdown and mapped code documentation. Every tagged heading starts an independent annotation, including nested headings. An ordinary same-level or higher heading ends the explanation; deeper ordinary headings remain part of it. Require the target on the tagged heading and nonempty explanation outside examples. Retain compact line tags and HTML-comment annotations. Visible Markdown annotation headings own their own heading units and remain in the semantic outline; untagged target-looking headings create no annotations.
+
 Code paths resolve from the citing file, such as `../calculator.ts#add`. Keep segmented accessors and escaped literal names unambiguous. TypeScript static members use `Class.member`; its instance members use `Class.prototype.member`. Other languages publish their own explicit member-address policy. The standalone engine does not inherit compiler import-scoped `{@link Symbol}` resolution.
 
 `@internal`, `@hidden`, and `@ignore` withdraw supported documented declarations and their descendants from both populations. Retain withdrawal metadata for diagnostics and reconcile it across merged identities before selecting hosts.

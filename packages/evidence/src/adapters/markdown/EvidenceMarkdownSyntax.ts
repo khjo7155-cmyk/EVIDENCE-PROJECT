@@ -1,4 +1,6 @@
 import type { EvidenceMarkdownSymbol } from "../../typings/EvidenceMarkdownSymbol";
+import { EvidenceDocumentationHeading } from "../../parsers/EvidenceDocumentationHeading";
+import type { IEvidenceDocumentationHeading } from "../../parsers/IEvidenceDocumentationHeading";
 import type { IEvidenceMarkdownFence } from "./IEvidenceMarkdownFence";
 import type { IEvidenceMarkdownHeading } from "./IEvidenceMarkdownHeading";
 
@@ -10,7 +12,6 @@ import type { IEvidenceMarkdownHeading } from "./IEvidenceMarkdownHeading";
  * reports annotations that appear in non-readable source regions.
  */
 export namespace EvidenceMarkdownSyntax {
-  const explicitAnchor = /\s*\{#([A-Za-z0-9][A-Za-z0-9._:-]*)\}\s*$/;
   const letterOrNumber = /^(?:\p{L}|\p{N})$/u;
   const markers = [
     "@evidenceExcludeReview",
@@ -53,32 +54,14 @@ export namespace EvidenceMarkdownSyntax {
     let cursor = 0;
     while (cursor < line.length && line[cursor] === " " && cursor < 4) ++cursor;
     if (cursor > 3 || line[cursor] !== "#") return undefined;
-    const marker = cursor;
-    while (line[cursor] === "#") ++cursor;
-    const level = cursor - marker;
-    if (level > 6) return undefined;
-    if (cursor < line.length && line[cursor] !== " " && line[cursor] !== "\t")
-      return undefined;
-    let title = line.slice(cursor).trim();
-    const withoutHashes = title.replace(/#+$/, "");
-    if (
-      withoutHashes !== title &&
-      (withoutHashes === "" ||
-        withoutHashes.endsWith(" ") ||
-        withoutHashes.endsWith("\t"))
-    )
-      title = withoutHashes.trim();
-    const match = explicitAnchor.exec(title);
-    if (match !== null) {
-      const anchor = match[1];
-      if (anchor !== undefined)
-        return {
-          level,
-          title: title.slice(0, match.index).trim(),
-          anchor,
-        };
-    }
-    return { level, title, anchor: slug(title) };
+    const heading: IEvidenceDocumentationHeading | undefined =
+      EvidenceDocumentationHeading.parse(line.slice(cursor).trimEnd());
+    if (heading === undefined) return undefined;
+    return {
+      level: heading.level,
+      title: heading.title,
+      anchor: heading.anchor ?? slug(heading.title),
+    };
   }
 
   /**

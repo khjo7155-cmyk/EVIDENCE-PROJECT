@@ -506,7 +506,7 @@ export abstract class EvidenceEcmaScriptAdapter<
       comment.range.start.offset,
       comment.range.end.offset,
     );
-    return /(?:^|[\r\n])[ \t]*(?:(?:\/\/|\/\*+|\*)[ \t]*)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
+    return /(?:^|[\r\n])[ \t]*(?:(?:\/\/|\/\*+|\*)[ \t]*)?(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
       raw,
     );
   }
@@ -519,7 +519,7 @@ export abstract class EvidenceEcmaScriptAdapter<
       comment.range.start.offset,
       comment.range.end.offset,
     );
-    return /(?:^|[\r\n])[ \t]*(?:(?:\/\/|\/\*+|\*)[ \t]*)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
+    return /(?:^|[\r\n])[ \t]*(?:(?:\/\/|\/\*+|\*)[ \t]*)?(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
       raw,
     );
   }

@@ -547,10 +547,10 @@ export class EvidenceCAdapter implements IEvidenceAdapter<"c"> {
 
   private annotationPattern(raw: string, withdrawal: boolean): boolean {
     return withdrawal
-      ? /(?:^|[\r\n])[ \t]*@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
+      ? /(?:^|[\r\n])[ \t]*(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link|internal|hidden|ignore)\b/u.test(
           raw,
         )
-      : /(?:^|[\r\n])[ \t]*@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
+      : /(?:^|[\r\n])[ \t]*(?:#{2,4}[ \t]+)?@(evidenceExcludeReview|evidenceReview|evidenceExclude|evidence|link)\b/u.test(
           raw,
         );
   }
