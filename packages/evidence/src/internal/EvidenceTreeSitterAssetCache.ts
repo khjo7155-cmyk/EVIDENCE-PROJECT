@@ -1,92 +1,105 @@
-import { createHash, randomUUID } from "node:crypto";
-import { mkdir, open, readFile, rename, rm, stat } from "node:fs/promises";
-import path from "node:path";
+import { createHash } from "node:crypto";
 import type { ReadableStreamReadResult } from "node:stream/web";
 import { setTimeout as delay } from "node:timers/promises";
-import typia from "typia";
 
 import { EvidenceParserError } from "../parsers/EvidenceParserError";
 import type { IEvidenceGrammar } from "../structures/IEvidenceGrammar";
 import type { IEvidenceGrammarAsset } from "../structures/IEvidenceGrammarAsset";
-import type { IEvidenceTreeSitterAssetLock } from "./IEvidenceTreeSitterAssetLock";
 import type { IEvidenceTreeSitterAssetOptions } from "./IEvidenceTreeSitterAssetOptions";
 import type { IEvidenceTreeSitterAssetPending } from "./IEvidenceTreeSitterAssetPending";
 
 /**
- * Acquires immutable upstream grammars and validates every cache read before
- * loading WASM.
+ * Acquires verified upstream grammar bytes entirely in process memory.
  *
- * Concurrent callers share transfer work by destination but receive independent
- * byte arrays. Atomic publication and lock recovery prevent partial or
- * abandoned downloads from becoming trusted cache entries across processes.
+ * Concurrent callers share transfers and completed immutable bytes, then
+ * receive independent copies. No acquisition path creates directories, cache
+ * files, locks, or temporary files; a new process downloads its own required
+ * grammars.
  */
 export class EvidenceTreeSitterAssetCache {
   /**
-   * Tracks process-local transfers by immutable cache destination.
+   * Verified bytes retained for reuse during this process's lifetime.
    *
-   * Concurrent bytes calls share this pending record so they do not download
-   * the same pinned grammar independently, while consumer counts govern
-   * cancellation.
+   * Stored arrays remain private; every successful request returns a copy.
    */
-  private static readonly pending = new Map<
+  private static readonly completed: Map<string, Uint8Array> = new Map<
     string,
-    IEvidenceTreeSitterAssetPending
+    Uint8Array
   >();
 
   /**
-   * Captures asset-acquisition controls without performing filesystem or
-   * network work.
+   * Active transfers with subscriber-local cancellation accounting.
    *
-   * Bytes applies these controls when it resolves the cache location, downloads
-   * a grammar, and reports progress for this cache instance.
+   * The last departing waiter evicts its record after transfer work settles.
+   */
+  private static readonly pending: Map<
+    string,
+    IEvidenceTreeSitterAssetPending
+  > = new Map<string, IEvidenceTreeSitterAssetPending>();
+
+  /**
+   * Captures acquisition controls without network or filesystem work.
+   *
+   * The legacy cache directory is only a memory namespace for caller isolation.
    */
   public constructor(
     private readonly options: IEvidenceTreeSitterAssetOptions,
   ) {}
 
   /**
-   * Returns verified caller-owned grammar bytes, repairing missing or damaged
-   * cache entries.
+   * Returns caller-owned verified bytes, sharing acquisition with other
+   * waiters.
    *
-   * The method shares a transfer with concurrent callers but slices its result
-   * so no caller can mutate another caller's buffer.
+   * Failed and cancelled transfers are evicted so later calls can recover. Only
+   * verified successful transfers enter the completed memory cache.
    */
   public async bytes(grammar: IEvidenceGrammar): Promise<Uint8Array> {
-    const destination = path.join(
-      cacheDirectory(this.options.cacheDirectory),
-      "grammars-v1",
-      `${String(grammar.wasm.sha256)}.wasm`,
-    );
+    const key: string = JSON.stringify([
+      this.options.cacheDirectory ?? process.env["EVID_CACHE_DIR"] ?? "",
+      grammar.wasm.url,
+      grammar.wasm.size,
+      grammar.wasm.sha256,
+    ]);
     try {
       if (this.options.signal !== undefined)
         this.options.signal.throwIfAborted();
-      const cached = await verified(destination, grammar.wasm);
-      if (cached !== undefined) return cached;
+      const cached: Uint8Array | undefined =
+        EvidenceTreeSitterAssetCache.completed.get(key);
+      if (cached !== undefined) return cached.slice();
 
-      let pending = EvidenceTreeSitterAssetCache.pending.get(destination);
+      let pending: IEvidenceTreeSitterAssetPending | undefined =
+        EvidenceTreeSitterAssetCache.pending.get(key);
       if (pending === undefined || pending.controller.signal.aborted) {
-        const controller = new AbortController();
+        const controller: AbortController = new AbortController();
         pending = {
           controller,
           consumers: 0,
-          promise: this.acquire(grammar, destination, controller.signal),
+          promise: this.download(grammar, controller.signal).then(
+            (bytes: Uint8Array): Uint8Array => {
+              controller.signal.throwIfAborted();
+              EvidenceTreeSitterAssetCache.completed.set(key, bytes);
+              return bytes;
+            },
+          ),
         };
-        EvidenceTreeSitterAssetCache.pending.set(destination, pending);
+        EvidenceTreeSitterAssetCache.pending.set(key, pending);
       }
       ++pending.consumers;
       try {
         this.options.progress?.(
           `Preparing ${grammar.id} parser (${grammar.version})...`,
         );
-        const bytes = await consume(pending.promise, this.options.signal);
+        const bytes: Uint8Array = await consume(
+          pending.promise,
+          this.options.signal,
+        );
         return bytes.slice();
       } finally {
         if (--pending.consumers === 0) {
           pending.controller.abort();
-          // Complete owned filesystem cleanup before a cancelled caller can dispose its execution.
-          await pending.promise.catch(() => undefined);
-          if (EvidenceTreeSitterAssetCache.pending.get(destination) === pending)
-            EvidenceTreeSitterAssetCache.pending.delete(destination);
+          await pending.promise.catch((): undefined => undefined);
+          if (EvidenceTreeSitterAssetCache.pending.get(key) === pending)
+            EvidenceTreeSitterAssetCache.pending.delete(key);
         }
       }
     } catch (cause) {
@@ -100,9 +113,9 @@ export class EvidenceTreeSitterAssetCache {
         );
       if (cause instanceof EvidenceParserError) throw cause;
       throw new EvidenceParserError(
-        "asset-cache",
-        destination,
-        "Cannot prepare the parser cache. Restore write access or set EVID_CACHE_DIR to an absolute writable directory.",
+        "asset-download",
+        grammar.id,
+        "Cannot acquire the parser in memory. Restore access to the pinned asset and retry.",
         undefined,
         { cause },
       );
@@ -110,83 +123,11 @@ export class EvidenceTreeSitterAssetCache {
   }
 
   /**
-   * Acquires a cross-process cache lock, verifies downloaded bytes, and
-   * atomically publishes one entry.
-   *
-   * The finally block removes only files owned by this acquisition, preserving
-   * another process's active lock and completed cache entry.
-   */
-  private async acquire(
-    grammar: IEvidenceGrammar,
-    destination: string,
-    signal: AbortSignal,
-  ): Promise<Uint8Array> {
-    await mkdir(path.dirname(destination), { recursive: true });
-    const lock = `${destination}.lock`;
-    const owner: IEvidenceTreeSitterAssetLock = {
-      pid: process.pid,
-      token: randomUUID(),
-    };
-    const deadline = Date.now() + 120_000;
-    for (;;) {
-      signal.throwIfAborted();
-      const cached = await verified(destination, grammar.wasm);
-      if (cached !== undefined) return cached;
-      try {
-        const handle = await open(lock, "wx");
-        try {
-          try {
-            await handle.writeFile(JSON.stringify(owner));
-          } finally {
-            await handle.close();
-          }
-        } catch (cause) {
-          await rm(lock, { force: true });
-          throw cause;
-        }
-        break;
-      } catch (cause) {
-        if (!fileError(cause, "EEXIST")) throw cause;
-        await recoverLock(lock);
-        if (Date.now() >= deadline)
-          throw new EvidenceParserError(
-            "asset-cache",
-            destination,
-            "Another process is still preparing this parser. Retry after it completes or stops.",
-          );
-        await delay(100, undefined, { signal });
-      }
-    }
-
-    const temporary = `${destination}.${owner.token}.tmp`;
-    try {
-      const cached = await verified(destination, grammar.wasm);
-      if (cached !== undefined) return cached;
-      const bytes = await this.download(grammar, signal);
-      signal.throwIfAborted();
-      const handle = await open(temporary, "wx");
-      try {
-        await handle.writeFile(bytes);
-        await handle.sync();
-      } finally {
-        await handle.close();
-      }
-      signal.throwIfAborted();
-      await rename(temporary, destination);
-      return bytes;
-    } finally {
-      await rm(temporary, { force: true });
-      if ((await readLock(lock))?.token === owner.token)
-        await rm(lock, { force: true });
-    }
-  }
-
-  /**
    * Downloads one pinned grammar with bounded retries, response size, and
    * cancellation.
    *
-   * Hash verification remains in the caller so every cache and fresh-download
-   * path shares the same immutable-asset check.
+   * Downloaded bytes are verified before they can enter the shared memory
+   * cache.
    */
   private async download(
     grammar: IEvidenceGrammar,
@@ -247,51 +188,10 @@ export class EvidenceTreeSitterAssetCache {
     throw new EvidenceParserError(
       "asset-download",
       grammar.id,
-      `Cannot download the pinned parser after ${attempts} attempts. Restore network access to ${grammar.wasm.url} and retry; verified cached parsers work offline.`,
+      `Cannot download the pinned parser after ${attempts} attempts. Restore network access to ${grammar.wasm.url} and retry; verified parsers already acquired in this process work offline.`,
       undefined,
       { cause: failure },
     );
-  }
-}
-
-/**
- * Selects the explicit, environment, or project-local cache root without
- * creating it.
- *
- * Acquisition owns directory creation so resolving a location never changes the
- * project cache as a side effect.
- */
-function cacheDirectory(override: string | undefined): string {
-  const configured = override ?? process.env["EVID_CACHE_DIR"];
-  if (configured !== undefined) {
-    if (!path.isAbsolute(configured))
-      throw new EvidenceParserError(
-        "asset-cache",
-        configured,
-        "EVID_CACHE_DIR must be an absolute writable directory.",
-      );
-    return path.normalize(configured);
-  }
-  return path.join(process.cwd(), "node_modules", ".cache", "evidence");
-}
-
-/**
- * Reads a cache file only when its size and SHA-256 match pinned provenance.
- *
- * Checking metadata first avoids loading a corrupted or unexpectedly large file
- * before immutable-asset validation.
- */
-async function verified(
-  file: string,
-  asset: IEvidenceGrammarAsset,
-): Promise<Uint8Array | undefined> {
-  try {
-    if ((await stat(file)).size !== asset.size) return undefined;
-    const bytes = await readFile(file);
-    return matches(bytes, asset) ? bytes : undefined;
-  } catch (cause) {
-    if (fileError(cause, "ENOENT")) return undefined;
-    throw cause;
   }
 }
 
@@ -372,62 +272,4 @@ async function consume(
   } finally {
     if (cancel !== undefined) signal.removeEventListener("abort", cancel);
   }
-}
-
-/**
- * Narrows expected filesystem error codes used for cache recovery decisions.
- *
- * Unknown thrown values remain non-matches and are propagated by the caller.
- */
-function fileError(cause: unknown, code: string): boolean {
-  return cause instanceof Error && "code" in cause && cause.code === code;
-}
-
-/**
- * Reads and validates lock ownership, treating malformed locks as recoverable
- * stale state.
- *
- * Incomplete writes flow into age-based recovery instead of being trusted as a
- * live owner.
- */
-async function readLock(
-  file: string,
-): Promise<IEvidenceTreeSitterAssetLock | undefined> {
-  try {
-    const parsed = typia.json.validateParse<IEvidenceTreeSitterAssetLock>(
-      await readFile(file, "utf8"),
-    );
-    return parsed.success ? parsed.data : undefined;
-  } catch (cause) {
-    if (fileError(cause, "ENOENT")) return undefined;
-    throw cause;
-  }
-}
-
-/**
- * Removes only stale lock files after checking owner liveness and acquisition
- * age.
- *
- * A live process keeps its lock regardless of age, preventing one slow download
- * from being replaced by a competing acquisition.
- */
-async function recoverLock(file: string): Promise<void> {
-  const owner = await readLock(file);
-  if (owner !== undefined) {
-    try {
-      process.kill(owner.pid, 0);
-      return;
-    } catch (cause) {
-      if (!fileError(cause, "ESRCH")) return;
-    }
-    if ((await readLock(file))?.token !== owner.token) return;
-  } else {
-    try {
-      if (Date.now() - (await stat(file)).mtimeMs < 120_000) return;
-    } catch (cause) {
-      if (fileError(cause, "ENOENT")) return;
-      throw cause;
-    }
-  }
-  await rm(file, { force: true });
 }

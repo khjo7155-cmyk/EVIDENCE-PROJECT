@@ -1,7 +1,7 @@
 import { EvidenceTestParserAssets } from "../../internal/EvidenceTestParserAssets";
 import { TestValidator } from "@nestia/e2e";
 import { randomUUID } from "node:crypto";
-import { readdir, writeFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { join } from "node:path";
 
 import {
@@ -9,29 +9,22 @@ import {
   EvidenceTreeSitterAssets,
 } from "@wrtnlabs/evidence";
 import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
-import { EvidenceTestParserError } from "../../internal/EvidenceTestParserError";
 
 /**
- * Shares verified grammar acquisition and repairs corruption in a reusable
- * cache.
+ * Shares verified grammar bytes in memory without creating filesystem
+ * artifacts.
  *
- * Grammar bytes must remain immutable across callers, and offline reuse is safe
- * only after verification. The scenario supplies pinned bytes through a
- * controlled fetch implementation and uses a disposable cache to exercise cold
- * and warm paths.
+ * Cold acquisition, offline reuse, and caller isolation must work even when a
+ * legacy cache path names a regular file. Existing disk entries are ignored.
  *
- * 1. Request one cold grammar concurrently from eight callers:
- *
- *    - Require exactly one request to the pinned URL.
- *    - Require complete bytes for every caller and independent returned arrays.
- * 2. Open the warm cache with a fetch implementation that always fails and require
- *    the same bytes without network access.
- * 3. Replace the cached file with corrupt content and require offline acquisition
- *    to fail instead of accepting the damaged entry.
- * 4. Restore network access and require one repair download, successful offline
- *    reuse afterward, and no transient files beside the verified cache entry.
- * 5. Omit cache overrides from a project working directory and require the grammar
- *    below that project's `node_modules/.cache/evidence` directory.
+ * 1. Acquire a cold grammar from eight callers; require one transfer, complete
+ *    bytes, and independent returned arrays.
+ * 2. Reuse those bytes from another provider offline, then mutate the returned
+ *    copy and require another offline read to remain intact.
+ * 3. Require no files after cold and warm acquisition. Use a regular file as the
+ *    legacy cache path and require acquisition without modifying it.
+ * 4. Exercise default and environment namespaces from an empty working directory;
+ *    require successful acquisition and no created directories.
  */
 export async function test_parser_assets(): Promise<void> {
   const original = new EvidenceTreeSitterAssets();
@@ -79,27 +72,29 @@ export async function test_parser_assets(): Promise<void> {
       Array.from(pinned),
     );
 
-    // Corruption cannot be accepted offline, and a later network recovery repairs it automatically.
-    const destination = join(
-      location,
-      "grammars-v1",
-      `${String(grammar.wasm.sha256)}.wasm`,
-    );
-    await writeFile(destination, "damaged grammar");
-    await EvidenceTestParserError.expect("asset-download", () =>
-      offline.bytes(grammar),
-    );
-    await assets.bytes(grammar);
-    TestValidator.equals("one repair request", requests.length, 2);
+    const warm: Uint8Array = await offline.bytes(grammar);
+    warm.fill(0);
     TestValidator.equals(
-      "repaired pinned size",
-      (await offline.bytes(grammar)).length,
-      grammar.wasm.size,
+      "warm reads cannot mutate memory",
+      Array.from(await offline.bytes(grammar)),
+      Array.from(pinned),
+    );
+    TestValidator.equals("no acquisition files", await readdir(location), []);
+
+    await EvidenceTestFileSystem.save(location, { "cache-file": "unchanged" });
+    await new EvidenceTreeSitterAssetCache({
+      cacheDirectory: join(location, "cache-file"),
+      fetch: async (): Promise<Response> => new Response(pinned),
+    }).bytes(grammar);
+    TestValidator.equals(
+      "legacy path is never opened",
+      await readdir(location),
+      ["cache-file"],
     );
     TestValidator.equals(
-      "no transient files remain",
-      await readdir(join(location, "grammars-v1")),
-      [`${String(grammar.wasm.sha256)}.wasm`],
+      "existing file is preserved",
+      await readFile(join(location, "cache-file"), "utf8"),
+      "unchanged",
     );
 
     const projectDirectory = join(location, "project");
@@ -119,20 +114,12 @@ export async function test_parser_assets(): Promise<void> {
       else process.env["EVID_CACHE_DIR"] = previousCacheDirectory;
     }
     TestValidator.equals(
-      "project-local default cache",
-      await readdir(
-        join(
-          projectDirectory,
-          "node_modules",
-          ".cache",
-          "evidence",
-          "grammars-v1",
-        ),
-      ),
-      [`${String(grammar.wasm.sha256)}.wasm`],
+      "default acquisition creates no directories",
+      await readdir(projectDirectory),
+      [],
     );
 
-    // The explicit environment override remains available for CI or read-only projects.
+    // The environment value isolates memory without being opened as a path.
     const environmentDirectory: string = join(location, "environment cache");
     const previousEnvironmentDirectory: string | undefined =
       process.env["EVID_CACHE_DIR"];
@@ -147,9 +134,11 @@ export async function test_parser_assets(): Promise<void> {
       else process.env["EVID_CACHE_DIR"] = previousEnvironmentDirectory;
     }
     TestValidator.equals(
-      "environment cache override",
-      await readdir(join(environmentDirectory, "grammars-v1")),
-      [`${String(grammar.wasm.sha256)}.wasm`],
+      "environment namespace creates no files",
+      (await readdir(location)).sort((left: string, right: string): number =>
+        left.localeCompare(right),
+      ),
+      ["cache-file", "project"],
     );
   });
 }

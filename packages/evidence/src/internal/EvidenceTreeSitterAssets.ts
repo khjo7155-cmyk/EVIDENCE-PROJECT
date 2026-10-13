@@ -11,9 +11,9 @@ import grammars from "./parser-grammars.json";
 /**
  * Reads compiled grammar provenance and lazily acquires verified pinned bytes.
  *
- * Metadata validation occurs before cache-key or URL use so a corrupted package
- * catalog cannot redirect filesystem writes or downloads outside the asset
- * boundary.
+ * Metadata validation occurs before memory-cache-key or URL use so a corrupted
+ * package catalog cannot redirect downloads outside the asset boundary. Runtime
+ * acquisition never reads or writes a disk cache.
  */
 export class EvidenceTreeSitterAssets {
   /**
@@ -71,7 +71,7 @@ export class EvidenceTreeSitterAssets {
    * cache.
    *
    * Input is cloned and validated before cache acquisition, preventing unsafe
-   * metadata from selecting a filesystem key or network destination.
+   * metadata from selecting a memory cache key or network destination.
    */
   public async bytes(input: IEvidenceGrammar): Promise<Uint8Array> {
     const grammar = structuredClone(typia.assert(input));
