@@ -19,6 +19,8 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 3. Dynamically import that repaired helper from ESM and require its value.
  * 4. Schedule another import after returning the default export and require the
  *    evaluator to keep its memory loader until process exit.
+ * 5. Resolve a consumer's ambient type package without a tsconfig, then require a
+ *    value incompatible with that declaration to fail typechecking.
  */
 export async function test_config_memory_modules(): Promise<void> {
   await EvidenceTestFileSystem.experiment(
@@ -29,6 +31,8 @@ export async function test_config_memory_modules(): Promise<void> {
       "typed.ts": "export enum Count { Value = 17 }",
       "typed.js": "export const Count = { Value: 999 };",
       "dynamic.ts": "export enum Count { Value = 23 }",
+      "node_modules/@types/fixture-environment/index.d.ts":
+        "declare const fixtureEnvironment: string;",
     },
     async (directory: string): Promise<void> => {
       const extensions: string[] = ["ts", "cts", "mts"];
@@ -99,6 +103,27 @@ export async function test_config_memory_modules(): Promise<void> {
         "late imports retain the memory loader",
         await evaluateTypeScriptConfig(join(directory, "evidence.config.mts")),
         31,
+      );
+
+      await EvidenceTestFileSystem.save(directory, {
+        "evidence.config.ts":
+          "const value: typeof fixtureEnvironment = 'ambient'; export default value;",
+      });
+      TestValidator.equals(
+        "consumer ambient types",
+        await evaluateTypeScriptConfig(file),
+        "ambient",
+      );
+      await EvidenceTestFileSystem.save(directory, {
+        "evidence.config.ts":
+          "const value: typeof fixtureEnvironment = 123; export default value;",
+      });
+      await TestValidator.error(
+        "ambient declarations remain checked",
+        (): Promise<unknown> =>
+          evaluateTypeScriptConfig(file, {
+            writeDiagnostic: (_content: string): void => {},
+          }),
       );
     },
   );

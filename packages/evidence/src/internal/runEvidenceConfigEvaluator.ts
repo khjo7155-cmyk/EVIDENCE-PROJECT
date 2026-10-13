@@ -69,7 +69,7 @@ export async function runEvidenceConfigEvaluator(
     rewriteRelativeImportExtensions: true,
     resolveJsonModule: true,
     noEmit: true,
-    types: [],
+    types: ["*"],
     ignoreDeprecations: "6.0",
   };
   const output: Map<string, string> = new Map<string, string>();
