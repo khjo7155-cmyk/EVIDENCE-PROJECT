@@ -4,6 +4,7 @@ import path from "node:path";
 import typia from "typia";
 
 import { runEvidenceConfigEvaluator } from "./runEvidenceConfigEvaluator";
+import { evidenceConfigModuleCandidates } from "./evidenceConfigModuleCandidates";
 import type { IEvidenceEvaluateTypeScriptConfigOptions } from "./IEvidenceEvaluateTypeScriptConfigOptions";
 import type { IEvidenceConfigPackageScope } from "./IEvidenceConfigPackageScope";
 
@@ -26,7 +27,9 @@ export async function evaluateTypeScriptConfig(
     (file) => require("node:module").createRequire(file)(file),
     ${JSON.stringify(filename)},
     ${JSON.stringify(require.resolve("@types/node/index.d.ts"))},
-    ${isPackageScope.toString()}
+    ${isPackageScope.toString()},
+    (base) => (${evidenceConfigModuleCandidates.toString()})(base,
+      require("node:path").extname(base).toLowerCase(), require("node:path").join)
   ).catch((error) => { console.error(error); process.exitCode = 1; });`;
   const writeDiagnostic: (content: string) => void =
     options.writeDiagnostic ?? writeProcessDiagnostic;

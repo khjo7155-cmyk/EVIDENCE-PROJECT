@@ -28,6 +28,7 @@ export async function runEvidenceConfigEvaluator(
   configFile: string,
   nodeTypes: string,
   isPackageScope: (value: unknown) => value is IEvidenceConfigPackageScope,
+  moduleCandidates: (base: string) => string[],
 ): Promise<void> {
   /**
    * Determines module format without inheriting application tsconfig.
@@ -152,64 +153,32 @@ export async function runEvidenceConfigEvaluator(
           specifier.startsWith("file:") ||
           path.isAbsolute(specifier);
         const requireMode: boolean = context.conditions.includes("require");
-        if (!local || (requireMode && specifier.startsWith("file:")))
+        // File URLs retain Node's exact-path semantics, including require's rejection.
+        if (!local || specifier.startsWith("file:"))
           return nextResolve(specifier, context);
-        const base: URL = specifier.startsWith("file:")
-          ? new URL(specifier)
-          : path.isAbsolute(specifier)
-            ? urls.pathToFileURL(specifier)
-            : requireMode && context.parentURL !== undefined
-              ? urls.pathToFileURL(
-                  path.resolve(
-                    path.dirname(urls.fileURLToPath(context.parentURL)),
-                    specifier,
-                  ),
-                )
-              : new URL(specifier, context.parentURL);
+        const base: URL = path.isAbsolute(specifier)
+          ? urls.pathToFileURL(specifier)
+          : requireMode && context.parentURL !== undefined
+            ? urls.pathToFileURL(
+                path.resolve(
+                  path.dirname(urls.fileURLToPath(context.parentURL)),
+                  specifier,
+                ),
+              )
+            : new URL(specifier, context.parentURL);
         const file: string = urls.fileURLToPath(base);
-        const extension: string = path.extname(file);
-        const candidates: string[] =
-          extension === ".js"
-            ? [file.slice(0, -3) + ".ts", file.slice(0, -3) + ".tsx"]
-            : extension === ".mjs"
-              ? [file.slice(0, -4) + ".mts"]
-              : extension === ".cjs"
-                ? [file.slice(0, -4) + ".cts"]
-                : extension === ""
-                  ? [
-                      ".ts",
-                      ".tsx",
-                      ".js",
-                      ".mts",
-                      ".cts",
-                      "/index.ts",
-                      "/index.js",
-                    ].map((suffix: string): string => file + suffix)
-                  : [];
-        // A checked TS source wins over a neighboring stale JS emit.
-        for (const candidate of candidates)
-          if (
-            fs.existsSync(candidate) &&
-            output.has(fs.realpathSync(candidate))
-          ) {
-            const target: URL = urls.pathToFileURL(fs.realpathSync(candidate));
-            target.search = base.search;
-            target.hash = base.hash;
-            return { url: target.href, shortCircuit: true };
-          }
-        try {
-          return nextResolve(specifier, context);
-        } catch (cause) {
-          for (const candidate of candidates) {
-            if (!fs.existsSync(candidate) || !fs.statSync(candidate).isFile())
-              continue;
-            const target: URL = urls.pathToFileURL(fs.realpathSync(candidate));
-            target.search = base.search;
-            target.hash = base.hash;
-            return { url: target.href, shortCircuit: true };
-          }
-          throw cause;
+        const candidates: string[] = moduleCandidates(file);
+        // Resolve local requests in the same order the watch scanner observes,
+        // including TS dependencies that are first discovered at runtime.
+        for (const candidate of candidates) {
+          if (!fs.existsSync(candidate) || !fs.statSync(candidate).isFile())
+            continue;
+          const target: URL = urls.pathToFileURL(fs.realpathSync(candidate));
+          target.search = base.search;
+          target.hash = base.hash;
+          return { url: target.href, shortCircuit: true };
         }
+        return nextResolve(specifier, context);
       },
       load(
         url: string,

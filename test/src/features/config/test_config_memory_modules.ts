@@ -21,6 +21,9 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    evaluator to keep its memory loader until process exit.
  * 5. Resolve a consumer's ambient type package without a tsconfig, then require a
  *    value incompatible with that declaration to fail typechecking.
+ * 6. Require a TS helper through a JS spelling at runtime, select MTS ahead of a
+ *    same-stem JS file, and resolve a directory's MTS index; require source
+ *    values.
  */
 export async function test_config_memory_modules(): Promise<void> {
   await EvidenceTestFileSystem.experiment(
@@ -31,6 +34,9 @@ export async function test_config_memory_modules(): Promise<void> {
       "typed.ts": "export enum Count { Value = 17 }",
       "typed.js": "export const Count = { Value: 999 };",
       "dynamic.ts": "export enum Count { Value = 23 }",
+      "selected.mts": "export const value = 37;",
+      "selected.js": "module.exports = { value: 999 };",
+      "folder/index.mts": "export const value = 41;",
       "node_modules/@types/fixture-environment/index.d.ts":
         "declare const fixtureEnvironment: string;",
     },
@@ -124,6 +130,21 @@ export async function test_config_memory_modules(): Promise<void> {
           evaluateTypeScriptConfig(file, {
             writeDiagnostic: (_content: string): void => {},
           }),
+      );
+
+      await EvidenceTestFileSystem.save(directory, {
+        "evidence.config.ts": dedent`
+          export default [
+            require("./typed.js").Count.Value,
+            require("./selected").value,
+            require("./folder").value,
+          ];
+        `,
+      });
+      TestValidator.equals(
+        "runtime local source order",
+        await evaluateTypeScriptConfig(file),
+        [17, 37, 41],
       );
     },
   );
