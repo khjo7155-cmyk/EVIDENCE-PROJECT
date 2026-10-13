@@ -1,6 +1,6 @@
 /**
  * One process-wide transfer shared by callers targeting the same immutable
- * cache entry.
+ * memory cache entry.
  *
  * Consumer accounting lets an individual cancellation return promptly while
  * transfer work continues for peers, then aborts only after the final waiter
@@ -8,10 +8,10 @@
  */
 export interface IEvidenceTreeSitterAssetPending {
   /**
-   * Promise for verified bytes after successful atomic cache publication.
+   * Promise for verified bytes after successful acquisition into memory.
    *
    * Each joining caller awaits this shared result, so checksum verification and
-   * publication run once for the immutable cache entry.
+   * retention run once for the immutable cache entry.
    */
   promise: Promise<Uint8Array>;
 

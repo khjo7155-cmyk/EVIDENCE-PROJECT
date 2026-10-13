@@ -88,7 +88,7 @@ The distribution certification checks that:
 - every supported registry entry has one adapter certification;
 - every grammar selected by those entries exists in the pinned manifest;
 - every manifest record passes `EvidenceTreeSitterAssets` validation of its provenance paths and HTTPS asset URLs;
-- every pinned grammar is acquired at its declared size and digest into the test fixture cache;
+- every pinned grammar is acquired at its declared size and digest into the in-memory test fixture cache;
 - every pinned grammar parses a real declaration through `EvidenceParser` in `test_parser_grammars`.
 
 Inspect package metadata and preparation scripts directly. Do not add tarball installation, packed-consumer, or CLI subprocess tests.
@@ -117,17 +117,17 @@ Count each concept separately:
 
 The runtime uses the official CommonJS entry of `web-tree-sitter`, pinned in the `tree-sitter` family catalog. The binding's core WASM comes from that npm dependency and is resolved through `require.resolve`, independent of the caller's working directory.
 
-Language grammars are not packaged. The grammar manifest at `packages/evidence/src/internal/parser-grammars.json` pins every grammar the runtime may acquire: upstream repository, release or reproducible build identifier, full source commit, WASM download URL, SHA-256 digest, byte length, and the license asset with its own digest and length. `EvidenceTreeSitterAssets` imports the manifest directly, validates every record with `typia`, rejects duplicate identifiers, and refuses non-HTTPS or credential-bearing URLs before any record can choose a cache key or download destination. The package emits the manifest into `lib` during the build; there is no generated catalog to regenerate. TypeScript and TSX share an upstream repository and license but use separate grammars.
+Language grammars are not packaged. The grammar manifest at `packages/evidence/src/internal/parser-grammars.json` pins every grammar the runtime may acquire: upstream repository, release or reproducible build identifier, full source commit, WASM download URL, SHA-256 digest, byte length, and the license asset with its own digest and length. `EvidenceTreeSitterAssets` imports the manifest directly, validates every record with `typia`, rejects duplicate identifiers, and refuses non-HTTPS or credential-bearing URLs before any record can choose a memory cache key or download URL. The package emits the manifest into `lib` during the build; there is no generated catalog to regenerate. TypeScript and TSX share an upstream repository and license but use separate grammars.
 
 ### Acquisition at runtime
 
-`TreeSitterAssetCache` downloads a pinned grammar the first time a selected source needs it, verifies the byte length and SHA-256 against the manifest, and publishes the file atomically under `grammars-v1/<sha256>.wasm` in the project cache. Every later read verifies size and digest again, so a damaged entry is downloaded afresh instead of being trusted. Concurrent callers in one process share a transfer and receive independent byte arrays; a cross-process lock prevents two processes from publishing the same entry at once, and stale locks from dead processes are recovered.
+`EvidenceTreeSitterAssetCache` downloads a pinned grammar when a selected source first needs it and verifies its byte length and SHA-256 before retaining it in process memory. Concurrent callers share a transfer and receive independent byte arrays. Failed and cancelled acquisitions are evicted for retry. Runtime analysis must never create directories, cache files, lock files, or temporary files. A fresh process needs network access; offline reuse lasts only for the process that already acquired the bytes.
 
-An explicit `IEvidenceTreeSitterAssetOptions.cacheDirectory` wins. Without one, the cache root is `EVID_CACHE_DIR` when set, then `node_modules/.cache/evidence` under the current working directory. The same options let an embedding caller override fetch transport, per-attempt timeout, attempt count, cancellation signal, and progress sink; `EvidenceTreeSitterAssetScope` carries those controls through one asynchronous execution chain so nested checker and adapter instances inherit them. Imports, configuration loading, help, version, init, and `evidence languages` never download a grammar.
+`IEvidenceTreeSitterAssetOptions.cacheDirectory` and `EVID_CACHE_DIR` remain legacy selectors for separate memory namespaces and are never accessed as filesystem paths. Other options control fetch transport, per-attempt timeout, attempt count, cancellation, and progress. `EvidenceTreeSitterAssetScope` carries these controls through one asynchronous execution chain. Imports, help, version, init, and `evidence languages` never download a grammar; watch dependency scanning may need its source-language grammar.
 
 ### Tests and CI
 
-Logic tests obtain the real pinned grammars into the gitignored `test/.tmp/parser-fixtures` cache through `TestParserAssets`. A cold checkout therefore needs network access once; the test workflow caches that directory keyed by the manifest's hash. Acquisition tests copy those verified bytes into a disposable cache and drive a controlled fetch implementation, so cold, warm, offline, corrupt, and repair paths are exercised without touching the shared fixtures. `test_parser_assets` and the `test_parser_acquisition_*` scenarios in `test/src/features/parser` own that coverage.
+Logic tests obtain pinned grammar fixtures through `EvidenceTestParserAssets` and retain them in memory for the test process. Every new test process needs network access once per required grammar. Acquisition scenarios use separate memory namespaces and controlled transports to verify sharing, offline reuse, corrupted responses, recovery, and the absence of filesystem artifacts. Source fixtures still belong under the gitignored `test/.tmp` tree through `EvidenceTestFileSystem`; they are authored test inputs, not runtime cache output.
 
 ### Add or update a grammar
 

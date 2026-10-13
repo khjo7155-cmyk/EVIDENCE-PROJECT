@@ -2,9 +2,9 @@
  * Nearest package metadata relevant to the configuration evaluator's module
  * decision.
  *
- * `configModule` reads this parsed projection while walking upward from a
- * config file. It models only the package field that can change the temporary
- * evaluator project's compiler module kind.
+ * The in-memory evaluator and watch dependency scanner validate this projection
+ * while walking upward from a config file. Its module mode determines static
+ * import conditions and the format of executable configuration output.
  */
 export interface IEvidenceConfigPackageScope {
   /**

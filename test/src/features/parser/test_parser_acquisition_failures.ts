@@ -14,7 +14,7 @@ import { EvidenceTestParserError } from "../../internal/EvidenceTestParserError"
  *
  * Retry policy must distinguish transient transport failures from permanent
  * HTTP and content-integrity failures. Rejected work must leave neither a
- * published cache entry nor a retained promise that prevents a later healthy
+ * completed memory entry nor a retained promise that prevents a later healthy
  * acquisition.
  *
  * 1. Return HTTP 503 and require asset-download failure after the configured two
@@ -22,7 +22,7 @@ import { EvidenceTestParserError } from "../../internal/EvidenceTestParserError"
  * 2. Supply truncated, oversized, and same-sized modified bytes separately:
  *
  *    - Each attempt fails with asset-corrupt.
- *    - No bytes are published in the cache directory.
+ *    - No files or directories are created.
  *    - Integrity failures are not retried.
  * 3. Switch the same provider to pinned bytes and require successful acquisition
  *    with exactly one additional request.
@@ -72,7 +72,7 @@ export async function test_parser_acquisition_failures(): Promise<void> {
         );
         TestValidator.equals(
           `${invalid} bytes never published`,
-          await readdir(join(cacheDirectory, "grammars-v1")),
+          await readdir(cacheDirectory),
           [],
         );
       }

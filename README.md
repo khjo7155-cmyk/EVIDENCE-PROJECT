@@ -50,7 +50,7 @@ npx evidence init
 npx evidence
 ```
 
-`typescript` and [`ttsc`](https://github.com/samchon/ttsc) are peer dependencies. `ttsc` supplies `ttsx`, which evaluates `evidence.config.ts` without a project `tsconfig.json`. Grammars download on first use. Replace the generated configuration as shown next.
+`typescript` and [`ttsc`](https://github.com/samchon/ttsc) are peer dependencies. Configuration is typechecked and evaluated in memory without a project `tsconfig.json`. Grammars download into memory on first use in each process. Replace the generated configuration as shown next.
 
 ### 1.2. Start with principles
 
@@ -299,7 +299,7 @@ Incomplete analysis never passes as an empty population.
 
 ## 4. Configuration
 
-`evidence.config.ts` exports one `IEvidenceConfig` with a `claims` array, an optional top-level `severity`, and an optional `report` setting. Severity defaults to `error`; claims inherit the top-level value, and references inherit their claim. The config is evaluated through the consumer's `ttsx` and validated with `typia` before any source is read.
+`evidence.config.ts` exports one `IEvidenceConfig` with a `claims` array, an optional top-level `severity`, and an optional `report` setting. Severity defaults to `error`; claims inherit the top-level value, and references inherit their claim. The config is typechecked with the bundled TypeScript compiler, evaluated in a fresh process, and validated with `typia` before artifact sources are read. Compilation, module output, and result transport stay in memory. The evaluator has read-only filesystem access and cannot launch child processes; imported settings are reevaluated on each watch cycle.
 
 Commands resolve configuration within the effective `--cwd` directory, preferring `evidence.config.ts`. An invalid, unreadable, directory or broken symlink at the preferred name remains an error; explicit paths never fall back. No-argument checker and loader APIs discover configuration in the current working directory. Roots remain relative to the selected physical configuration file. `init` defaults to creating `evidence.config.ts`.
 
@@ -402,6 +402,8 @@ The resolver never falls back to a project-wide name.
 ## 6. Languages
 
 Every family can be a claim and a reference and can cite every other.
+
+Analysis creates no temporary files or disk caches. Downloaded grammars are checked against their pinned size and SHA-256, shared in memory, and reused offline only within the same process. Each new process needs network access to its required grammars. `cacheDirectory` and `EVID_CACHE_DIR` are legacy memory namespace selectors and never name a directory that Evidence reads or writes. Explicit `init` and output-file options still write the requested destination.
 
 Programming languages and SQL dialects parse through upstream Tree-sitter grammars, Prisma through its own parser, and Swagger as JSON or YAML. Adapters run no compiler, preprocessor, macro, or build; a construct that could change the public surface and cannot be resolved makes analysis incomplete.
 

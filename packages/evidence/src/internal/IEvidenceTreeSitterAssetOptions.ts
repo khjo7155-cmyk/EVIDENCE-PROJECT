@@ -1,17 +1,20 @@
 /**
  * Execution-local controls for immutable grammar acquisition.
  *
- * These options influence one caller's cache and transfer lifetime; they do not
- * alter catalog provenance or the bytes accepted into the shared cache.
+ * These options influence one caller's memory cache and transfer lifetime; they
+ * do not alter catalog provenance or the bytes accepted into the shared cache.
  */
 export interface IEvidenceTreeSitterAssetOptions {
   /**
-   * Writable root for the immutable grammar cache.
+   * Legacy namespace for isolating the process-local grammar cache.
    *
-   * Omission first uses `EVID_CACHE_DIR`, then `node_modules/.cache/evidence`
-   * under the current working directory. `EvidenceTreeSitterAssetCache` places
-   * verified grammar bytes below this root and never treats it as catalog
-   * provenance.
+   * Omission uses `EVID_CACHE_DIR` when set, then the default memory namespace.
+   * The value is never accessed as a filesystem path. Grammars live only in
+   * memory, including when this option or the legacy environment variable is
+   * set.
+   *
+   * @deprecated Retained for caller isolation; it no longer enables disk
+   *   caching.
    */
   cacheDirectory?: string;
 

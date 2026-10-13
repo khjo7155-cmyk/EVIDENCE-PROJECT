@@ -1,26 +1,29 @@
 import type { IEvidenceGrammar } from "@wrtnlabs/evidence";
 import { randomUUID } from "node:crypto";
-import { resolve } from "node:path";
 
 import {
   EvidenceTreeSitterAssets,
   EvidenceTreeSitterAssetScope,
 } from "@wrtnlabs/evidence";
-import { EvidenceTestFileSystem } from "./EvidenceTestFileSystem";
 
 /**
- * Acquires real pinned test grammars automatically while isolating each suite's
- * runtime cache.
+ * Supplies pinned test grammars through isolated memory namespaces.
+ *
+ * Fixture acquisition uses the real network once per grammar and process.
+ * Scenario transports reuse those verified bytes without writing a fixture
+ * cache.
  */
 export namespace EvidenceTestParserAssets {
   /**
-   * Reuses a contributor/CI fixture cache independently of the acquisition
-   * scenario under test.
+   * Returns verified in-memory fixture bytes.
+   *
+   * The separate namespace keeps scenario retries and cancellations from
+   * changing the network fixture acquisition that supplies their input.
    */
   export async function bytes(grammar: IEvidenceGrammar): Promise<Uint8Array> {
     return EvidenceTreeSitterAssetScope.run(
       {
-        cacheDirectory: resolve(__dirname, "../../.tmp/parser-fixtures"),
+        cacheDirectory: "parser-fixtures",
         fetch: globalThis.fetch,
         attempts: 3,
         timeoutMilliseconds: 30_000,
@@ -32,8 +35,10 @@ export namespace EvidenceTestParserAssets {
   }
 
   /**
-   * Creates a disposable runtime cache and supplies only catalog-pinned bytes
-   * as its controlled transport.
+   * Runs a suite with an isolated grammar acquisition namespace.
+   *
+   * Nested adapters inherit a controlled transport that supplies catalog-pinned
+   * bytes from the fixture namespace instead of creating runtime cache files.
    */
   export async function run<T>(closure: () => Promise<T>): Promise<T> {
     const grammars = await new EvidenceTreeSitterAssets().list();
@@ -51,26 +56,9 @@ export namespace EvidenceTestParserAssets {
       return new Response(Uint8Array.from(await bytes(grammar)));
     }
 
-    return EvidenceTestFileSystem.experiment(
-      `parser-runtime-${randomUUID()}`,
-      {},
-      async (cacheDirectory) => {
-        // Child config evaluators inherit the same ignored temporary root.
-        const previous = new Map(
-          ["TEMP", "TMP", "TMPDIR"].map((key) => [key, process.env[key]]),
-        );
-        for (const key of previous.keys()) process.env[key] = cacheDirectory;
-        try {
-          return await EvidenceTreeSitterAssetScope.run(
-            { cacheDirectory, fetch: fetchFixture },
-            closure,
-          );
-        } finally {
-          for (const [key, value] of previous)
-            if (value === undefined) delete process.env[key];
-            else process.env[key] = value;
-        }
-      },
+    return EvidenceTreeSitterAssetScope.run(
+      { cacheDirectory: `parser-runtime-${randomUUID()}`, fetch: fetchFixture },
+      closure,
     );
   }
 }
