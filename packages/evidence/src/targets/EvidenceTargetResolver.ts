@@ -119,7 +119,7 @@ export class EvidenceTargetResolver {
     inventories: IEvidenceInventory[],
     type?: EvidenceArtifactType,
   ) {
-    this.index = new EvidenceInventory(inventories);
+    this.index = new EvidenceInventory(inventories, { fileScopes: true });
     this.inventory = this.index.snapshot();
     this.type = type;
     for (const source of this.inventory.sources) {

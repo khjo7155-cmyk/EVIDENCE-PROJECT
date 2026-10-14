@@ -76,6 +76,7 @@ export namespace EvidenceAdapterCertification {
       Array.from(new Set(inventory.units.map((unit) => unit.type))),
       [certification.type],
     );
+    assertFileScopes(certification.type, inventory);
     const keys = new Map(
       inventory.units.map((unit) => [unit.id, unitKey(unit)]),
     );
@@ -540,6 +541,68 @@ export namespace EvidenceAdapterCertification {
     if (key === undefined)
       throw new Error(`Missing certification identity: ${id}`);
     return key;
+  }
+
+  /**
+   * Requires file scopes to be derived for citation, never published.
+   *
+   * An adapter publishes declarations only. The resolving view adds one file
+   * unit per source, with an empty identity, one empty-accessor address per
+   * selected spelling and no content of its own, that owns every top-level
+   * declaration sited only in that file. A declaration merged from several
+   * files stays unowned so one file cannot retire it.
+   */
+  function assertFileScopes(type: string, published: IEvidenceInventory): void {
+    TestValidator.equals(
+      `${type} published inventory has no file scope`,
+      published.units.filter((unit) => unit.symbol === "file").length,
+      0,
+    );
+    const inventory = new EvidenceInventory([published], {
+      fileScopes: true,
+    }).snapshot();
+    const units = new Map(inventory.units.map((unit) => [unit.id, unit]));
+    const scopes = inventory.units.filter((unit) => unit.symbol === "file");
+    for (const scope of scopes) {
+      const file = scope.sites[0]?.file;
+      const source = inventory.sources.find(
+        (candidate) => candidate.physicalPath === file,
+      );
+      TestValidator.equals(
+        `${type} file scope ${scope.name} shape`,
+        {
+          parent: scope.parentId,
+          sites: scope.sites.length,
+          content: scope.sites[0]?.content.length,
+          identity: scope.identity,
+        },
+        { parent: undefined, sites: 1, content: 0, identity: [] },
+      );
+      TestValidator.equals(
+        `${type} file scope ${scope.name} addresses`,
+        inventory.addresses
+          .filter((address) => address.unitId === scope.id)
+          .map((address) => [address.file, address.segments.length])
+          .sort(compareValue),
+        (source?.addresses ?? [])
+          .filter((address) => address.selected !== false)
+          .map((address) => [address.absolute, 0])
+          .sort(compareValue),
+      );
+    }
+    for (const unit of published.units) {
+      if (unit.parentId !== undefined) continue;
+      const files = new Set(unit.sites.map((site) => site.file));
+      const owner =
+        files.size === 1
+          ? scopes.find((scope) => files.has(scope.sites[0]?.file ?? ""))
+          : undefined;
+      TestValidator.equals(
+        `${type} file scope of ${unit.id}`,
+        units.get(unit.id)?.parentId,
+        owner?.id,
+      );
+    }
   }
 
   function unitKey(unit: IEvidenceUnit): string {

@@ -20,9 +20,9 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * Missing, unselected, malformed, unsupported, withdrawn, ambiguous, and
  * incomplete addresses require different diagnostics and recovery behavior.
  *
- * 1. Resolve an existing unselected file, a missing file, a file without a file
- *    unit, malformed programming spellings, and a host without a supported
- *    attachment.
+ * 1. Resolve an existing unselected file, a missing file, a selected file that
+ *    declares nothing and so has no file scope, malformed programming
+ *    spellings, and a host without a supported attachment.
  * 2. Verify their distinct statuses instead of allowing a guessed edge.
  * 3. Resolve an internal declaration, competing star exports, and an export graph
  *    with a missing source name; require withdrawal metadata, ambiguity, and an
@@ -32,7 +32,7 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * @evidence contracts/testing.md#behavioral-verification Resolves failing targets against TypeScript inventories and asserts each distinct status and diagnostic.
  * @evidence contracts/testing.md#independent-expectations Expected statuses come from the resolution contract: missing-file, out-of-population, malformed, unsupported-host, hidden, ambiguous and incomplete.
- * @evidence contracts/testing.md#distinguishing-cases Covers unselected and missing files, malformed accessors, unsupported hosts, withdrawn declarations, competing star exports, and incomplete export graphs taking precedence over missing-file. Successful resolution is owned by test_target_resolution.
+ * @evidence contracts/testing.md#distinguishing-cases Covers unselected and missing files, a declaration-free selected file without a file scope, malformed accessors, unsupported hosts, withdrawn declarations, competing star exports, and incomplete export graphs taking precedence over missing-file. Successful resolution is owned by test_target_resolution.
  * @evidence contracts/testing.md#execution-ownership The exported test_target_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_target_failures(): Promise<void> {
@@ -45,12 +45,20 @@ export async function test_target_failures(): Promise<void> {
       const root = directory.replaceAll("\\", "/");
       const host = createHost(root + "/docs/review.md");
       const selected = await new EvidenceTypeScriptAdapter().analyze(
-        EvidenceTestSourceSnapshot.create(
-          "src/selected.ts",
-          "export const value = 1;",
-          undefined,
-          root,
-        ),
+        EvidenceTestSourceSnapshot.combine([
+          EvidenceTestSourceSnapshot.create(
+            "src/selected.ts",
+            "export const value = 1;",
+            undefined,
+            root,
+          ),
+          EvidenceTestSourceSnapshot.create(
+            "src/empty.ts",
+            "// Declares nothing.\nexport {};\n",
+            undefined,
+            root,
+          ),
+        ]),
       );
       const resolver = new EvidenceTargetResolver([selected]);
       const ids = selected.units.map((unit) => unit.id);
@@ -74,7 +82,7 @@ export async function test_target_failures(): Promise<void> {
       );
       TestValidator.equals("missing file", missing.status, "missing-file");
       const fileOnly: IEvidenceTargetResolution = await resolver.resolve(
-        createStatement("../src/selected.ts", root),
+        createStatement("../src/empty.ts", root),
         host,
         ids,
       );

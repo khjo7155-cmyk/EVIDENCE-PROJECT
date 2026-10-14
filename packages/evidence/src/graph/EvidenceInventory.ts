@@ -5,8 +5,11 @@ import { EvidenceSourceText } from "../internal/EvidenceSourceText";
 import type { IEvidenceAddress } from "../structures/IEvidenceAddress";
 import type { IEvidenceDiagnostic } from "../structures/IEvidenceDiagnostic";
 import type { IEvidenceInventory } from "../structures/IEvidenceInventory";
+import type { IEvidenceInventoryOptions } from "../structures/IEvidenceInventoryOptions";
 import type { IEvidencePopulation } from "../structures/IEvidencePopulation";
 import type { IEvidenceResolution } from "../structures/IEvidenceResolution";
+import type { IEvidenceSourceAddress } from "../structures/IEvidenceSourceAddress";
+import type { IEvidenceSourceFile } from "../structures/IEvidenceSourceFile";
 import type { IEvidenceSourceLocation } from "../structures/IEvidenceSourceLocation";
 import type { IEvidenceUnit } from "../structures/IEvidenceUnit";
 import type { IEvidenceUnitSite } from "../structures/IEvidenceUnitSite";
@@ -17,10 +20,11 @@ import type { IEvidenceWithdrawal } from "../structures/IEvidenceWithdrawal";
  * populations.
  *
  * Construction captures the supplied inventories, merges compatible identities,
- * and checks source ranges, parent relationships, addresses, and host
- * ownership. Inconsistent records leave diagnostics and an incomplete inventory
- * instead of silently disappearing from the denominator. Normalization makes
- * snapshots and serialization deterministic.
+ * optionally gives every file-addressed source a structural file unit, and
+ * checks source ranges, parent relationships, addresses, and host ownership.
+ * Inconsistent records leave diagnostics and an incomplete inventory instead of
+ * silently disappearing from the denominator. Normalization makes snapshots and
+ * serialization deterministic.
  *
  * Selection distinguishes required units from their addressable ancestors and
  * propagates withdrawals through explicit parent links. Resolution then matches
@@ -41,11 +45,11 @@ import type { IEvidenceWithdrawal } from "../structures/IEvidenceWithdrawal";
  *   );
  *   // Client may resolve as an aggregate owner while only its method is required.
  *
- * @evidence contracts/common.md#principled-implementation Construction asserts the input shape with typia, merges inventories, validates source ranges, sites, parents, cycles, addresses and hosts against the original text, caches inherited withdrawals per unit, and normalizes ordering.
+ * @evidence contracts/common.md#principled-implementation Construction asserts the input shape with typia, merges inventories, on request gives each file-addressed source a structural file unit owning its single-file top-level declarations, validates source ranges, sites, parents, cycles, addresses and hosts against the original text, caches inherited withdrawals per unit, and normalizes ordering.
  * @evidence contracts/common.md#clear-and-simple-design The class owns reconciliation, validation, selection and exact address resolution; merging and canonical keys come from EvidenceInventoryMerge.
  * @evidence contracts/common.md#prohibited-implementation-shortcuts Semantic contradictions become diagnostics that mark the inventory incomplete instead of disappearing from the denominator.
  * @evidence contracts/common.md#meaningful-documentation The class comment explains construction, selection, resolution and ownership of results with an example; every public and private member is documented.
- * @evidence contracts/performance.md#efficient-algorithms Construction is linear in records with map lookups, plus one line index per source for range validation; inherited withdrawals are computed once per unit.
+ * @evidence contracts/performance.md#efficient-algorithms Construction is linear in records with map lookups (file scoping is one pass over units and their sites), plus one line index per source for range validation; inherited withdrawals are computed once per unit.
  * @evidence contracts/performance.md#reuse-equivalent-work Unit and withdrawal maps are built once; resolution adds a lazily built address index and caches each selection's visible and hidden scopes per ID array, so repeated citations against one reference reuse that work.
  * @evidence contracts/performance.md#bound-retention-and-release-resources The index owns a cloned copy of its inputs and plain maps; the address index is one entry per public address, scope caches are keyed weakly by the caller's ID arrays with one copied array per entry, and everything is released with the index.
  */
@@ -113,12 +117,19 @@ export class EvidenceInventory {
    *
    * Shape validation rejects malformed input. Semantic inconsistencies become
    * inventory diagnostics so callers can inspect the partial records and their
-   * incomplete status rather than receiving an apparently healthy subset.
+   * incomplete status rather than receiving an apparently healthy subset. With
+   * `fileScopes`, each file-addressed source also gains a structural file unit
+   * so file-level citations resolve; adapters publishing their own output leave
+   * it off.
    */
-  public constructor(inventories: IEvidenceInventory[]) {
+  public constructor(
+    inventories: IEvidenceInventory[],
+    options: IEvidenceInventoryOptions = {},
+  ) {
     this.data = EvidenceInventoryMerge.combine(
       structuredClone(typia.assert(inventories)),
     );
+    if (options.fileScopes === true) this.scopeFiles();
     for (const unit of this.data.units) this.units.set(unit.id, unit);
     this.validate();
     this.normalize();
@@ -647,6 +658,102 @@ export class EvidenceInventory {
    * representation when equivalent adapter records arrived from independent
    * scan inputs.
    */
+  /**
+   * Gives each file-addressed source a structural file unit owning its
+   * top-level declarations.
+   *
+   * Markdown already publishes one per document. Every other file-addressed
+   * adapter publishes declarations without an owner, so a file-only target such
+   * as `src/a.ts` had nothing to resolve to. The synthesized unit carries the
+   * source's public spellings with empty segments and no own content, so an
+   * exclusion on it propagates to every declaration of the file through the
+   * ordinary descendant rule, and its fingerprint changes exactly when one of
+   * them does. Existing fingerprints are unaffected because a fingerprint
+   * covers only a unit's own subtree.
+   */
+  private scopeFiles(): void {
+    const existing: Set<string> = new Set(
+      this.data.units.map((unit: IEvidenceUnit): string => unit.id),
+    );
+    const sources: Map<string, IEvidenceSourceFile> = new Map(
+      this.data.sources.map((source: IEvidenceSourceFile) => [
+        source.physicalPath,
+        source,
+      ]),
+    );
+    // Physical aliases can leave several records of one source until
+    // normalization; merge their spellings so input order cannot choose them.
+    const spellings: Map<string, IEvidenceSourceAddress[]> = new Map();
+    for (const source of this.data.sources)
+      spellings.set(source.id, [
+        ...(spellings.get(source.id) ?? []),
+        ...source.addresses,
+      ]);
+    const members: Map<string, IEvidenceUnit[]> = new Map();
+    for (const unit of this.data.units) {
+      // A file unit from an earlier capture owns declarations; it has no owner.
+      if (
+        unit.parentId !== undefined ||
+        unit.symbol === "file" ||
+        UNSCOPED_TYPES.has(unit.type)
+      )
+        continue;
+      const files: string[] = EvidenceInventoryMerge.unique(
+        unit.sites.map((site: IEvidenceUnitSite): string => site.file),
+        (file: string): string => file,
+      );
+      const file: string | undefined = files[0];
+      // A unit declared across several files has no single owning file. One
+      // file must not retire a declaration another file still contributes.
+      if (files.length !== 1 || file === undefined) continue;
+      const key: string = JSON.stringify([unit.type, file]);
+      const group: IEvidenceUnit[] = members.get(key) ?? [];
+      group.push(unit);
+      members.set(key, group);
+    }
+    for (const group of members.values()) {
+      const first: IEvidenceUnit | undefined = group[0];
+      const file: string | undefined = first?.sites[0]?.file;
+      const source: IEvidenceSourceFile | undefined =
+        file === undefined ? undefined : sources.get(file);
+      if (first === undefined || file === undefined || source === undefined)
+        continue;
+      const id: string = `${first.type}:${source.id}:file`;
+      const addresses: IEvidenceSourceAddress[] =
+        EvidenceInventoryMerge.sourceAddresses(spellings.get(source.id) ?? []);
+      if (!existing.has(id)) {
+        existing.add(id);
+        this.data.units.push({
+          id,
+          type: first.type,
+          symbol: "file",
+          identity: [],
+          name: addresses[0]?.relative ?? source.physicalPath,
+          sites: [
+            {
+              id: `${id}:site`,
+              file,
+              range: EvidenceSourceText.of(source.content).range(
+                0,
+                source.content.length,
+              ),
+              content: [],
+            },
+          ],
+          withdrawals: [],
+        });
+        for (const address of addresses)
+          if (address.selected !== false)
+            this.data.addresses.push({
+              unitId: id,
+              file: address.absolute,
+              segments: [],
+            });
+      }
+      for (const unit of group) unit.parentId = id;
+    }
+  }
+
   private normalize(): void {
     this.data.sources = EvidenceInventoryMerge.unique(
       this.data.sources,
@@ -720,3 +827,15 @@ export class EvidenceInventory {
     );
   }
 }
+
+/**
+ * Artifact types whose units never receive a synthesized file unit.
+ *
+ * Markdown publishes its own file unit, and Prisma and Swagger address
+ * schema-wide identities that no single file owns.
+ */
+const UNSCOPED_TYPES: ReadonlySet<string> = new Set([
+  "markdown",
+  "prisma",
+  "swagger",
+]);

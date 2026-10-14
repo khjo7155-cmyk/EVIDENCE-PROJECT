@@ -6,6 +6,7 @@ export type * from "./IEvidenceDiagnostic";
 export type * from "./IEvidenceDocumentation";
 export type * from "./IEvidenceHost";
 export type * from "./IEvidenceInventory";
+export type * from "./IEvidenceInventoryOptions";
 export type * from "./IEvidencePopulation";
 export type * from "./IEvidencePublicAddress";
 export type * from "./IEvidenceResolution";
