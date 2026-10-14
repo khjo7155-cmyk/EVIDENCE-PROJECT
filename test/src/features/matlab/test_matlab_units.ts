@@ -114,15 +114,9 @@ export async function test_matlab_units(): Promise<void> {
   TestValidator.equals(
     "exact source declarations",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${unit.identity.join(".")}`,
-      )
+      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
       .sort((left, right) => left.localeCompare(right)),
     [
-      "file:alias/Contract.m",
-      "file:src/main.m",
       "type:Contract",
       "property:Contract.documented",
       "property:Contract.undocumented",
@@ -164,10 +158,7 @@ export async function test_matlab_units(): Promise<void> {
   TestValidator.equals(
     "all undocumented sites remain hosts",
     inventory.hosts.length,
-    inventory.units
-      // The structural file scope is not a declaration.
-      .filter((unit) => unit.symbol !== "file")
-      .reduce((count, unit) => count + unit.sites.length, 0),
+    inventory.units.reduce((count, unit) => count + unit.sites.length, 0),
   );
   const graph = new EvidenceInventory([inventory]);
   TestValidator.equals(

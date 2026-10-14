@@ -64,14 +64,9 @@ export async function test_php_units(): Promise<void> {
   TestValidator.equals(
     "exact public PHP identity set",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${unit.identity.join(".")}`,
-      )
+      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
       .sort((a, b) => a.localeCompare(b)),
     [
-      "file:alias/contract.php",
       "type:App.Domain.Contract",
       "property:App.Domain.Contract.$first",
       "property:App.Domain.Contract.$second",
@@ -145,7 +140,7 @@ export async function test_php_units(): Promise<void> {
   TestValidator.equals(
     "non-ASCII declarations preserved",
     unicode.units.map((unit) => unit.name),
-    ["unicode.php", "\u00c0", "\u00e0"],
+    ["\u00c0", "\u00e0"],
   );
 
   const brackets = await new EvidencePhpAdapter().analyze(
@@ -159,8 +154,7 @@ export async function test_php_units(): Promise<void> {
     brackets.units
       .map((unit) => unit.identity)
       .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
-    // The empty identity is the file scope.
-    [["One", "Same"], ["Two", "Same"], ["globalRun"], []].sort((a, b) =>
+    [["One", "Same"], ["Two", "Same"], ["globalRun"]].sort((a, b) =>
       JSON.stringify(a).localeCompare(JSON.stringify(b)),
     ),
   );
@@ -186,7 +180,6 @@ export async function test_php_units(): Promise<void> {
       ["App", "Domain", "Shared"],
       ["App", "Domain", "Value"],
       ["App", "Domain", "value"],
-      [], // The file scope's empty identity.
     ].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b))),
   );
   const collisionGraph = new EvidenceInventory([colliding]);

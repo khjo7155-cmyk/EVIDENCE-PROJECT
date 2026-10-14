@@ -73,9 +73,7 @@ export async function test_bigquery_graph(): Promise<void> {
         .filter((unit) => unit.symbol === symbol)
         .map((unit) => unit.id);
       TestValidator.equals(`${symbol} denominator`, ids.length, 1);
-      const contractIds = contract.units
-        .filter((unit) => unit.symbol === "function")
-        .map((unit) => unit.id);
+      const contractIds = contract.units.map((unit) => unit.id);
       for (const claimRole of [true, false]) {
         const claim = claimRole ? inventory : contract;
         const reference = claimRole ? contract : inventory;

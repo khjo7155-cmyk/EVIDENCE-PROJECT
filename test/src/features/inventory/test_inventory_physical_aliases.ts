@@ -14,15 +14,16 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *
  * 1. Clone a declaration and its host under another physical-path spelling while
  *    retaining the same source identity, then merge both input orders.
- * 2. Require complete, identical serialization with one source, one selected unit,
- *    and one host whose origins contain both logical paths.
+ * 2. Require complete, identical serialization, also with derived file scopes,
+ *    with one source, one selected unit, and one host whose origins contain
+ *    both logical paths.
  * 3. Resolve both the original and alias public addresses successfully.
  * 4. Change a source identity at the same path while keeping its content and
  *    require incomplete analysis, exposing replacement between snapshots.
  *
  * @evidence contracts/testing.md#behavioral-verification Merges a declaration with a physical-path alias in both orders and asserts serialization, origins, resolution and replacement detection.
  * @evidence contracts/testing.md#independent-expectations Expected equality across input orders is an independent determinism property; origins come from the authored paths.
- * @evidence contracts/testing.md#distinguishing-cases Covers both merge orders, alias and original resolution, and a changed source identity at the same path.
+ * @evidence contracts/testing.md#distinguishing-cases Covers both merge orders with and without derived file scopes, alias and original resolution, and a changed source identity at the same path.
  * @evidence contracts/testing.md#execution-ownership The exported test_inventory_physical_aliases is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_physical_aliases(): Promise<void> {
@@ -66,6 +67,12 @@ export async function test_inventory_physical_aliases(): Promise<void> {
     "scan order cannot choose declaration spelling",
     forward.serialize(),
     reverse.serialize(),
+  );
+  // Derived file scopes merge every spelling of the aliased source.
+  TestValidator.equals(
+    "scan order cannot choose file scope spelling",
+    new EvidenceInventory([first, second], { fileScopes: true }).serialize(),
+    new EvidenceInventory([second, first], { fileScopes: true }).serialize(),
   );
   TestValidator.equals(
     "one physical source",

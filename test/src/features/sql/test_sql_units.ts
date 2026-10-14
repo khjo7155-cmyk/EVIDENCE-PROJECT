@@ -42,14 +42,12 @@ export async function test_sql_units(): Promise<void> {
     inventory.units
       .map((unit) => unit.symbol)
       .sort((left, right) => left.localeCompare(right, "en")),
-    ["column", "column", "file", "model", "relation"],
+    ["column", "column", "model", "relation"],
   );
   const model = inventory.units.find((unit) => unit.symbol === "model");
   if (model === undefined) throw new Error("Missing owning table.");
   TestValidator.equals("qualified model", model.identity, ["SALES", "CHILD"]);
-  const children = inventory.units.filter(
-    (unit) => unit.symbol !== "model" && unit.symbol !== "file",
-  );
+  const children = inventory.units.filter((unit) => unit.symbol !== "model");
   TestValidator.predicate(
     "every database member belongs to its table",
     children.every((unit) => unit.parentId === model.id),

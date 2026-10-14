@@ -304,7 +304,9 @@ class EvidenceGraphEvaluator {
     const { claim, inventory: claimInventory, index: claimIndex } = context;
     if (reference.severity === "off")
       return this.inactiveObligation(claimIndex, referenceIndex, reference);
-    const inventory = new EvidenceInventory([reference.inventory]);
+    const inventory = new EvidenceInventory([reference.inventory], {
+      fileScopes: true,
+    });
     const snapshot = inventory.snapshot();
     const population = inventory.select(reference.unitIds);
     this.validateReferencePolicy(

@@ -242,7 +242,7 @@ async function fileFingerprint(config: string, name: string): Promise<string> {
   const reference: IEvidenceInventory | undefined =
     analysis.graphInput.claims[0]?.references[0]?.inventory;
   if (reference === undefined) throw new Error("Missing reference inventory.");
-  const unit = new EvidenceInventory([reference])
+  const unit = new EvidenceInventory([reference], { fileScopes: true })
     .snapshot()
     .units.find(
       (candidate) =>

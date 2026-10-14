@@ -56,7 +56,6 @@ export async function test_bigquery_units(): Promise<void> {
       .map((unit) => JSON.stringify([unit.symbol, unit.identity]))
       .sort((left, right) => left.localeCompare(right, "en")),
     [
-      ["file", []],
       ["model", ["acme-prod", "sales", "orders"]],
       ...[
         "id",
@@ -81,7 +80,7 @@ export async function test_bigquery_units(): Promise<void> {
   TestValidator.equals(
     "every field and relation has one owning table",
     inventory.units
-      .filter((unit) => unit.symbol !== "model" && unit.symbol !== "file")
+      .filter((unit) => unit.symbol !== "model")
       .every((unit) => unit.parentId === model.id),
     true,
   );
@@ -93,8 +92,7 @@ export async function test_bigquery_units(): Promise<void> {
   TestValidator.equals(
     "all undocumented units remain hosts",
     new Set(inventory.hosts.flatMap((host) => host.unitIds)).size,
-    // The structural file scope is not a declaration.
-    inventory.units.filter((unit) => unit.symbol !== "file").length,
+    inventory.units.length,
   );
 
   const moved = await adapter.analyze(
@@ -102,11 +100,8 @@ export async function test_bigquery_units(): Promise<void> {
   );
   TestValidator.equals(
     "schema identity independent of file",
-    // Schema declarations survive a move; only the file scope names the file.
-    moved.units.filter((unit) => unit.symbol !== "file").map((unit) => unit.id),
-    inventory.units
-      .filter((unit) => unit.symbol !== "file")
-      .map((unit) => unit.id),
+    moved.units.map((unit) => unit.id),
+    inventory.units.map((unit) => unit.id),
   );
   TestValidator.equals(
     "file move preserves review",

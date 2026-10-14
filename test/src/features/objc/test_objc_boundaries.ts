@@ -108,7 +108,7 @@ export async function test_objc_boundaries(): Promise<void> {
   TestValidator.equals(
     "guard body is inventoried",
     guards.units.map((unit) => unit.name),
-    ["src/Guarded.h", "Guarded"],
+    ["Guarded"],
   );
   const conflicting = await adapter.analyze(
     EvidenceTestSourceSnapshot.combine([
@@ -140,10 +140,7 @@ export async function test_objc_boundaries(): Promise<void> {
   TestValidator.equals(
     "static and implementation-only declarations stay unpublished",
     privacy.units.map((unit) => [unit.name, unit.sites.length]),
-    [
-      ["run", 1],
-      ["src/Public.h", 1],
-    ],
+    [["run", 1]],
   );
 
   const failed = EvidenceTestSourceSnapshot.create(

@@ -63,14 +63,9 @@ export async function test_dart_units(): Promise<void> {
   TestValidator.equals(
     "exact public names and kinds",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${unit.identity.join(".")}`,
-      )
+      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
       .sort((left, right) => left.localeCompare(right)),
     [
-      "file:alias/contract.dart",
       "type:Contract",
       "function:Contract.new",
       "function:Contract.named",

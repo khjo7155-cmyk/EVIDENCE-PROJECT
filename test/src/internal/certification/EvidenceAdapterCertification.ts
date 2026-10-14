@@ -76,6 +76,7 @@ export namespace EvidenceAdapterCertification {
       Array.from(new Set(inventory.units.map((unit) => unit.type))),
       [certification.type],
     );
+    assertFileScopes(certification.type, inventory);
     const keys = new Map(
       inventory.units.map((unit) => [unit.id, unitKey(unit)]),
     );
@@ -84,9 +85,7 @@ export namespace EvidenceAdapterCertification {
         source.addresses.map((address) => [address.absolute, address.relative]),
       ),
     );
-    assertFileScopes(certification.type, inventory);
     const units = inventory.units
-      .filter((unit) => unit.symbol !== "file")
       .map((unit) => normalizeUnit(inventory, unit, keys, files))
       .sort(compareKey);
     const hosts = inventory.hosts
@@ -488,10 +487,7 @@ export namespace EvidenceAdapterCertification {
       key: unitKey(unit),
       symbol: declarationSymbol(unit.symbol),
       identity: unit.identity,
-      // Fixtures declare semantic owners; the structural file scope is certified
-      // separately by assertFileScopes.
-      ...(unit.parentId === undefined ||
-      requireKey(keys, unit.parentId).startsWith("file:")
+      ...(unit.parentId === undefined
         ? {}
         : { parent: requireKey(keys, unit.parentId) }),
       sites: unit.sites.length,
@@ -547,22 +543,24 @@ export namespace EvidenceAdapterCertification {
     return key;
   }
 
-  function unitKey(unit: IEvidenceUnit): string {
-    return unit.symbol === "file"
-      ? `file:${unit.name}`
-      : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`;
-  }
-
   /**
-   * Requires every single-file top-level declaration to be owned by its file
-   * scope, and no other declaration to be.
+   * Requires file scopes to be derived for citation, never published.
    *
-   * The file unit lets one file-level citation or exclusion cover everything
-   * the file declares. It must carry one empty-accessor address per selected
-   * spelling of its source and no content of its own, while a declaration
-   * merged from several files stays unowned so one file cannot retire it.
+   * An adapter publishes declarations only. The resolving view adds one file
+   * unit per source, with an empty identity, one empty-accessor address per
+   * selected spelling and no content of its own, that owns every top-level
+   * declaration sited only in that file. A declaration merged from several
+   * files stays unowned so one file cannot retire it.
    */
-  function assertFileScopes(type: string, inventory: IEvidenceInventory): void {
+  function assertFileScopes(type: string, published: IEvidenceInventory): void {
+    TestValidator.equals(
+      `${type} published inventory has no file scope`,
+      published.units.filter((unit) => unit.symbol === "file").length,
+      0,
+    );
+    const inventory = new EvidenceInventory([published], {
+      fileScopes: true,
+    }).snapshot();
     const units = new Map(inventory.units.map((unit) => [unit.id, unit]));
     const scopes = inventory.units.filter((unit) => unit.symbol === "file");
     for (const scope of scopes) {
@@ -592,22 +590,23 @@ export namespace EvidenceAdapterCertification {
           .sort(compareValue),
       );
     }
-    for (const unit of inventory.units) {
-      if (unit.symbol === "file") continue;
-      const parent =
-        unit.parentId === undefined ? undefined : units.get(unit.parentId);
-      if (parent !== undefined && parent.symbol !== "file") continue;
+    for (const unit of published.units) {
+      if (unit.parentId !== undefined) continue;
       const files = new Set(unit.sites.map((site) => site.file));
       const owner =
         files.size === 1
           ? scopes.find((scope) => files.has(scope.sites[0]?.file ?? ""))
           : undefined;
       TestValidator.equals(
-        `${type} file scope of ${unitKey(unit)}`,
-        parent?.id,
+        `${type} file scope of ${unit.id}`,
+        units.get(unit.id)?.parentId,
         owner?.id,
       );
     }
+  }
+
+  function unitKey(unit: IEvidenceUnit): string {
+    return `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`;
   }
 
   function replace(

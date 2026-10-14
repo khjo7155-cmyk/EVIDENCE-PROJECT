@@ -144,7 +144,7 @@ export async function test_c_failures(): Promise<void> {
   TestValidator.equals(
     "explicit C declaration unit",
     definitionOnly.units.map((unit) => unit.name),
-    ["explicit_value", "include/definitions.h"],
+    ["explicit_value"],
   );
 
   // Tree-sitter syntax errors never become a healthy partial inventory.

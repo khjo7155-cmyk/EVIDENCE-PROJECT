@@ -82,14 +82,9 @@ export async function test_swift_units(): Promise<void> {
   TestValidator.equals(
     "exact source-public denominator",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
-      )
+      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
       .sort((left, right) => left.localeCompare(right)),
     [
-      "file:alias/Contract.swift",
       "type:Contract",
       "property:Contract.readable",
       "function:Contract.init",

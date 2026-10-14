@@ -120,8 +120,7 @@ export async function test_java_failures(): Promise<void> {
     generatedBoundary.units
       .map((unit) => unit.identity.join("."))
       .sort(compare),
-    // The empty identity is the file scope.
-    ["", "Model", "Model.id"],
+    ["Model", "Model.id"],
   );
 
   // Tree-sitter syntax errors never become a healthy partial inventory.

@@ -2,6 +2,7 @@ import path from "node:path";
 
 import { EvidenceFileTarget } from "../targets/EvidenceFileTarget";
 import { EvidenceFingerprint } from "../graph/EvidenceFingerprint";
+import { EvidenceInventory } from "../graph/EvidenceInventory";
 import { EvidenceLanguageRegistry } from "../parsers/EvidenceLanguageRegistry";
 import { EvidenceTargetResolver } from "../targets/EvidenceTargetResolver";
 import { EvidenceInventoryMerge } from "../internal/EvidenceInventoryMerge";
@@ -10,6 +11,7 @@ import { EvidenceQueryPopulationContext } from "../contexts/EvidenceQueryPopulat
 import type { IEvidenceQueryContext } from "../contexts/IEvidenceQueryContext";
 import { EvidenceMarkdownTarget } from "../adapters/markdown/EvidenceMarkdownTarget";
 import type { IEvidenceCheckAnalysis } from "../structures/IEvidenceCheckAnalysis";
+import type { IEvidenceInventory } from "../structures/IEvidenceInventory";
 import type { IEvidenceDeclaration } from "../structures/IEvidenceDeclaration";
 import type { IEvidenceDiagnostic } from "../structures/IEvidenceDiagnostic";
 import type { IEvidenceGraphBoundary } from "../structures/IEvidenceGraphBoundary";
@@ -450,7 +452,7 @@ export namespace EvidenceQueryProgrammer {
           ...(reportClaim.name === undefined ? {} : { name: reportClaim.name }),
           type: reportClaim.type,
         },
-        inventory: claim.inventory,
+        inventory: scoped(claim.inventory),
         unitIds: claim.unitIds,
       });
       claim.references.forEach((reference, referencePosition) => {
@@ -466,7 +468,7 @@ export namespace EvidenceQueryProgrammer {
             reference: reportObligation.reference,
             type: reportObligation.type,
           },
-          inventory: reference.inventory,
+          inventory: scoped(reference.inventory),
           unitIds: reference.unitIds,
           reference,
           obligation: requireResultObligation(
@@ -480,6 +482,18 @@ export namespace EvidenceQueryProgrammer {
     return output.map(
       (population) => new EvidenceQueryPopulationContext(population),
     );
+  }
+
+  /**
+   * Returns the resolving view of one population's inventory.
+   *
+   * Queries resolve targets through EvidenceTargetResolver, which derives file
+   * scopes. Listing, inspection and coverage must see the same units, so a file
+   * target accepted by `--only` or `inspect` is also a listable, inspectable
+   * structural ancestor of the declarations it owns.
+   */
+  function scoped(inventory: IEvidenceInventory): IEvidenceInventory {
+    return new EvidenceInventory([inventory], { fileScopes: true }).snapshot();
   }
 
   /**

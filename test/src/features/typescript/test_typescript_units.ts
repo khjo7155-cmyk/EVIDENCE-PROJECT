@@ -77,14 +77,9 @@ export async function test_typescript_units(): Promise<void> {
   );
 
   const actual = inventory.units
-    .map((unit) =>
-      unit.symbol === "file"
-        ? `file:${unit.name}`
-        : `${unit.symbol}:${unit.identity.join(".")}`,
-    )
+    .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
     .sort(compare);
   const expected = [
-    "file:src/contracts.ts",
     "function:Box.create",
     "function:Box.prototype.callback",
     "function:Box.prototype.execute",

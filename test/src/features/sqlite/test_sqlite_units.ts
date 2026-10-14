@@ -54,11 +54,7 @@ export async function test_sqlite_units(): Promise<void> {
   TestValidator.equals(
     "exact semantic names and kinds",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
-      )
+      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
       .sort((left, right) => left.localeCompare(right, "en")),
     [
       'model:main["order.items"]',
@@ -67,15 +63,13 @@ export async function test_sqlite_units(): Promise<void> {
       'column:main["order.items"].price',
       'column:main["order.items"].total',
       'relation:main["order.items"]["foreign key:seller.link"]',
-      "file:alias.sql",
       "model:temp.scratch",
       "column:temp.scratch.untyped",
       'column:temp.scratch["quote\\"name"]',
       'column:temp.scratch["back`tick"]',
     ].sort((left, right) => left.localeCompare(right, "en")),
   );
-  // The structural file scope is not a declaration.
-  for (const unit of inventory.units.filter((unit) => unit.symbol !== "file")) {
+  for (const unit of inventory.units) {
     TestValidator.equals("one physical declaration site", unit.sites.length, 1);
     TestValidator.equals(
       "both logical addresses retained",
@@ -126,15 +120,10 @@ export async function test_sqlite_units(): Promise<void> {
   );
   TestValidator.equals(
     "file-independent schema identities",
-    // Schema declarations survive a move; only the file scope names the file.
-    relocated.units
-      .filter((unit) => unit.symbol !== "file")
-      .map((unit) => unit.id),
-    inventory.units
-      .filter((unit) => unit.symbol !== "file")
-      .map((unit) => unit.id),
+    relocated.units.map((unit) => unit.id),
+    inventory.units.map((unit) => unit.id),
   );
-  for (const unit of inventory.units.filter((unit) => unit.symbol !== "file"))
+  for (const unit of inventory.units)
     TestValidator.equals(
       "relocation-stable fingerprint",
       EvidenceFingerprint.inspect(inventory, unit.id).fingerprint,

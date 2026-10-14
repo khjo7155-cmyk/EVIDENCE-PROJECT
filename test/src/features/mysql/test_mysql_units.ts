@@ -45,14 +45,9 @@ export async function test_mysql_units(): Promise<void> {
   TestValidator.equals(
     "exact schema surface",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
-      )
+      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
       .sort((left, right) => left.localeCompare(right)),
     [
-      "file:alias/schema.sql",
       "model:Store.Parent",
       "column:Store.Parent.id",
       "column:Store.Parent.code",

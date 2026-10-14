@@ -114,14 +114,9 @@ export async function test_go_units(): Promise<void> {
   TestValidator.equals(
     "Go declaration units",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${unit.identity.join(".")}`,
-      )
+      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
       .sort(compare),
     [
-      "file:shop/sale.go",
       "function:Add",
       "function:AliasContract.Execute",
       "function:Sale.Save",

@@ -133,14 +133,9 @@ export async function test_cpp_units(): Promise<void> {
   TestValidator.equals(
     "C++ declaration units",
     inventory.units
-      .map((unit) =>
-        unit.symbol === "file"
-          ? `file:${unit.name}`
-          : `${unit.symbol}:${unit.identity.join(".")}`,
-      )
+      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
       .sort(compare),
     [
-      "file:include/shop.hpp",
       "function:shop.models.Box`1.constructor",
       "function:shop.models.Box`1.convert`1",
       "function:shop.models.Box`1.destructor",

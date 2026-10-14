@@ -5,6 +5,7 @@ import { EvidenceSourceText } from "../internal/EvidenceSourceText";
 import type { IEvidenceAddress } from "../structures/IEvidenceAddress";
 import type { IEvidenceDiagnostic } from "../structures/IEvidenceDiagnostic";
 import type { IEvidenceInventory } from "../structures/IEvidenceInventory";
+import type { IEvidenceInventoryOptions } from "../structures/IEvidenceInventoryOptions";
 import type { IEvidencePopulation } from "../structures/IEvidencePopulation";
 import type { IEvidenceResolution } from "../structures/IEvidenceResolution";
 import type { IEvidenceSourceAddress } from "../structures/IEvidenceSourceAddress";
@@ -19,10 +20,10 @@ import type { IEvidenceWithdrawal } from "../structures/IEvidenceWithdrawal";
  * populations.
  *
  * Construction captures the supplied inventories, merges compatible identities,
- * gives every file-addressed source a structural file unit, and checks source
- * ranges, parent relationships, addresses, and host ownership. Inconsistent
- * records leave diagnostics and an incomplete inventory instead of silently
- * disappearing from the denominator. Normalization makes snapshots and
+ * optionally gives every file-addressed source a structural file unit, and
+ * checks source ranges, parent relationships, addresses, and host ownership.
+ * Inconsistent records leave diagnostics and an incomplete inventory instead of
+ * silently disappearing from the denominator. Normalization makes snapshots and
  * serialization deterministic.
  *
  * Selection distinguishes required units from their addressable ancestors and
@@ -44,7 +45,7 @@ import type { IEvidenceWithdrawal } from "../structures/IEvidenceWithdrawal";
  *   );
  *   // Client may resolve as an aggregate owner while only its method is required.
  *
- * @evidence contracts/common.md#principled-implementation Construction asserts the input shape with typia, merges inventories, gives each file-addressed source a structural file unit owning its single-file top-level declarations, validates source ranges, sites, parents, cycles, addresses and hosts against the original text, caches inherited withdrawals per unit, and normalizes ordering.
+ * @evidence contracts/common.md#principled-implementation Construction asserts the input shape with typia, merges inventories, on request gives each file-addressed source a structural file unit owning its single-file top-level declarations, validates source ranges, sites, parents, cycles, addresses and hosts against the original text, caches inherited withdrawals per unit, and normalizes ordering.
  * @evidence contracts/common.md#clear-and-simple-design The class owns reconciliation, validation, selection and exact address resolution; merging and canonical keys come from EvidenceInventoryMerge.
  * @evidence contracts/common.md#prohibited-implementation-shortcuts Semantic contradictions become diagnostics that mark the inventory incomplete instead of disappearing from the denominator.
  * @evidence contracts/common.md#meaningful-documentation The class comment explains construction, selection, resolution and ownership of results with an example; every public and private member is documented.
@@ -116,13 +117,19 @@ export class EvidenceInventory {
    *
    * Shape validation rejects malformed input. Semantic inconsistencies become
    * inventory diagnostics so callers can inspect the partial records and their
-   * incomplete status rather than receiving an apparently healthy subset.
+   * incomplete status rather than receiving an apparently healthy subset. With
+   * `fileScopes`, each file-addressed source also gains a structural file unit
+   * so file-level citations resolve; adapters publishing their own output leave
+   * it off.
    */
-  public constructor(inventories: IEvidenceInventory[]) {
+  public constructor(
+    inventories: IEvidenceInventory[],
+    options: IEvidenceInventoryOptions = {},
+  ) {
     this.data = EvidenceInventoryMerge.combine(
       structuredClone(typia.assert(inventories)),
     );
-    this.scopeFiles();
+    if (options.fileScopes === true) this.scopeFiles();
     for (const unit of this.data.units) this.units.set(unit.id, unit);
     this.validate();
     this.normalize();

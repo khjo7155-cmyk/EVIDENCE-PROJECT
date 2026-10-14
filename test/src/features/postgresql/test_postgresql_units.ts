@@ -61,7 +61,6 @@ export async function test_postgresql_units(): Promise<void> {
       .map((unit) => [String(unit.symbol), unit.identity])
       .sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b), "en")),
     [
-      ["file", []],
       ["model", ["app", "account"]],
       ["column", ["app", "account", "id"]],
       ["column", ["app", "account", "region"]],
@@ -90,9 +89,7 @@ export async function test_postgresql_units(): Promise<void> {
       ["relation", ["app", "account", "constraint region_fk"]],
     ].sort((a, b) => JSON.stringify(a).localeCompare(JSON.stringify(b), "en")),
   );
-  for (const unit of inventory.units.filter(
-    (unit) => unit.symbol !== "model" && unit.symbol !== "file",
-  ))
+  for (const unit of inventory.units.filter((unit) => unit.symbol !== "model"))
     TestValidator.equals(
       "each member belongs to its table",
       inventory.units.find((owner) => owner.id === unit.parentId)?.identity,
