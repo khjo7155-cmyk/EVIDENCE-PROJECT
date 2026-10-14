@@ -9,7 +9,7 @@ description: Repairs, implements, tests, and validates evidence source, tests, s
 
 Every maintained declaration answers, in its doc comment, the [contracts](../contracts/SKILL.md) checklists its package selects:
 
-- production types and functions: [`common.md`](../contracts/common.md), plus [`portability.md`](../contracts/portability.md) and [`performance.md`](../contracts/performance.md) where selected;
+- production types and functions: [`common.md`](../contracts/common.md) and [`performance.md`](../contracts/performance.md);
 - tests: [`testing.md`](../contracts/testing.md).
 
 ## Code
