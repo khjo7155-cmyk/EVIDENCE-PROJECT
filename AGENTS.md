@@ -1,39 +1,43 @@
 # AGENTS.md
 
-`evidence` is a standalone Evidence Graph checker being built in TypeScript with upstream Tree-sitter WASM. The pnpm workspace contains the published package in `packages/evidence` and its logic unit-test workspace in `test`.
+`evidence` is a standalone Evidence Graph checker in TypeScript on upstream Tree-sitter WASM. The pnpm workspace holds the published package in `packages/evidence` and its logic unit tests in `test`.
+
+Never fork the parser engine, or import a language compiler to cover a syntax case an adapter misses, without a product decision. Use the official `web-tree-sitter` and pinned upstream grammars through the common adapter contract, and record a needed grammar fix with its owner.
 
 ## Attitude
 
-Follow the literal request; it is the contract, not a hint at what the user "really" wants.
+- Do the literal request, widening it only when the user hands that over.
+- The user's instruction outranks any skill.
+- Answer a question from the user before continuing any work.
+- Write everything the user sees in the user's language.
+- Write code, comments, commits, issues, and pull requests in English.
+- Let a test run, CI run, or review round finish, then fix all of its findings together by cause.
+- Do the work yourself; use subagents only when the user asks.
+- Delete every scratch file once it has served.
 
-- **Scope is the user's to widen.** Work with initiative inside the requested goal. Do not replace a specific task with a repository-wide campaign.
-- **Match the user's language.** Communicate in Korean or English as the user does. Repository documentation, issues, and pull requests use English unless requested otherwise.
-- **Choose the principled course.** Decide from evidence, correctness, product boundaries, and consequences. Difficulty is a reason to investigate, not to weaken the contract.
-- **Evidence precedes correction.** Verify reports against the actual code, tests, artifacts, upstream behavior, and history before changing behavior.
-- **Trace the consequence surface.** Follow a verified cause through consumers, state transitions, platforms, and failure/recovery paths.
-- **Default over ask.** Resolve routine choices from the existing context. Preserve authorization already given in the conversation.
+## Finishing Work
+
+A message without a tool call ends the turn. While work remains, do not end it with:
+
+- a summary that announces the next step;
+- an offer to continue;
+- a list of decisions that do not block the work;
+- a report because a stage finished;
+- a wait on background work.
+
+Put status notes in the same message as the next tool call.
+
+Stop only when nothing can move without the user, a protected target blocks you, or a destructive or outward-facing action needs confirmation.
 
 ## Skills
 
-Durable conventions live under `.agents/skills/`. Read the linked skill when its topic applies. Conditional procedures belong in the skill's linked sibling documents.
+Read the skill whose trigger applies.
 
-- [Project](.agents/skills/project/SKILL.md): workspace layout, current product boundaries, dependencies, and canonical commands.
-- [Development](.agents/skills/development/SKILL.md): implementation, test, validation, and change-integrity rules. Read before changing code, package wiring, or CI.
-- [Documentation](.agents/skills/documentation/SKILL.md): prose, source JSDoc, implementation comments, test scenarios, and agent instructions. Read before editing documentation, source comments, or skills.
-- [Evidence Graph](.agents/skills/project/evidence/SKILL.md): units, targets, coverage, exclusions, reviews, and parser completeness. Read before changing graph semantics, configuration contracts, adapters, or diagnostics.
-- [Review](.agents/skills/review/SKILL.md): solo review of the whole declared change and its consequences. Use for ordinary review and self-review.
-- [Pull Request](.agents/skills/pull-request/SKILL.md): branches, commits, submission, checks, and merge boundaries. Use when the corresponding delivery action is authorized.
-- [Issue Campaign](.agents/skills/issue-campaign/SKILL.md): broad discovery and issue-to-implementation campaigns. Do not use for one already-defined issue or an ordinary PR.
-- [Multi-Agent](.agents/skills/multi-agent/SKILL.md): explicitly requested parallel review or implementation. Do not load merely because several tasks exist.
-- [Discussion](.agents/skills/discussion/SKILL.md): explicitly requested structured discussion with persistent conclusions. Ordinary questions and code review do not require it.
-- [Benchmark](.agents/skills/benchmark/SKILL.md): measurement integrity, workload definitions, and result reporting. Use when measuring or publishing performance or coverage results.
-
-## Maintenance
-
-This file is the shared entry point for Codex and Claude Code; `CLAUDE.md` points here. Keep it to product identity, global attitude, and the skill index.
-
-Keep repository skills under `.agents/skills/<topic>/SKILL.md`, with unique kebab-case frontmatter names and third-person descriptions stating their scope and trigger. The nested `project/evidence` skill uses the name `evidence-graph`. Keep operational rules in their owning skill and link to them elsewhere. Use sibling documents for substantial conditional procedures; do not add UI metadata or empty resource directories.
-
-The skill structure and shared conventions are adapted from [samchon/ttsc](https://github.com/samchon/ttsc/tree/14a22f077caf23f1bfb8a97b3d9db765912074ef/.agents/skills). Keep changes appropriate to this standalone TypeScript/WASM project; compiler plugins, Go shims, and ttsc-specific benchmark operations are not this repository's implementation model.
-
-Apply the [documentation principles](.agents/skills/documentation/SKILL.md) to every skill and supporting instruction file. Keep each rule in one owning file and link to it from other workflows.
+- [contracts](.agents/skills/contracts/SKILL.md): writing or reviewing maintained source or tests, for their `@evidence` checklists.
+- [development](.agents/skills/development/SKILL.md): changing code, tests, scripts, or workflows.
+- [evidence-graph](.agents/skills/evidence-graph/SKILL.md): changing graph semantics, configuration types, adapters, grammars, or diagnostics.
+- [prompting](.agents/skills/prompting/SKILL.md): changing `AGENTS.md`, `CLAUDE.md`, or a skill.
+- [documentation](.agents/skills/documentation/SKILL.md): writing any document or doc comment.
+- [review](.agents/skills/review/SKILL.md): any review or self-review.
+- [issue-campaign](.agents/skills/issue-campaign/SKILL.md): a broad audit or repeated issue-to-pull-request work.
+- [pull-request](.agents/skills/pull-request/SKILL.md): only when asked to push, open, update, or merge, or under a delivery mandate.

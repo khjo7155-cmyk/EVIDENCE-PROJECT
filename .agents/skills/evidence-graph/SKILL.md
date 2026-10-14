@@ -1,15 +1,32 @@
 ---
 name: evidence-graph
-description: Defines Evidence Graph units, target grammar, coverage, exclusions, reviews, and language-adapter completeness. Use before changing graph semantics, public configuration, artifact adapters, or diagnostics; distinguish the compatibility baseline from implemented features.
+description: Defines Evidence Graph units, target grammar, coverage, exclusions, reviews, configuration families, and language-adapter completeness. Use before changing graph semantics, configuration types, adapters, grammars, or diagnostics.
 ---
 
 # Evidence Graph
 
 ## Baseline And Scope
 
-The behavioral baseline is the [pinned original domain contract](https://github.com/samchon/ttsc/blob/14a22f077caf23f1bfb8a97b3d9db765912074ef/.agents/skills/project/evidence/SKILL.md) and its linked code/regressions. Read the relevant original section before porting behavior. Public configuration, claim, and reference types follow `D:/github/samchon/ttsc/packages/evidence`, generalized into the families defined by the [project skill](../SKILL.md). Verify runtime behavior in the implementation rather than inferring availability from a type declaration.
+The behavioral baseline is the [pinned original domain contract](https://github.com/samchon/ttsc/blob/14a22f077caf23f1bfb8a97b3d9db765912074ef/.agents/skills/project/evidence/SKILL.md) and its linked code/regressions. Read the relevant original section before porting behavior. Verify runtime behavior in the implementation rather than inferring availability from a type declaration.
 
 Reuse or port Markdown, Prisma, and Swagger behavior. Replace compiler Program discovery with file snapshots and TypeScript language adapters over upstream `web-tree-sitter`. Keep original semantics and intentional migration differences explicit.
+
+| Work | Read |
+| --- | --- |
+| Adding a language, pinning or building a grammar, or certifying an adapter | [adapter-onboarding.md](adapter-onboarding.md) |
+| Extraction, identity, and host records of an existing adapter | [adapter-inventories.md](adapter-inventories.md) |
+
+## Configuration
+
+Config, Claim, Reference, their shared bases, and artifact selectors follow `D:/github/samchon/ttsc/packages/evidence`, generalized into the `Programming` and `Database` families. The `type` discriminator names the source language, such as `typescript`, `cpp`, `rust`, `prisma`, `sql`, or `dbml`, with identifiers kept in `EvidenceProgrammingType` and `EvidenceDatabaseType`; add no separate `language` setting. Files are selected directly with globs.
+
+Programming declarations use the `type`, `function`, and `property` selectors, and classes belong to `type`. Database languages share one Claim and one Reference interface with the `model`, `column`, and `relation` selectors.
+
+## Runtime
+
+Configuration is compiled in memory by the bundled `typescript-runtime` alias in a fresh read-only process and returned over IPC, never through `ttsx` or its disk cache. Grammars follow the [parser asset](adapter-onboarding.md#parser-assets) rules: analysis keeps them only in memory and never writes a file, and language WASM stays out of the repository and the package.
+
+Adapters implement `IEvidenceAdapter` and return serializable inventories. `EvidenceInventory` reconciles identities, validates ownership, and projects independent populations, and `EvidenceTagParser` reads documentation only after the adapter establishes its attachment.
 
 ## Identities And Populations
 
@@ -61,3 +78,11 @@ Grammar availability alone is not language support. Certify declarations, kinds,
 Tree-sitter recovery establishes an extraction limitation, not language invalidity. Describe grammar or adapter incompleteness without asserting that the source must be corrected. Support complete recognized forms with their original positions and semantics; accepting one known grammar gap must not hide other recovery nodes. Static foreign forwarding owns no local declaration or acknowledgement obligation. Resolve local forwarding against declaration ownership, keep support-only files outside selected populations, and retain genuine missing local sources, ambiguity, and unresolved explicit Evidence citations.
 
 Tree-sitter does not execute macros, dynamic exports, build scripts, or test functions. Document declared-source boundaries and recognized limitations without claiming compiler-level completeness. Diagnostics should state what failed and a truthful repair, including implementing missing behavior when appropriate. The checker cannot prove prose true or establish who reviewed it.
+
+## Review Questions
+
+- Can loading or extraction fail while a check still reports success?
+- Can aliases, merged declarations, or host positions duplicate or lose an obligation?
+- Can a review count as evidence, or invalidate its own fingerprint?
+- Can cwd, Unicode, case, symlinks, or CRLF change a target's identity?
+- Do the source entry points, `publishConfig`, and the package allowlist agree?

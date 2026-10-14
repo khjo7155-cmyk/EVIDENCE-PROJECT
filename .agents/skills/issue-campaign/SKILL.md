@@ -1,31 +1,31 @@
 ---
 name: issue-campaign
-description: Defines broad Evidence Graph issue discovery, detailed English handoffs, and authorized issue-to-implementation campaigns. Use for broad audits or repeated campaigns, not one already-defined issue or an ordinary PR.
+description: Runs evidence's issue campaign, repeating full discovery rounds until one finds nothing new, publishing the issues, and landing them in one pull request per cycle. Use for a broad audit or repeated issue-to-pull-request work, not for one defined issue.
 ---
 
 # Issue Campaign
 
-## Scope And Discovery
+A cycle audits the target branch until a discovery round finds nothing new, then lands every accepted issue in one pull request whose merge starts the next cycle. Stay within the phases the user authorized; an audit-only request publishes and pushes nothing. Discover and fix only within the campaign's named topic, and say so at once if the work must reach beyond it.
 
-Read the project and review skills. Establish the requested scope and phase boundary: investigation, issue publication, implementation, PR submission, or merge. Do not treat authorization for one phase as authorization for later external actions.
+## Discovery
 
-For a sustained campaign, keep a concise ledger under `.wiki/<campaign>` with the inspected commit, candidate evidence, reproductions, decisions, issue dependencies, and validation state. Preserve existing notes. Published issues must stand alone without this local ledger.
+1. Run a complete round under the [review law](../review/SKILL.md) over the declared scope, including real workflows, related issues and pull requests, and the [contracts](../contracts/SKILL.md) even where tests pass.
+2. Check each candidate's owner, history, and duplicates, then accept, merge, split, or reject it.
+3. Repeat complete rounds on the same baseline until one finds nothing meaningful. That freezes the accepted set; a target-branch change restarts discovery.
 
-Audit the complete declared scope before deciding which findings survive. Verify current behavior, root cause, upstream ownership, related open/closed decisions, and the consequence surface. Record accepted, combined, rejected, deferred, or blocked candidates with reasons. For an explicitly exhaustive campaign, repeat full discovery rounds until a fresh round contributes no further verified candidate.
+## Issues
 
-## English Issue Handoffs
+With publication authority, write each accepted issue so a fresh agent can start from it alone: the problem, reproduction and root cause, consequence surface and case matrix, the invariant to restore, acceptance cases with commands, and dependencies.
 
-Give each issue enough context for a contributor to act without reading the conversation. Include:
+## Pull Request
 
-- the problem, intended behavior, and affected users;
-- actual reproduction or product requirement with source references;
-- implementation boundaries and compatibility decisions;
-- positive, negative, and boundary acceptance criteria;
-- concrete verification commands or fixture scenarios; and
-- dependencies and related work.
+1. Branch from the baseline, push an empty commit (`git commit --allow-empty`), and open one draft pull request listing every cycle issue, with no closing keywords.
+2. Implement every issue in dependency order with its tests. Drop an issue only as a duplicate, invalid, out of scope, or externally blocked, and say so on the issue.
+3. End each resolving commit with `Close #n: <title>` per issue. A revert must drop that line, and a squash still carries the reverted commit's line.
+4. After each pushed commit, run [Individual Self-Review](../review/SKILL.md#individual-self-review) and record it as a `COMMENT` review.
+5. On the integrated head, run [Overall Self-Review](../review/SKILL.md#overall-self-review) while CI runs. Fix every failed check, pre-existing ones included, and repeat on the new head.
+6. Read the [development validation guide](../development/validation.md) and format, then [merge](../pull-request/SKILL.md) with authority once one head is green and review-clean. First read `git log origin/master..HEAD` to confirm each closed issue keeps its fix, and reopen any that does not.
+7. After merge and any release authorized for the delivery, comment on each resolved issue with a brief description of its fix and, when applicable, the released version.
+8. Then `git pull --ff-only` on `master`, delete the topic branch, remove only the temporary paths the campaign created, and start the next cycle.
 
-Inspect existing issues before publishing duplicates. Use a structured API body or a UTF-8 file with `gh --body-file`, then read back the published body. Keep issue numbers and identities stable. Correct implementation ordering in the roadmap rather than shifting unrelated contents between existing issue numbers.
-
-## Implementation
-
-When implementation is authorized, read [development.md](development.md). A request to implement one named issue remains that issue plus the user's explicit additions; it does not start the rest of the backlog.
+The campaign is complete when a round on the latest baseline finds nothing, no accepted issue is open, and no campaign branch, pull request, or temporary asset remains.
