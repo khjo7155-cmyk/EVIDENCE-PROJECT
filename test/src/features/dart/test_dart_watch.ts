@@ -17,6 +17,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Introduce malformed source and require an incomplete cycle.
  * 3. Repair source and change configuration, requiring the corresponding recovered
  *    populations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher over a Dart project through source edits, a new file, malformed source, repair and a configuration change.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run; per-cycle expectations follow the authored changes.
+ * @evidence contracts/testing.md#distinguishing-cases Covers edits, new files, an incomplete cycle from malformed source, recovery and configuration changes.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

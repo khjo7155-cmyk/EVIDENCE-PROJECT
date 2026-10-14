@@ -25,6 +25,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    to its physical directory; reject links to unsupported formats.
  * 4. On POSIX, reject unreadable TS and JSON entries without fallback; restore
  *    access and recover. Windows exercises file-kind and junction failures.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads configurations through directories, broken junctions, links and unreadable entries and asserts failures and anchors.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the rule that only an absent entry permits fallback and roots anchor to the physical file.
+ * @evidence contracts/testing.md#distinguishing-cases Covers directory entries, broken junctions, links to JSON and unsupported formats, and unreadable entries on POSIX.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_discovery_entries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_config_discovery_entries(): Promise<void> {
   const config: string = JSON.stringify({

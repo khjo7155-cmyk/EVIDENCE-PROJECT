@@ -6,6 +6,14 @@ import type { IEvidenceEcmaScriptBinding } from "./IEvidenceEcmaScriptBinding";
  * The export resolver caches this result for each source and name, then uses
  * its bindings to publish units and its state flags to distinguish exclusions
  * and declaration-free cycles from missing supported declarations.
+ *
+ * @evidence contracts/common.md#principled-implementation A resolution lists reached bindings plus flags for excluded, cyclic and failed traversals, so declaration-free cycles and exclusions are not mistaken for missing declarations.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver memoizes these results per source and name.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are filled from parsed syntax; no project, package or fixture value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceEcmaScriptResolution {
   /**

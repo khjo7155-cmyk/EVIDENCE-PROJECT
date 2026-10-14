@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require both declared variables and the exported type to resolve through the
  *    actual API URI.
  * 3. Verify annotation strings do not create dependencies.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Dart library and part with annotated directives and trivia, asserting resolution through the actual URIs and no annotation dependencies.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow Dart's directive grammar, where only URI fields define topology.
+ * @evidence contracts/testing.md#distinguishing-cases Covers annotated directives, spaced library names, commented declarator lists, and annotation strings that must not become dependencies.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_directive_syntax is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_directive_syntax(): Promise<void> {
   const inventory = await new EvidenceDartAdapter().analyze(

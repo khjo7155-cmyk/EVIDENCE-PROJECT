@@ -31,6 +31,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    matching prefix of the full report each time.
  * 4. Use bounds larger than the report and require the full report with no
  *    omission, then require the text report to announce a narrowed result.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks the same project with TypeScript and JSON configurations and narrows the reports, asserting kept findings, counts and exit codes.
+ * @evidence contracts/testing.md#independent-expectations The unbounded report establishes four distinct unit findings; each bounded expectation is computed as the matching prefix of that full report, an independent relation rather than a snapshot.
+ * @evidence contracts/testing.md#distinguishing-cases Covers both configuration formats, one and two units, one finding, both bounds, and bounds larger than the report.
+ * @evidence contracts/testing.md#execution-ownership The exported test_report_window_config is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_report_window_config(): Promise<void> {
   const config: IEvidenceConfig = {

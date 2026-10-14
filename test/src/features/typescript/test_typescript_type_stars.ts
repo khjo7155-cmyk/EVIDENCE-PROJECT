@@ -25,6 +25,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    complete inventories and unchanged declaration source ownership.
  * 3. Combine supported stars with missing syntax or a second recovered token;
  *    require incomplete extraction instead of accepting the entire file.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes type-only star and namespace exports in TS and TSX and asserts identities, coordinates and incompleteness for unsupported recovery.
+ * @evidence contracts/testing.md#independent-expectations Expected projections follow TypeScript 5.0 type-only export semantics; value-only members are absent only in type space.
+ * @evidence contracts/testing.md#distinguishing-cases Covers ordinary and type-only stars, namespace exports, a transitive barrel, comments and Unicode, and missing syntax or a second recovered token.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_type_stars is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_type_stars(): Promise<void> {
   const adapter: EvidenceTypeScriptAdapter = new EvidenceTypeScriptAdapter();

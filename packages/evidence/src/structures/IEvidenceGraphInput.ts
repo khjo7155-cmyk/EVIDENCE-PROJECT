@@ -14,6 +14,14 @@ import type { IEvidenceGraphClaim } from "./IEvidenceGraphClaim";
  *   const input: IEvidenceGraphInput = { claims: [] };
  *   const result: IEvidenceGraphResult = EvidenceGraph.evaluate(input);
  *   // result.success is true and result.claims is empty.
+ *
+ * @evidence contracts/common.md#principled-implementation The evaluator's input is the list of materialized claims, each owning its independent references.
+ * @evidence contracts/common.md#clear-and-simple-design Materialization is complete before evaluation, so the input holds data only and evaluation reads no files.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No precomputed coverage or consumer flag is accepted as input.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains that inputs are fully materialized; the field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphInput {
   /**

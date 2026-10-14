@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    constructor field rather than the enclosing class.
  * 3. Repeat the assertions for LF, CRLF, and tab-indented source, verifying
  *    withdrawal, completion, reviews, and original tag offsets.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes nested classes with leading evidence before members, decorators and constructor fields and asserts targets, withdrawal, completion, reviews and offsets.
+ * @evidence contracts/testing.md#independent-expectations Expected owners and offsets are written by hand from the source; the same expectations must hold for every line-ending variant.
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested types, methods, constructor fields and a withdrawn member under LF, CRLF and tab indentation.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_leading_comments is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_leading_comments(): Promise<void> {
   const source = dedent`

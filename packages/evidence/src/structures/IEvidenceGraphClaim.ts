@@ -12,6 +12,14 @@ import type { IEvidenceInventory } from "./IEvidenceInventory";
  *
  * Exclusion carrier restrictions narrow eligible positions within this claim.
  * They do not create hosts or widen the claim's selected population.
+ *
+ * @evidence contracts/common.md#principled-implementation A materialized inventory, selected host IDs and independent references form the evaluator's claim input.
+ * @evidence contracts/common.md#clear-and-simple-design Inventory and host selection are separate fields; references carry their own inventories and policies.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Carrier restrictions narrow positions without creating hosts or widening the population.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains selection and independence; each field documents omission and effect.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphClaim {
   /**

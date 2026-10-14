@@ -13,6 +13,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *
  * 1. Compare every cycle to a fresh check.
  * 2. Verify failure, incompleteness, and recovery transitions.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a Swift project through the authored file changes and asserts each published cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run on the same files; per-cycle status expectations follow the authored edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an added file (failing coverage), a syntax failure (incomplete), repair and a selector change.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

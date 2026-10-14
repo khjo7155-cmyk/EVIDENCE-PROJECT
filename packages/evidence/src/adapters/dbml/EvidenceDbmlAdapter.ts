@@ -26,6 +26,14 @@ import { EvidenceDbmlFileScanner } from "./EvidenceDbmlFileScanner";
  * relation endpoints are resolved across file analyses before public units and
  * annotation carriers are materialized, preserving semantic ownership and
  * explicit failures instead of guessing unresolved schema links.
+ *
+ * @evidence contracts/common.md#principled-implementation Physical aliases are deduplicated, each file is scanned once, then tables, schema aliases and relation endpoints are resolved across all files before units, addresses, fingerprints and annotation carriers are materialized.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns cross-file resolution and materialization; the scanner owns per-file syntax and documentation reads its notes.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Missing, ambiguous or arity-mismatched endpoints and conflicting schemas are reported as incompleteness rather than dropped or guessed.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the resolution order; every public and private member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in tables, columns and relations after per-file scans, with map lookups for endpoint resolution.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser serves every file, and duplicate physical files are parsed once.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; working maps are released when analysis returns.
  */
 export class EvidenceDbmlAdapter implements IEvidenceAdapter<"dbml"> {
   /**
@@ -45,6 +53,14 @@ export class EvidenceDbmlAdapter implements IEvidenceAdapter<"dbml"> {
    * Failed scans preserve located diagnostics and incomplete state.
    * Successfully scanned files contribute dependencies, aliases, relation
    * ownership, and documentation before the parser runtime closes in cleanup.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze validates and clones the snapshot, scans deduplicated files, establishes tables, resolves relations, publishes units and materializes hosts.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is a private method.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolved schema links produce explicit failures rather than smaller inventories.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains validation and phase order.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in schema size.
+   * @evidence contracts/performance.md#reuse-equivalent-work Deduplicated files are parsed once with one parser.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

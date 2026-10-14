@@ -5,6 +5,14 @@ import type { IEvidenceDeclaration } from "../structures/IEvidenceDeclaration";
  *
  * Resolution stores host identities separately from the target because one
  * physical annotation can cover multiple selected descendants.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration with its host units and target unit is the acknowledgement after resolution, ready for policy checks.
+ * @evidence contracts/common.md#clear-and-simple-design The record joins identities only.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only resolved targets reach this shape.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the stage; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceResolvedAcknowledgement {
   /**

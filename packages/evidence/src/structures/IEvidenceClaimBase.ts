@@ -26,6 +26,14 @@ import type { IEvidenceReference } from "./IEvidenceReference";
  *     ],
  *   };
  *   // Both reference populations require independent coverage.
+ *
+ * @evidence contracts/common.md#principled-implementation Generic type and symbol parameters restrict each family's discriminator and selector vocabulary without a separate language option.
+ * @evidence contracts/common.md#clear-and-simple-design Shared selection fields live here once; family interfaces add only their own files or symbols.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Untagged hosts stay selected so checklist and cardinality policies can detect unanswered declarations.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains host selection, planning effects and gives an example; each field documents defaults, glob rules and inheritance.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceClaimBase<
   Type extends string,

@@ -4,6 +4,14 @@
  * Nested functions and properties inherit these segments to keep their unit IDs
  * stable, while exported addresses can still distinguish a class member from an
  * instance member through the suffix selected by the scanner.
+ *
+ * @evidence contracts/common.md#principled-implementation Class ownership segments and the address suffix let nested members keep stable IDs while distinguishing class and instance members.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner threads the context through class bodies.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePythonClassContext {
   /**

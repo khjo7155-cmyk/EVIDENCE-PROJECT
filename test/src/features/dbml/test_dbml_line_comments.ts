@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    original UTF-16 offset.
  * 3. Verify each inline column host includes both the column and its relation
  *    unit.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF line comments with a fence, continuation and inline references, asserting declarations, offsets and shared inline hosts.
+ * @evidence contracts/testing.md#independent-expectations Expected offsets are computed by hand from the source; host owners follow the inline relation rule.
+ * @evidence contracts/testing.md#distinguishing-cases Covers fenced annotations, continued runs and an inline relation documenting both column and relation.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_line_comments is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_line_comments(): Promise<void> {
   const source = dedent`

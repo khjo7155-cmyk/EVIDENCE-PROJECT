@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze DocC hosts, withdrawals, and examples.
  * 2. Verify coordinates, targets, and fingerprints.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Swift DocC with attributes, CRLF text, examples and withdrawals and asserts coordinates, targets and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers attached DocC, attributes between documentation and declarations, inert examples and withdrawn hierarchies.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_hosts(): Promise<void> {
   const source = dedent`

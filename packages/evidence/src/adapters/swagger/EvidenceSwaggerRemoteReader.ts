@@ -11,6 +11,14 @@ const REMOTE_TIMEOUT_MILLISECONDS = 30_000;
  *
  * Remote input is intentionally bounded before parsing so a configured URL
  * cannot turn schema discovery into an unbounded memory or time consumer.
+ *
+ * @evidence contracts/common.md#principled-implementation Remote sources must be HTTP(S) URLs without fragments, are read with a timeout and a byte limit enforced against both the declared length and the streamed count, and are digested before parsing.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns remote input and its redaction; parsing is the loader's.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Credentials and query values are redacted from labels and error messages, including malformed URL-like input.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains bounding; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceSwaggerRemoteReader {
   /**
@@ -18,6 +26,14 @@ export namespace EvidenceSwaggerRemoteReader {
    *
    * Returning `undefined` leaves ordinary paths to the local-source loader;
    * explicit remote URLs must be HTTP(S) and cannot use fragments.
+   *
+   * @evidence contracts/common.md#principled-implementation A source with a URL scheme must parse as HTTP(S) without a fragment; other strings are left to the local loader.
+   * @evidence contracts/common.md#clear-and-simple-design Parsing only classifies the source.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported schemes throw rather than being treated as paths.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the undefined result.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in source length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each configured source is classified once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function parse(source: string): URL | undefined {
     if (!/^[A-Za-z][A-Za-z0-9+.-]*:\/\//u.test(source)) return undefined;
@@ -36,6 +52,14 @@ export namespace EvidenceSwaggerRemoteReader {
    *
    * The content-length preflight and streamed byte count enforce the same limit
    * when a server omits or lies about its response header.
+   *
+   * @evidence contracts/common.md#principled-implementation The response is fetched with a timeout, its declared length checked, its body streamed under the same byte cap, and the accepted bytes decoded and digested.
+   * @evidence contracts/common.md#clear-and-simple-design Decoding and digesting are a private helper.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Oversized or lying responses are rejected before parsing.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the double size enforcement.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in response size, capped at sixteen MiB.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Remote documents are fetched on every load by design.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The stream is consumed or cancelled and the request is bounded by its timeout signal.
    */
   export async function read(url: URL): Promise<IEvidenceRemoteSwaggerSource> {
     const response = await fetch(url, {
@@ -81,6 +105,14 @@ export namespace EvidenceSwaggerRemoteReader {
    *
    * Query values may carry credentials or arbitrary user data, so their
    * presence is retained while their contents are never exposed.
+   *
+   * @evidence contracts/common.md#principled-implementation The canonical label keeps scheme, host and path while marking but hiding query contents.
+   * @evidence contracts/common.md#clear-and-simple-design Display is the single label contract for valid URLs.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Credentials and query values are never shown.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the redaction.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in URL length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Labels are built per diagnostic.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function display(url: URL): string {
     const query = url.search === "" ? "" : "?<redacted>";
@@ -93,6 +125,14 @@ export namespace EvidenceSwaggerRemoteReader {
    * Valid URLs reuse the canonical display contract. Malformed URL-like inputs
    * still lose user information, query values, and fragments without changing
    * ordinary local filesystem spellings.
+   *
+   * @evidence contracts/common.md#principled-implementation Valid URLs reuse display, and malformed remote-looking input still loses user info, query values and fragments.
+   * @evidence contracts/common.md#clear-and-simple-design It delegates to display when possible.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ordinary local paths are left unchanged.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains handling of malformed input.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in source length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Labels are built per diagnostic.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function safeDisplay(source: string): string {
     const candidate: string = source.trim();
@@ -117,6 +157,14 @@ export namespace EvidenceSwaggerRemoteReader {
    *
    * Fetch implementations may embed credential-bearing input in exception text,
    * so sanitizing only the diagnostic location cannot establish redaction.
+   *
+   * @evidence contracts/common.md#principled-implementation The configured source and any URL repeated in a lower error message are replaced by their safe labels.
+   * @evidence contracts/common.md#clear-and-simple-design It composes safeDisplay.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Sanitizing only the location would leak secrets embedded in fetch errors.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why the message is sanitized.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in message length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Messages are sanitized per diagnostic.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function safeMessage(cause: unknown, source: string): string {
     let output: string = cause instanceof Error ? cause.message : String(cause);

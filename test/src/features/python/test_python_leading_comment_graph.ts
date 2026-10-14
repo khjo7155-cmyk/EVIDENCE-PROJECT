@@ -27,6 +27,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Remove the acknowledgement and verify the exact requirement becomes missing,
  *    then compare all subtree fingerprints after metadata and member-body
  *    edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Markdown requirement and a class whose leading comment acknowledges a property, evaluates the graph, removes the acknowledgement and compares subtree fingerprints.
+ * @evidence contracts/testing.md#independent-expectations The missing requirement is the fixture's single unit; fingerprint expectations are relational across metadata and member-body edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers coverage from a leading comment, its removal, and both edit kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_leading_comment_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_leading_comment_graph(): Promise<void> {
   const reference = await new EvidenceMarkdownAdapter().analyze(

@@ -21,6 +21,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Evaluate covered claims.
  * 2. Evaluate missing claims and compare IDs.
  * 3. Verify annotation-only fingerprint stability.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds Java and counterpart inventories, evaluates covered and uncovered graphs for each selector kind, and asserts success and the exact missing units, plus fingerprint stability across an evidence-prose-only edit.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared units; fingerprint expectations are relational (stable for a prose-only edit).
+ * @evidence contracts/testing.md#distinguishing-cases Covers every Java selector kind in covered and missing directions. Extraction details are owned by the units and hosts tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_java_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_java_graph(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

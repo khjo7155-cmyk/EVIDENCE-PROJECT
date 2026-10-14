@@ -6,6 +6,14 @@ import type { IEvidenceUnitSite } from "../../structures/IEvidenceUnitSite";
  *
  * Ownership is kept explicitly because unit materialization needs both semantic
  * output and the comment text that established its review state.
+ *
+ * @evidence contracts/common.md#principled-implementation A unit is paired with the parser documentation that establishes its withdrawal state.
+ * @evidence contracts/common.md#clear-and-simple-design Materialization consumes the pair.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are copied from parsed schema data; no schema- or project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePrismaOwnedUnit {
   /**

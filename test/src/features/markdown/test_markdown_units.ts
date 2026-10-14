@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Resolve a repeated public anchor and require an ambiguous result while each
  *    duplicate remains a file child.
  * 4. Require an otherwise diagnostic-free inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Markdown headings with Unicode, punctuation, explicit and duplicate anchors and asserts units, identities, parents and ambiguity.
+ * @evidence contracts/testing.md#independent-expectations Expected anchors follow the documented slug and explicit-anchor rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers H1-H4 units, Setext, code, malformed markers and H5/H6 that must not add units, and a duplicate anchor resolving as ambiguous.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_units(): Promise<void> {
   const content = dedent`

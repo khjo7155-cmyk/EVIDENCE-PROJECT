@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    enumerators.
  * 2. Compare the selected unit symbols and full identities.
  * 3. Verify members retain their aggregate owner.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C tags, typedefs, functions, objects, fields and enumerators and asserts symbols, identities and owners.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared C surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every supported C declaration category and member ownership.
+ * @evidence contracts/testing.md#execution-ownership The exported test_c_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_c_units(): Promise<void> {
   // Certified metadata describes the exact grammar and explicit-source boundary.

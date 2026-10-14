@@ -4,6 +4,14 @@
  * Configuration loading, dependency, and execution failures use this shape so
  * machine consumers still receive structured output. It is distinct from a
  * completed check whose ordinary report contains coverage errors.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned failure envelope with fixed status, success and exit code keeps operational failures structured and distinct from completed checks.
+ * @evidence contracts/common.md#clear-and-simple-design The envelope holds only identity, message and repair; the caught error is translated once by the command layer.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts success is the literal false and exitCode the literal 2, so no failure can be read as a pass.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains when the envelope is used; each field documents its role.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCommandFailure {
   /**

@@ -31,6 +31,14 @@ import type { EvidenceDatabaseSymbol } from "../../typings/EvidenceDatabaseSymbo
  * Materialization joins those views so semantic schema units remain tied to
  * their physical hosts. A schema-loading failure produces incomplete analysis
  * instead of an empty pass.
+ *
+ * @evidence contracts/common.md#principled-implementation Prisma's own WASM parser decides which models, columns and relations exist for the whole selected schema, while a position scan supplies exact sites and comments; materialization joins the two.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter joins semantic and positional views; parsing, scanning and target spelling are separate modules.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts A rejected schema yields an incomplete inventory, and a missed position keeps the unit with a file-level fallback instead of dropping it.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the two views; every member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in schema size: one whole-schema parse plus one position scan per file.
+ * @evidence contracts/performance.md#reuse-equivalent-work Parse results are cached by parser identity and schema digest, so unchanged schemas are not reparsed.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The adapter holds no state between analyses; the loader's cache is bounded separately.
  */
 export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
   /**
@@ -50,6 +58,14 @@ export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
    * schema content. Complete input is deduplicated by physical identity, parsed
    * for models, and joined to source locations before annotations are
    * materialized.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze deduplicates physical files, loads the parser model, scans positions, and materializes units, documentation hosts and withdrawals.
+   * @evidence contracts/common.md#clear-and-simple-design Phases are private methods; loading and scanning are delegated.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Loader failures become diagnostics and incompleteness.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains deduplication and failure handling.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in schema size.
+   * @evidence contracts/performance.md#reuse-equivalent-work The model loader reuses cached results for an unchanged schema set.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Detached records outlive the WASM call; nothing native is retained.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,
@@ -211,7 +227,7 @@ export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
     const source = found === undefined ? fallback : found.analysis.source;
     if (source === undefined)
       throw new Error("A parsed Prisma unit has no selected source file.");
-    const text = new EvidenceSourceText(source.content);
+    const text = EvidenceSourceText.of(source.content);
     const range = found === undefined ? text.range(0, 0) : found.location.range;
     const id = `prisma:${key}`;
     const site: IEvidenceUnitSite = {
@@ -448,7 +464,7 @@ export class EvidencePrismaAdapter implements IEvidenceAdapter<"prisma"> {
     source: IEvidenceSourceFile,
     run: IEvidencePrismaCommentRun,
   ): void {
-    const sourceText = new EvidenceSourceText(source.content);
+    const sourceText = EvidenceSourceText.of(source.content);
     let offset = 0;
     for (const line of run.text.split("\n")) {
       const trimmed = line.trim();

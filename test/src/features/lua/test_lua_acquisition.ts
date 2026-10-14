@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Fetch the Lua grammar and analyze source. 2. Reanalyze offline from cache. 3.
  *    Compare the complete inventories.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Acquires the Lua grammar, analyzes source, then reanalyzes with a failing fetch and compares inventories.
+ * @evidence contracts/testing.md#independent-expectations The offline inventory must equal the online one, an independent relational oracle.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition and offline reuse; other grammars must not be loaded.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_lua_acquisition(): Promise<void> {
   const parser = new EvidenceParser();

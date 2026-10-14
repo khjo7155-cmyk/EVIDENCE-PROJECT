@@ -20,6 +20,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 3. Delete the malformed configuration and require another failed cycle.
  * 4. Recreate the original JSON content and require a complete recovery cycle
  *    before closing the watcher.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher over a JSON configuration through malformed, deleted and restored states and asserts each cycle.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the contract that the current configuration state is published, never a stale success.
+ * @evidence contracts/testing.md#distinguishing-cases Covers success, malformed JSON, deletion and recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_json_config is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_json_config(): Promise<void> {
   const config: IEvidenceConfig = {

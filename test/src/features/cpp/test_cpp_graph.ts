@@ -23,6 +23,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    evidence is absent.
  * 3. Verify a prose-only evidence change leaves the selected unit fingerprint
  *    stable.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds C++ and counterpart inventories, evaluates covered and uncovered graphs for each selector kind, and asserts success and the exact missing units, plus fingerprint stability across an evidence-prose-only edit.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared units; fingerprint expectations are relational (stable for a prose-only edit).
+ * @evidence contracts/testing.md#distinguishing-cases Covers every C++ selector kind in covered and missing directions. Extraction details are owned by the units and hosts tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cpp_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cpp_graph(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

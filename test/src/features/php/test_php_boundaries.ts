@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze dynamic, unsupported, and malformed PHP sources.
  * 2. Require incomplete results with relevant diagnostics.
  * 3. Verify source failure cannot pass.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes dynamic, unsupported and malformed PHP sources and a failed snapshot and asserts incompleteness with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented PHP boundary (runtime-dependent declarations are not statically knowable).
+ * @evidence contracts/testing.md#distinguishing-cases Covers dynamic declarations, unsupported forms, syntax errors, conflicts and a failed source that must not pass.
+ * @evidence contracts/testing.md#execution-ownership The exported test_php_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_php_boundaries(): Promise<void> {
   for (const source of [

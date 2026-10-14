@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Verify that prose mentions and code examples add no declarations or
  *    diagnostics.
  * 4. Verify that the HTML comment still produces its real Evidence target.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Markdown with tag syntax in prose, lists, quotes, code, pre and MDX text and asserts unsupported-host diagnostics and the one real comment target.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics are one per rendered tag line, computed from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers rendered prose, lists, quotes, code blocks, pre content, MDX template text and a real HTML comment.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_prose_tags is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_prose_tags(): Promise<void> {
   const content = dedent`

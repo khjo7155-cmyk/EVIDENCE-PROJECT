@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze Objective-C input on a cold cache while recording requests.
  * 2. Verify the requested grammar and complete cold inventory.
  * 3. Repeat offline and require an equivalent warm result.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Objective-C with a cold grammar cache while recording requests, then offline, asserting requests and equal inventories.
+ * @evidence contracts/testing.md#independent-expectations Only the Objective-C grammar may be requested; the warm inventory must equal the cold one.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition and offline reuse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_acquisition(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("objc");

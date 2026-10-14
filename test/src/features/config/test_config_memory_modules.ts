@@ -24,6 +24,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 6. Require a TS helper through a JS spelling at runtime, select MTS ahead of a
  *    same-stem JS file, and resolve a directory's MTS index; require source
  *    values.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates mixed-format module graphs from memory and asserts resolved values and type-check failures.
+ * @evidence contracts/testing.md#independent-expectations Expected values are the authored module outputs; a stale JavaScript twin proves the TypeScript source was used.
+ * @evidence contracts/testing.md#distinguishing-cases Covers ts, cts and mts entries, computed dependencies, type errors, dynamic imports after export, ambient type packages, JS spellings of TS helpers and MTS indexes.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_memory_modules is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_config_memory_modules(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented schema units, inert examples, and withdrawn declarations.
  * 2. Verify attachment, coordinates, targets, and withdrawal metadata.
  * 3. Require literal qualified addresses to resolve exactly.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes documented SQL schema units, examples and withdrawals and asserts attachment, UTF-16 coordinates, targets and withdrawal metadata.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; literal qualified addresses must resolve exactly.
+ * @evidence contracts/testing.md#distinguishing-cases Covers documented units, inert examples, withdrawn declarations and qualified targets.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sql_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sql_hosts(): Promise<void> {
   const source = dedent`

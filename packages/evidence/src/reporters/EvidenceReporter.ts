@@ -10,6 +10,14 @@ import type { EvidenceReportFormat } from "../typings/EvidenceReportFormat";
  * Rendering does not evaluate coverage or change process status, which keeps
  * presentation separate from the check programmer's completeness and severity
  * decisions.
+ *
+ * @evidence contracts/common.md#principled-implementation Check reports are rendered as indented JSON or as summary counts followed by diagnostic blocks, both preserving the report's diagnostic order.
+ * @evidence contracts/common.md#clear-and-simple-design Rendering is separate from evaluation; private helpers format diagnostic blocks.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Rendering never changes status or exit code.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the separation; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceReporter {
   /**
@@ -17,6 +25,14 @@ export namespace EvidenceReporter {
    *
    * The returned string includes its final newline and is ready for a stream or
    * output file. This function performs no I/O.
+   *
+   * @evidence contracts/common.md#principled-implementation The requested format selects json or text, each ending with a newline.
+   * @evidence contracts/common.md#clear-and-simple-design Render only dispatches.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No I/O is performed.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the newline and no-I/O contract.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function render(
     report: IEvidenceCheckReport,
@@ -33,6 +49,14 @@ export namespace EvidenceReporter {
    * Units are admitted in order of their first diagnostic, and findings naming
    * no unit stay eligible. Counts, status, and exit code are copied unchanged
    * so the omission cannot make a failing check look clean.
+   *
+   * @evidence contracts/common.md#principled-implementation Command bounds override configured bounds one by one; units are admitted by first diagnostic, unit-less findings stay eligible, and the limit applies after.
+   * @evidence contracts/common.md#clear-and-simple-design Narrowing returns a new report and leaves rendering to render.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Counts, status and exit code are copied unchanged and omissions are counted, so a narrowed report cannot look clean.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains admission order and preserved totals; the inline comment explains override precedence.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in diagnostics with constant-time set lookups.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is narrowed once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It returns the original or a shallow copy; nothing is retained.
    */
   export function narrow(
     report: IEvidenceCheckReport,
@@ -65,6 +89,14 @@ export namespace EvidenceReporter {
    *
    * No fields are projected away, so consumers retain claim boundaries and
    * structured diagnostic coordinates alongside the aggregate counts.
+   *
+   * @evidence contracts/common.md#principled-implementation The whole versioned report is serialized as indented JSON without projecting fields away.
+   * @evidence contracts/common.md#clear-and-simple-design JSON output is the plain serialization.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No field is dropped for presentation.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains completeness of the JSON form.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function json(report: IEvidenceCheckReport): string {
     return JSON.stringify(report, null, 2) + "\n";
@@ -76,6 +108,14 @@ export namespace EvidenceReporter {
    * Each finding includes configuration context, location, subject, and repair.
    * Missing source coordinates fall back to file or aggregate context rather
    * than implying an invented line number.
+   *
+   * @evidence contracts/common.md#principled-implementation Summary counts precede one block per diagnostic with context, location, subject and repair.
+   * @evidence contracts/common.md#clear-and-simple-design Block formatting is a private helper.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Missing coordinates fall back to file or aggregate context instead of an invented line.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the block contents and fallback.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function text(report: IEvidenceCheckReport): string {
     const counts = report.counts;

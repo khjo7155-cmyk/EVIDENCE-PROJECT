@@ -24,6 +24,14 @@ import { EvidenceSourceText } from "../../internal/EvidenceSourceText";
  *
  * This scanner classifies source-local public surface and documentation while a
  * later snapshot-wide resolver follows imports and publishes public addresses.
+ *
+ * @evidence contracts/common.md#principled-implementation Module classes, functions, assignments, explicit type aliases, nested classes, methods (static, class or instance via the prototype segment), properties and direct constructor receiver assignments are classified, with docstrings or adjacent same-indent comment runs as carriers.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Decorators are not executed and generated members are not invented; conditional or nested receiver assignments mark the file incomplete.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidencePythonFileScanner {
   /**
@@ -154,6 +162,14 @@ export class EvidencePythonFileScanner {
    * The first pass establishes `__all__`; the second records declarations and
    * bindings, so public-name decisions do not depend on statement encounter
    * order.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidencePythonFileAnalysis {
     this.collectModuleDocstring();

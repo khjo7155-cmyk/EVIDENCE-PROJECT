@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze malformed, conflicting, unsupported, and unresolved DBML source.
  * 2. Require each case to report incompleteness with its diagnostic.
  * 3. Repair the affected source and require normal schema analysis to recover.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes malformed, conflicting, unsupported and unresolved DBML and repaired versions, asserting incompleteness and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented DBML boundary; recovery expectations are the repaired schema's units.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each failure class and its repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_failure_recovery is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_failure_recovery(): Promise<void> {
   const adapter = new EvidenceDbmlAdapter();

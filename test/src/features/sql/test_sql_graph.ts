@@ -13,6 +13,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 1. Run real claim and reference configurations for each selector.
  * 2. Evaluate matching acknowledgement and missing-evidence cases.
  * 3. Require the resulting status to match each scenario.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker on configurations with SQL as claim and as reference for each selector and asserts covered and missing results.
+ * @evidence contracts/testing.md#independent-expectations Expected outcomes follow each scenario's authored acknowledgements.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every selector in both roles, covered and missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sql_graph is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator. It installs nothing and spawns no CLI.
  */
 export async function test_sql_graph(): Promise<void> {
   const schema = dedent`

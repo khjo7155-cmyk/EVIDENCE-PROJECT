@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Remove each acknowledgement in turn and require the matching requirement to
  *    become the sole missing obligation.
  * 3. Compare fingerprints after evidence-text and implementation-body edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Links Ruby type, singleton method and constant evidence to Markdown requirements, evaluates the graph, removes each acknowledgement in turn, and compares fingerprints across edits.
+ * @evidence contracts/testing.md#independent-expectations Each missing requirement is the exact unit whose acknowledgement was removed; fingerprint expectations are relational (stable for evidence text, changed for implementation content).
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Ruby selector kind covered and missing, and metadata-only versus implementation edits.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_graph(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

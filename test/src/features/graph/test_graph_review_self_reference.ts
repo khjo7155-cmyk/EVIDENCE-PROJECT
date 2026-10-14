@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    the rule's recomputed fingerprint to remain unchanged.
  * 3. Evaluate the section as both claim and required-review reference target.
  * 4. Require no diagnostics and a successful current self-review.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Markdown rule, adds a self-review with its fingerprint, recomputes, and evaluates the section as claim and reference.
+ * @evidence contracts/testing.md#independent-expectations The fingerprint is computed before the review is added; the property under test is that it does not change afterward.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the self-referencing review; other review states are owned by test_graph_review_policy.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_review_self_reference is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_review_self_reference(): Promise<void> {
   const bare = await analyze(

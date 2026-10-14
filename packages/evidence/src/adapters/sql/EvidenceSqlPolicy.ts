@@ -5,6 +5,14 @@ import type { Node as EvidenceNode } from "web-tree-sitter";
  *
  * `EvidenceSqlFileScanner` uses this policy to reject syntax whose meaning
  * varies by dialect.
+ *
+ * @evidence contracts/common.md#principled-implementation The portable policy accepts only explicit CREATE TABLE syntax whose meaning does not vary by dialect, folding regular identifiers as standard SQL does.
+ * @evidence contracts/common.md#clear-and-simple-design Policy decisions are separate from the shared scanner.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Everything outside the portable subset is rejected rather than interpreted.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains its purpose; both functions are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceSqlPolicy {
   /**
@@ -13,6 +21,14 @@ export namespace EvidenceSqlPolicy {
    *
    * This yields portable semantic identity while retaining literal quoted
    * spelling.
+   *
+   * @evidence contracts/common.md#principled-implementation Regular identifiers fold to upper case and standard double-quoted identifiers keep their literal spelling, following the SQL standard.
+   * @evidence contracts/common.md#clear-and-simple-design Identifier decoding is the policy's only naming rule.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported quoting returns undefined rather than inventing a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains folding and quoting.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in the identifier or literal length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each spelling is decoded once where it occurs.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function identifier(raw: string): string | undefined {
     if (/^"(?:[^"]|"")+"$/u.test(raw))
@@ -28,6 +44,14 @@ export namespace EvidenceSqlPolicy {
    *
    * The scanner reports the returned reason so unsupported syntax cannot shrink
    * the population.
+   *
+   * @evidence contracts/common.md#principled-implementation Statements other than plain CREATE TABLE, and dialect extensions within them, return a rejection reason.
+   * @evidence contracts/common.md#clear-and-simple-design Validation returns a reason; the scanner records it.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Rejection keeps unsupported syntax from shrinking the population.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the reporting.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in the inspected statement's syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each statement is validated once during its file scan.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function reads borrowed nodes during the parse callback and keeps no reference to them.
    */
   export function validate(node: EvidenceNode): string | undefined {
     if (node.type === "comment" || node.type === "marginalia") return undefined;

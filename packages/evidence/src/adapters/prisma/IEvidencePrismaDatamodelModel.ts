@@ -5,6 +5,14 @@ import type { IEvidencePrismaDatamodelField } from "./IEvidencePrismaDatamodelFi
  *
  * The loader later pairs this semantic result with a physical source location
  * instead of treating parser output as an independently owned artifact.
+ *
+ * @evidence contracts/common.md#principled-implementation A parser model keeps name, fields and documentation for pairing with source locations.
+ * @evidence contracts/common.md#clear-and-simple-design The loader maps models into detached records.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are copied from parsed schema data; no schema- or project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePrismaDatamodelModel {
   /**

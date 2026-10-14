@@ -21,6 +21,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 4. Mark the host unsupported, remove its owners, and attach an evidence
  *    declaration; require incomplete analysis because unsupported carriers
  *    cannot supply evidence.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds inventories with a shared statement host and invalid attachments and asserts owners, content slices and incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected slices are the authored initializer text; ownership failures follow the host contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers two declarators sharing a host, a host on an unowned site, and an unsupported host carrying evidence.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_hosts(): Promise<void> {
   const input = EvidenceTestInventory.create();

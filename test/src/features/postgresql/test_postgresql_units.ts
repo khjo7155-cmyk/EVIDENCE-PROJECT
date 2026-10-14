@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze quoted names, folded names, and schemas split across files.
  * 2. Verify units, ownership, composite relations, and target resolution.
  * 3. Require exact address behavior for quoted segments.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes quoted and folded PostgreSQL names and schemas split across files and asserts units, ownership, composite relations and target resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow PostgreSQL identifier folding and quoting, written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers quoted versus folded names, cross-file ownership, ordered composite relation endpoints and exact quoted-segment addressing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_postgresql_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_postgresql_units(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.combine([

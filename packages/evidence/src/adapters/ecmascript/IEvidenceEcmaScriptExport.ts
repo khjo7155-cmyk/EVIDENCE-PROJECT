@@ -6,6 +6,14 @@ import type { EvidenceEcmaScriptExportKind } from "./EvidenceEcmaScriptExportKin
  * The export resolver follows these edges through the source snapshot to expose
  * local units under their public module names and diagnose unsupported
  * targets.
+ *
+ * @evidence contracts/common.md#principled-implementation An export edge records kind, exported name, local name and optional module specifier for one static export statement.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner produces edges; the export resolver interprets them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are filled from parsed syntax; no project, package or fixture value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceEcmaScriptExport {
   /**

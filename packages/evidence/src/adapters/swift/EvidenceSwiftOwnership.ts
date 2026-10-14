@@ -8,6 +8,14 @@ import type { IEvidenceSwiftFileAnalysis } from "./IEvidenceSwiftFileAnalysis";
  * The pass resolves selected local aliases without importing compiler metadata,
  * then propagates visibility from the verified nominal owner to extension
  * members.
+ *
+ * @evidence contracts/common.md#principled-implementation Extensions are linked to a unique accessible nominal declaration in the module, resolving selected local aliases first, and visibility propagates from the verified owner to extension members.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns snapshot-wide resolution only; scanning and materialization are separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Ambiguous or missing owners are reported rather than attached arbitrarily.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why resolution waits for every file; its function and helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceSwiftOwnership {
   /**
@@ -17,6 +25,14 @@ export namespace EvidenceSwiftOwnership {
    * Repeated passes handle declarations whose owner is another pending
    * extension; unresolved cycles remain incomplete instead of gaining an
    * invented owner.
+   *
+   * @evidence contracts/common.md#principled-implementation Local aliases and extension-introduced types are resolved through finite alias chains, then extension members take ownership and visibility from their nominal declaration.
+   * @evidence contracts/common.md#clear-and-simple-design It mutates the copied file analyses in place before units are materialized.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ambiguous or missing owners are reported rather than attached arbitrarily.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the resolution and its failure cases.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in declarations and references with map lookups; alias chains are followed with cycle detection.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis over all files.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It mutates caller-owned analyses and keeps no state.
    */
   export function resolve(analyses: IEvidenceSwiftFileAnalysis[]): void {
     const declarations = analyses.flatMap((analysis) => analysis.declarations);

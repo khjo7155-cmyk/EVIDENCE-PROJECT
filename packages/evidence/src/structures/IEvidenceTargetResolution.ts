@@ -11,6 +11,14 @@ import type { IEvidenceWithdrawal } from "./IEvidenceWithdrawal";
  * cannot accept a unique visible target. Diagnostics distinguish malformed
  * spelling, unavailable files, selection boundaries, and incomplete extraction
  * so callers do not report every failure as a missing member.
+ *
+ * @evidence contracts/common.md#principled-implementation Status, attempted addresses, units, withdrawals and diagnostics explain a target's resolution within one reference.
+ * @evidence contracts/common.md#clear-and-simple-design Resolution output is separate from evaluation.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Failed resolutions keep their reason and diagnostics.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the outcome; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceTargetResolution {
   /**

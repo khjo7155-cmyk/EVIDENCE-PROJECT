@@ -16,6 +16,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 1. Analyze local Swagger and OpenAPI JSON and YAML documents.
  * 2. Verify exact operation targets and complete inventories.
  * 3. Confirm independent document fingerprints differ.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes local Swagger 2.0 and OpenAPI 3.x JSON and YAML documents and asserts operation targets, complete inventories and distinct document fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected targets follow the shared operation addressing model written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each version and format, and independent documents that must not be conflated.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swagger_units(): Promise<void> {
   const location = join(__dirname, "units-" + randomUUID());

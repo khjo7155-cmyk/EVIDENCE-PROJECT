@@ -18,6 +18,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    passing cycle.
  * 3. Delete only the excluded barrel; require incomplete analysis.
  * 4. Restore it without editing the caller; require recovery and stop watch.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher while only an excluded forwarding barrel changes, disappears and returns, asserting each cycle's exit code.
+ * @evidence contracts/testing.md#independent-expectations Expected exit codes follow the rule that excluded support files remain watch inputs: pass, pass, incomplete (2), recovered.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a changed, deleted and restored excluded barrel without editing the selected owner.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_excluded_barrel_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_excluded_barrel_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

@@ -5,6 +5,14 @@
  * graph. Two references to the same population therefore retain two
  * requirements. Diagnostic totals include every finding at the corresponding
  * severity, including findings a report window withheld from `diagnostics`.
+ *
+ * @evidence contracts/common.md#principled-implementation Counts sum active obligations instead of deduplicating units, matching the rule that references never pool coverage.
+ * @evidence contracts/common.md#clear-and-simple-design Counts are a flat projection; per-obligation detail stays in claims.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Totals include diagnostics a report window withheld, so narrowing output cannot shrink the counts.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the summation rule and withheld findings; each count documents what it includes.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCheckCounts {
   /**

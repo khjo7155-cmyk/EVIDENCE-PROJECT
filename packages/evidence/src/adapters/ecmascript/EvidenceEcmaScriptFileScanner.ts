@@ -25,6 +25,14 @@ import { EvidenceEcmaScriptSyntax } from "./EvidenceEcmaScriptSyntax";
  * It captures declared ownership, comment attachment, and static module edges;
  * `EvidenceEcmaScriptExportResolver` alone decides which local units become
  * public.
+ *
+ * @evidence contracts/common.md#principled-implementation One walk of the parsed module records declarations by kind (types, functions, properties, class and namespace members, parameter properties), JSDoc attachment, static imports and export edges, plus a bounded model of unconditional CommonJS initialization.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns local extraction; the export resolver alone decides publication, and syntax helpers come from EvidenceEcmaScriptSyntax.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Computed keys, conditional CommonJS mutation, escaped aliases and other unsupported forms mark the file incomplete instead of guessing exports.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states its boundary; documented fields and methods explain each rule, and private helpers are named by role.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the syntax tree, linear in file size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner returns node-free data before the parse session closes, so no Tree-sitter node is retained.
  */
 export class EvidenceEcmaScriptFileScanner {
   /**
@@ -82,6 +90,14 @@ export class EvidenceEcmaScriptFileScanner {
    * Unsupported dynamic or malformed public-surface constructs retain
    * diagnostics and incompleteness instead of disappearing from downstream
    * coverage.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan collects imports, walks top-level statements with an inherited context, applies CommonJS rules for CommonJS modules, and returns the file analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct scanning is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs are recorded as diagnostics and incompleteness.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in file size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned analysis copies names and ranges; no node escapes the session.
    */
   public scan(): IEvidenceEcmaScriptFileAnalysis {
     if (this.mode === "esm") this.collectImports();

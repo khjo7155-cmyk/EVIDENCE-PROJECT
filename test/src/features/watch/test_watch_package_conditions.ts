@@ -28,6 +28,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    then recreate it without touching the config or manifest.
  * 5. Require the repaired cycle to recover, equal a fresh check, and continue
  *    observing the selected import entry rather than the unused require entry.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher through package entry edits, export-map changes and deletion, asserting reports and active dependencies.
+ * @evidence contracts/testing.md#independent-expectations Each published check report (every cycle that is not an operational failure) is compared with a fresh one-shot EvidenceChecker run on the same files, an independent oracle for what the watcher must publish.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an import entry selecting covered and uncovered roots, a repointed export map, a deleted entry and recreation without touching the config.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_package_conditions is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_package_conditions(): Promise<void> {
   const location: string = join(

@@ -9,6 +9,14 @@ import type { IEvidencePopulation } from "../structures/IEvidencePopulation";
  * reconciled. Every reference beneath the claim reuses its host population, but
  * resolves and evaluates reference-side units independently through its own
  * context.
+ *
+ * @evidence contracts/common.md#principled-implementation The claim, its inventory, projected population and index are the claim-side state evaluation needs.
+ * @evidence contracts/common.md#clear-and-simple-design Claim-side state is separate from per-reference contexts.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts The index is the authored claim index.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the claim side; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphClaimContext {
   /**

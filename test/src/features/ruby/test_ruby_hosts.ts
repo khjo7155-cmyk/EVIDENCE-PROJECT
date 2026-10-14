@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require only supported carriers to produce declarations and require one
  *    attribute host to own both generated public properties.
  * 3. Require misplaced comment annotations to remain diagnosable and ignore data.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes line and embedded RDoc beside body, literal, inline, private, detached and commented-out tagged carriers and asserts declarations and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts follow the RDoc placement rule; one attribute host must own both generated properties.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each supported carrier against each inert or misplaced lookalike.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_hosts(): Promise<void> {
   const inventory = await new EvidenceRubyAdapter().analyze(

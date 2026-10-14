@@ -24,6 +24,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    single-evidence findings.
  * 3. Select the namespace ancestor and require its host failures, then hide one
  *    function and require explicit failure when naming it.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs focused checks on claim declarations and asserts outgoing citation and cardinality findings and alias handling.
+ * @evidence contracts/testing.md#independent-expectations Expected findings come from the fixture's authored citations: a correct one passes, a malformed one fails, an untagged one violates single evidence.
+ * @evidence contracts/testing.md#distinguishing-cases Covers alias targets, bad and untagged functions, a namespace ancestor, and a hidden function named explicitly. Reference-side focusing is owned by test_command_only_selection.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_claims is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_only_claims(): Promise<void> {
   const config: IEvidenceConfig = {

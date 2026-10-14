@@ -5,6 +5,14 @@
  * manifest bytes on every watch cycle. Other package fields cannot select a
  * runtime entry or package scope and therefore remain outside the scanner's
  * resolution contract.
+ *
+ * @evidence contracts/common.md#principled-implementation The manifest fields that can redirect a dependency (type, name, main, exports, imports) mirror Node resolution inputs.
+ * @evidence contracts/common.md#clear-and-simple-design Untyped redirect fields stay unknown until the resolver validates their shape.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No package-specific redirect is hardcoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the subset; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceConfigResolutionManifest {
   /**

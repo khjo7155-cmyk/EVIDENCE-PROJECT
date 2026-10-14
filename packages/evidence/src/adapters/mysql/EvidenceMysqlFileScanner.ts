@@ -12,6 +12,14 @@ import type { IEvidenceSourceFile } from "../../structures/IEvidenceSourceFile";
  * Enriches shared SQL extraction with MySQL COMMENT hosts and dialect policy.
  *
  * This namespace supplies the scanner callback used by the MySQL adapter.
+ *
+ * @evidence contracts/common.md#principled-implementation The shared SQL scanner is run with the MySQL policy, then table and column COMMENT strings attach to their exact declarations.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace supplies the MySQL scan callback; extraction is shared.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts String contents stay opaque so literal text never becomes syntax.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains its role; the function and helper are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceMysqlFileScanner {
   /**
@@ -20,6 +28,14 @@ export namespace EvidenceMysqlFileScanner {
    *
    * Shared SQL scanning supplies declarations; this pass adds dialect-specific
    * documentation.
+   *
+   * @evidence contracts/common.md#principled-implementation The shared scan result is enriched with COMMENT carriers found by a named-node traversal of each declaration.
+   * @evidence contracts/common.md#clear-and-simple-design Shared extraction and COMMENT attachment are separate steps.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Only table and column COMMENT strings attach.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the attachment rule.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The callback copies names and ranges into node-free records before the parse session closes.
    */
   export function scan(
     session: EvidenceParseSession,

@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documentation, withdrawals, and inert examples.
  * 2. Verify coordinates, records, and resolution.
  * 3. Compare annotation and semantic fingerprint effects.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Zig documentation with withdrawals and inert examples and asserts coordinates, records, resolution and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers attached documentation, lexical withdrawals, code examples and both edit kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_zig_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_zig_hosts(): Promise<void> {
   const source = dedent`

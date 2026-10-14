@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Analyze the fixture and verify exact public unit identities and symbols.
  * 3. Verify hidden and local declarations are excluded while class and instance
  *    members retain separate addresses.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks the registered Python metadata and analyzes module declarations, classes, fields, properties and aliases, asserting identities and symbols.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared Python surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers class versus instance ownership, properties, aliases, and hidden and local declarations that must stay absent.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_units(): Promise<void> {
   const language = EvidenceLanguageRegistry.list().find(

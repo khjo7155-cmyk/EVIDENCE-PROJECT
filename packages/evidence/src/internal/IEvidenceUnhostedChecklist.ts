@@ -6,6 +6,14 @@ import type { EvidenceSeverity } from "../typings/EvidenceSeverity";
  *
  * Checklists are held while other declarations establish structural ownership,
  * preventing a source-order coincidence from discarding a valid obligation.
+ *
+ * @evidence contracts/common.md#principled-implementation A checklist declaration with its severity and indices waits until host assignment is known.
+ * @evidence contracts/common.md#clear-and-simple-design The record defers one finding; evaluation decides whether to emit it.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Deferral avoids a derivative finding when a failed obligation could still own the declaration.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the deferral; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceUnhostedChecklist {
   /**

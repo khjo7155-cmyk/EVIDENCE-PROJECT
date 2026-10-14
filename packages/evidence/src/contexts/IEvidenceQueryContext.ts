@@ -7,6 +7,14 @@ import type { EvidenceQueryPopulationContext } from "./EvidenceQueryPopulationCo
  * The EvidenceQuery facade clones analysis before constructing this context and
  * clones reports before returning them. Population indexes can therefore cache
  * traversal results without depending on caller-owned mutable inventory data.
+ *
+ * @evidence contracts/common.md#principled-implementation The analysis, cwd and population contexts are shared by list, inspect and graph programmers.
+ * @evidence contracts/common.md#clear-and-simple-design Programmers receive this owned state instead of rebuilding indexes.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Queries read retained analysis rather than reloading files.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains sharing across queries; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The context chooses no algorithm; population contexts own their indexes.
+ * @evidence contracts/performance.md#reuse-equivalent-work Population contexts are built once per analysis and reused by every list, inspect and graph query over it.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The context holds plain analysis data owned by its query session and no external resource.
  */
 export interface IEvidenceQueryContext {
   /**

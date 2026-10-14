@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Create sources under contrasting package metadata.
  * 2. Analyze each extension.
  * 3. Verify the selected module mode and resulting exports.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads JavaScript sources under contrasting package metadata and extensions and asserts the selected module mode and exports.
+ * @evidence contracts/testing.md#independent-expectations Expected modes follow Node's rules: .mjs and .cjs explicit, .js and .jsx from the nearest package type.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each extension under ESM and CommonJS package scopes.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_module_modes is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_module_modes(): Promise<void> {
   const language = EvidenceLanguageRegistry.list().find(

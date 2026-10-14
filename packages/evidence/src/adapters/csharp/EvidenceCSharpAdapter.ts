@@ -32,6 +32,14 @@ import { EvidenceCSharpFileScanner } from "./EvidenceCSharpFileScanner";
  * Inventory completeness includes discovery and syntax findings. A partial or
  * unsupported declaration is not discarded as though the remaining source were
  * the complete public surface.
+ *
+ * @evidence contracts/common.md#principled-implementation File analyses record accessibility, partial declarations and sites; materialization groups compatible partial and overload families within the configured root boundary, so equal names from unrelated populations never merge, before XML comments attach.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and XML documentation normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Duplicate non-partial types, incompatible partial forms and declaration-position preprocessor conditionals mark the inventory incomplete instead of discarding declarations.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceCSharpAdapter implements IEvidenceAdapter<"csharp"> {
   /**
@@ -51,6 +59,14 @@ export class EvidenceCSharpAdapter implements IEvidenceAdapter<"csharp"> {
    * identities, and maps documentation before common validation. The parser is
    * released in the failure path as well as after a successful inventory
    * snapshot.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, groups declarations into families under the root identity, publishes addresses including generic arity aliases, and attaches XML documentation.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

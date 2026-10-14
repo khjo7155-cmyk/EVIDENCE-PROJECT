@@ -21,6 +21,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    cycle instead of the previous graph result.
  * 4. Restore the barrel export and implementation, then require cycle 4 to succeed
  *    before closing the watcher.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher through a renamed barrel export, invalid syntax and restoration, asserting cycle results.
+ * @evidence contracts/testing.md#independent-expectations Each published check report (every cycle that is not an operational failure) is compared with a fresh one-shot EvidenceChecker run on the same files, an independent oracle for what the watcher must publish.
+ * @evidence contracts/testing.md#distinguishing-cases Covers success, a missing public target (exit 1), a parse failure (incomplete) and recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_reexport is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_reexport(): Promise<void> {
   const location = join(__dirname, `reexport ${randomUUID()}`);

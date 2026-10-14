@@ -15,6 +15,14 @@ import type { IEvidenceTreeSitterAssetPending } from "./IEvidenceTreeSitterAsset
  * receive independent copies. No acquisition path creates directories, cache
  * files, locks, or temporary files; a new process downloads its own required
  * grammars.
+ *
+ * @evidence contracts/common.md#principled-implementation Process-wide maps of completed and pending transfers keyed by namespace, URL, size and digest share downloads and verified bytes across callers while each caller receives a copy.
+ * @evidence contracts/common.md#clear-and-simple-design The class owns transfer, retry, bounded streaming and verification; validation of metadata stays in EvidenceTreeSitterAssets.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Nothing is written to disk; the legacy cache directory is only a memory namespace, and failed or cancelled transfers are evicted.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the in-memory and no-disk rules; every field, method and helper is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each grammar is downloaded at most once per key, streamed into a buffer preallocated to the pinned size and hashed once.
+ * @evidence contracts/performance.md#reuse-equivalent-work Completed bytes and in-flight transfers are shared by key across all callers in the process.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources Completed bytes stay for the process lifetime, bounded by the pinned grammars per namespace; pending records are deleted when their last consumer leaves.
  */
 export class EvidenceTreeSitterAssetCache {
   /**
@@ -52,6 +60,14 @@ export class EvidenceTreeSitterAssetCache {
    *
    * Failed and cancelled transfers are evicted so later calls can recover. Only
    * verified successful transfers enter the completed memory cache.
+   *
+   * @evidence contracts/common.md#principled-implementation A completed entry is copied; otherwise the caller joins or starts the pending transfer, races it against its own signal, and the last consumer aborts and evicts the record.
+   * @evidence contracts/common.md#clear-and-simple-design Download, bounded body reading, verification and per-caller cancellation are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Only verified successful transfers enter the completed map; HTTP and verification failures become typed parser errors.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains sharing, eviction and caller-owned copies.
+   * @evidence contracts/performance.md#efficient-algorithms A cache hit costs one copy of the bytes; a miss costs at most the configured attempts with exponential backoff and a size-capped stream.
+   * @evidence contracts/performance.md#reuse-equivalent-work Concurrent requests for the same key share one in-flight promise.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The consumer count releases the pending record and aborts the shared controller when the last caller leaves; timers and stream readers are released in finally blocks.
    */
   public async bytes(grammar: IEvidenceGrammar): Promise<Uint8Array> {
     const key: string = JSON.stringify([

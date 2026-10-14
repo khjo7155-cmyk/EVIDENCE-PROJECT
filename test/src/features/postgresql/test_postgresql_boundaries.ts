@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze each context-dependent or malformed schema.
  * 2. Require incomplete status and actionable diagnostics.
  * 3. Verify wrong extensions and failed sources cannot pass.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes context-dependent and malformed PostgreSQL schemas, wrong extensions and a failed snapshot and asserts incompleteness with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented PostgreSQL boundary (no search path or migration state).
+ * @evidence contracts/testing.md#distinguishing-cases Covers search-path dependence, migration state, unsupported syntax, wrong extensions and a failed source.
+ * @evidence contracts/testing.md#execution-ownership The exported test_postgresql_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_postgresql_boundaries(): Promise<void> {
   const adapter = new EvidencePostgresqlAdapter();

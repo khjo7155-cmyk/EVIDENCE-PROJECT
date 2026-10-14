@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    graph result and exact missing population.
  * 3. Analyze a review-only Scala annotation and verify it is retained as review
  *    data without supplying missing coverage.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against a Scala reference with an undocumented type, function and property, and a review-only annotation.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared Scala units; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each symbol kind retained and removed, and the review-only case.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_graph(): Promise<void> {
   const reference = await new EvidenceScalaAdapter().analyze(

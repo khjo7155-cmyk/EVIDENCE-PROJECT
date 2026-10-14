@@ -19,6 +19,14 @@ import { validateEvidenceConfig } from "./validateEvidenceConfig";
  * Validation precedes filtering so a disabled or off entry cannot hide an
  * invalid declaration. The plan clones populations to prevent later caller
  * mutation from changing an in-progress graph evaluation.
+ *
+ * @evidence contracts/common.md#principled-implementation Validation runs before filtering so disabled entries are still checked, then severities and symbol defaults are resolved and populations cloned.
+ * @evidence contracts/common.md#clear-and-simple-design Severity narrowing, reference normalization and symbol defaults are private helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Explicit symbol selections are never replaced by artifact defaults.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains validation order and cloning; each helper documents its invariant.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in the number of claims and references, plus structured clones of their populations.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A plan is built once per configuration load.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources Cloned populations are owned by the returned plan; caller mutation cannot change it.
  */
 export function createEvidenceConfigPlan(
   config: IEvidenceConfig,

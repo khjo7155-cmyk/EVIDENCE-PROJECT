@@ -13,6 +13,14 @@ import { EvidenceInventorySources } from "./EvidenceInventorySources";
  *
  * Conflicts mark the result incomplete instead of choosing whichever adapter
  * happened to run first, preserving the failure boundary for graph evaluation.
+ *
+ * @evidence contracts/common.md#principled-implementation Records are merged by identity, and any disagreement between equal identities becomes an inventory-conflict diagnostic that marks the result incomplete.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns merging plus the deterministic ordering and key helpers other inventory code reuses.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Conflicts never pick a winner by scan order.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the conflict boundary; every exported and private helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceInventoryMerge {
   /**
@@ -22,6 +30,14 @@ export namespace EvidenceInventoryMerge {
    * Conflicting semantic identities remain diagnostics and mark the merged
    * result incomplete, so input order cannot select an arbitrary graph
    * population.
+   *
+   * @evidence contracts/common.md#principled-implementation Physical paths are reconciled first; then sources, units, sites and hosts are unioned by ID with key comparisons, and duplicate statement IDs must have identical serialized bodies.
+   * @evidence contracts/common.md#clear-and-simple-design Comparison keys and conflict recording are separate helpers; combine only orchestrates.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Incompatible records add conflicts and mark the output incomplete instead of being dropped, and incompleteness always carries an inventory-incomplete diagnostic.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why input order cannot select a population; the inline comment explains alias-duplicated tags.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in total records with map lookups, except site matching within one unit, which scans that unit's few sites.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Merging runs once per population over its specific inputs.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Input records are moved into the output rather than copied; the temporary maps are local and discarded.
    */
   export function combine(inputs: IEvidenceInventory[]): IEvidenceInventory {
     EvidenceInventorySources.reconcile(inputs);
@@ -149,6 +165,14 @@ export namespace EvidenceInventoryMerge {
    *
    * Later records replace earlier records for the same key before bytewise key
    * ordering removes source traversal order from serialized output.
+   *
+   * @evidence contracts/common.md#principled-implementation A map keyed by the caller's semantic key keeps the last record per key, then entries are sorted bytewise.
+   * @evidence contracts/common.md#clear-and-simple-design Key derivation is supplied by the caller.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Bytewise ordering removes traversal and locale effects from output.
+   * @evidence contracts/common.md#meaningful-documentation The comment states last-wins replacement and deterministic order.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n): linear insertion plus a sort.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each call deduplicates its own list.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function unique<T>(values: T[], key: (value: T) => string): T[] {
     const records = new Map<string, T>();
@@ -163,6 +187,14 @@ export namespace EvidenceInventoryMerge {
    *
    * Inventory serialization uses this bytewise relation so the same graph sorts
    * identically across machines with different locale settings.
+   *
+   * @evidence contracts/common.md#principled-implementation Plain string comparison orders identities by UTF-16 code units, independent of locale.
+   * @evidence contracts/common.md#clear-and-simple-design One comparator is shared by every deterministic sort in inventory code.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No locale-aware collation is used.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains locale independence.
+   * @evidence contracts/performance.md#efficient-algorithms O(length) per comparison.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A comparator has no reusable work.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The comparator keeps no state after returning; its result is owned by the caller.
    */
   export function compare(x: string, y: string): number {
     return x < y ? -1 : x > y ? 1 : 0;
@@ -174,6 +206,14 @@ export namespace EvidenceInventoryMerge {
    *
    * When equivalent addresses collide, a selected address clears the dependency
    * marker because it represents part of the configured public population.
+   *
+   * @evidence contracts/common.md#principled-implementation Addresses are deduplicated by absolute, relative and display spelling, and a selected address clears a dependency-only marker on collision.
+   * @evidence contracts/common.md#clear-and-simple-design The function only deduplicates and orders addresses.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Direct selection wins over dependency loading so selected files are never treated as support-only.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the selection rule.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n) for n addresses.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each call handles one source's addresses.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function sourceAddresses(
     values: IEvidenceSourceAddress[],
@@ -202,6 +242,14 @@ export namespace EvidenceInventoryMerge {
    * Unit merging compares this key before unioning content ranges, so
    * compatible declarations share a physical host without requiring identical
    * extraction order.
+   *
+   * @evidence contracts/common.md#principled-implementation Site ID, file and serialized range identify a site's structure without its content spans.
+   * @evidence contracts/common.md#clear-and-simple-design Content spans have their own key, so structure and content are compared separately.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts The key uses typia's JSON serializer rather than ad hoc concatenation.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why content is excluded.
+   * @evidence contracts/performance.md#efficient-algorithms Constant work per site.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Keys are cheap per comparison.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function siteKey(site: IEvidenceUnitSite): string {
     return JSON.stringify([
@@ -217,6 +265,14 @@ export namespace EvidenceInventoryMerge {
    *
    * The range values are normalized through {@link unique} before a shared site
    * can be accepted as equivalent across inventories.
+   *
+   * @evidence contracts/common.md#principled-implementation Content ranges are serialized, deduplicated and sorted through unique, so extraction order does not affect equivalence.
+   * @evidence contracts/common.md#clear-and-simple-design It reuses unique rather than its own ordering.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ordering normalization prevents false conflicts without accepting different content.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains source-order independence.
+   * @evidence contracts/performance.md#efficient-algorithms O(r log r) for r content ranges.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Keys are computed per comparison.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function contentKey(site: IEvidenceUnitSite): string {
     return JSON.stringify(

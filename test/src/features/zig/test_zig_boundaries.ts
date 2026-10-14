@@ -10,6 +10,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze compiler-dependent, private, and local declarations.
  * 2. Verify incomplete diagnostics and retained boundary behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes compiler-dependent, private and local Zig declarations and asserts incompleteness or retained boundaries.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Zig boundary (no compile-time evaluation).
+ * @evidence contracts/testing.md#distinguishing-cases Covers compiler-dependent declarations and their explicit private and local counterparts.
+ * @evidence contracts/testing.md#execution-ownership The exported test_zig_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_zig_boundaries(): Promise<void> {
   const adapter = new EvidenceZigAdapter();

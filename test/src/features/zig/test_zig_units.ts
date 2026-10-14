@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze declarations spanning those ownership boundaries.
  * 2. Verify exact units, parents, aliases, and addresses.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Zig declarations across fields, aliases, private owners and same-name files and asserts units, parents, aliases and addresses.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared public surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each ownership boundary that must not collapse identities.
+ * @evidence contracts/testing.md#execution-ownership The exported test_zig_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_zig_units(): Promise<void> {
   const inventory = await new EvidenceZigAdapter().analyze(

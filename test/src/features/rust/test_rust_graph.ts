@@ -21,6 +21,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    become missing while the remaining graph stays covered.
  * 3. Compare review fingerprints after metadata-only and declaration-content
  *    edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Links Rust type, function and property hosts to Markdown requirements, evaluates the graph, removes each acknowledgement in turn, and compares fingerprints across edits.
+ * @evidence contracts/testing.md#independent-expectations Each missing requirement is the exact unit whose acknowledgement was removed; fingerprint expectations are relational (stable for evidence text, changed for implementation content).
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Rust selector kind covered and missing, and metadata-only versus implementation edits.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_graph(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

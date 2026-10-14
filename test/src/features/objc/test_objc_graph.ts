@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Extract Objective-C units and TypeScript claims for each selector.
  * 2. Evaluate covered and undocumented selector populations.
  * 3. Verify a review-only reference stays missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against Objective-C references for each selector, including a review-only reference.
+ * @evidence contracts/testing.md#independent-expectations Missing populations are the fixture's declared units; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each selector covered and undocumented, and the review-only case.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_graph(): Promise<void> {
   const reference = await new EvidenceObjcAdapter().analyze(

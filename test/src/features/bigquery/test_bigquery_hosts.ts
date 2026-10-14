@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    retain a hidden field without an attached host.
  * 3. Keep review annotations separate from declarations and preserve the model
  *    fingerprint across an annotation-only edit.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF Unicode GoogleSQL with description tags and asserts reasons, UTF-16 coordinates, unattached hidden fields, separate reviews and fingerprint stability.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand from the authored source; the fingerprint expectation is relational across an annotation-only edit.
+ * @evidence contracts/testing.md#distinguishing-cases Covers table and column descriptions, defaults and fenced examples that must stay inert, a hidden field, reviews, and an annotation-only edit.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_hosts(): Promise<void> {
   const adapter = new EvidenceBigQueryAdapter();

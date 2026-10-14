@@ -34,6 +34,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 4. Restore the implementation citation and remove only the test acknowledgement;
  *    require implementation-to-requirement coverage to remain and the test's
  *    reference obligation to report the method as missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates a requirement-to-method-to-test chain through real adapters and the resolver, removing one link at a time.
+ * @evidence contracts/testing.md#independent-expectations Expected coverage follows independence of configured pairs: breaking one link affects only its own obligation.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the healthy chain, a missing implementation citation, and a missing test citation.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_chain is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_chain(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

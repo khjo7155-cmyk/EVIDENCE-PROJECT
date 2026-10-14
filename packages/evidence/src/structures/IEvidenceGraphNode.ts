@@ -10,6 +10,14 @@ import type { IEvidenceSourceLocation } from "./IEvidenceSourceLocation";
  * on both sides of one pair. Selection marks denominator participation;
  * structural ancestors can remain addressable nodes whose coverage summarizes
  * descendants.
+ *
+ * @evidence contracts/common.md#principled-implementation A node per boundary, role and unit carries selection and coverage state for display without merging obligations.
+ * @evidence contracts/common.md#clear-and-simple-design Node identity is boundary-qualified; semantic identity is kept in unitId.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Coverage flags are derived from the boundary ledger rather than set independently.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains per-obligation qualification; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphNode {
   /**

@@ -29,6 +29,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 4. Put a foreign Python star after a local declaration and require that owner to
  *    remain selected; put a restricted Rust declaration beside a foreign star
  *    and require its attempted local re-export to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes TypeScript, JavaScript, Python and Rust forwarding chains above foreign stars and export lists and asserts retained local units and incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected populations follow each language's forwarding semantics: foreign provenance never becomes a missing local owner.
+ * @evidence contracts/testing.md#distinguishing-cases Covers named and namespace forwards, Python __all__ with foreign stars, Rust private modules forwarding crates, a local owner before a foreign star and a restricted Rust re-export.
+ * @evidence contracts/testing.md#execution-ownership The exported test_foreign_export_chains is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_foreign_export_chains(): Promise<void> {
   const adapters: IEvidenceAdapter[] = [

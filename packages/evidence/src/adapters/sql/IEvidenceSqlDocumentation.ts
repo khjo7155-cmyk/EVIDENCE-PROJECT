@@ -9,6 +9,14 @@ import type { IEvidenceSqlDocumentationAttachment } from "./IEvidenceSqlDocument
  * The scanner keeps every relevant carrier, including one that cannot attach,
  * so the documentation parser can diagnose annotations without silently
  * dropping their source range.
+ *
+ * @evidence contracts/common.md#principled-implementation A comment carrier with its range, syntax and attachments is kept even when it cannot attach, so its annotations can be diagnosed.
+ * @evidence contracts/common.md#clear-and-simple-design Scanners produce carriers; the materializer parses them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are copied from parsed syntax; no schema- or project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSqlDocumentation {
   /**

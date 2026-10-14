@@ -8,6 +8,14 @@ import type { IEvidenceDbmlDocumentation } from "./IEvidenceDbmlDocumentation";
  *
  * The adapter uses mapped positions to attach Evidence tags to original source
  * text.
+ *
+ * @evidence contracts/common.md#principled-implementation DBML note strings and comments are decoded with escape handling while each character keeps its original UTF-16 span.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace only maps text whose owner the scanner already established.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported escapes are rejected rather than approximated.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains offset preservation; the function is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceDbmlDocumentation {
   /**
@@ -16,6 +24,14 @@ export namespace EvidenceDbmlDocumentation {
    *
    * Callers provide a scanner-created carrier after structural ownership is
    * known.
+   *
+   * @evidence contracts/common.md#principled-implementation Comment or note text is decoded and mapped back to source offsets for the tag parser.
+   * @evidence contracts/common.md#clear-and-simple-design Ownership is supplied by the caller.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Malformed escapes produce no mapping.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains preserved mappings.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in carrier length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each carrier is read once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function read(
     content: string,

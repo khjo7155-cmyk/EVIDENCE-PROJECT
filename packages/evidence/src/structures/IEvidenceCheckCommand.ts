@@ -6,6 +6,14 @@ import type { EvidenceReportFormat } from "../typings/EvidenceReportFormat";
  * The command layer resolves cwd against its invocation base, then resolves the
  * configuration and optional output path within that directory. Watch requests
  * require streaming execution; the buffered command API rejects them.
+ *
+ * @evidence contracts/common.md#principled-implementation A parsed command record captures cwd, config, format, output, watch and focus options after validation, so execution never reinterprets raw tokens.
+ * @evidence contracts/common.md#clear-and-simple-design The record holds only check options; parsing and execution live in EvidenceCommand.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Optional flags use true-only types so absence is the single off state.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains resolution of cwd, config and output and the watch restriction; each option documents its default and effect.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCheckCommand {
   /**

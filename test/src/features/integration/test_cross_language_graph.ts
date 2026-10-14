@@ -31,6 +31,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    missing acknowledgement findings.
  * 6. Restore the fixture records and require the same complete six-obligation
  *    graph in the existing checker process.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker over a five-claim cross-language fixture through edits and a malformed document, asserting obligations, counts, diagnostics and exit codes.
+ * @evidence contracts/testing.md#independent-expectations Expected counts and diagnostics are derived from the authored fixture's claims and references.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the healthy graph, one removed citation, a grown denominator, a renamed export, a malformed Swagger document (exit 2) and restoration.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cross_language_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cross_language_graph(): Promise<void> {
   const location = join(__dirname, `cross-language-${randomUUID()}`);

@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze the supported declaration matrix.
  * 2. Verify exact identities, symbols, and ownership.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes ambient, abstract, parameter-property and dotted-namespace TypeScript declarations and asserts identities, symbols and ownership.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each structural form that contributes different public units.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_declarations is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_declarations(): Promise<void> {
   const content = dedent`

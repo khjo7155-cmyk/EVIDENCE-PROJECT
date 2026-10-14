@@ -30,6 +30,14 @@ import type { IEvidenceGoFileAnalysis } from "./IEvidenceGoFileAnalysis";
  * The pipeline retains discovery and parse failures before common inventory
  * validation. It never treats an unresolved receiver as permission to omit a
  * method and report complete coverage over the remaining units.
+ *
+ * @evidence contracts/common.md#principled-implementation Files are scanned independently, then the package resolver assigns receiver methods to package-wide types and publishes identities before documentation joins them through recorded declaration sites, including grouped declarations.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and Go comment normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts An unresolved receiver never permits omitting a method; it marks the inventory incomplete, and build tags and promoted members are outside the declared surface.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceGoAdapter implements IEvidenceAdapter<"go"> {
   /**
@@ -50,6 +58,14 @@ export class EvidenceGoAdapter implements IEvidenceAdapter<"go"> {
    * attachment. Discovery dependencies survive for watch recovery, and the
    * invocation closes its parser on every path before returning a serializable
    * inventory.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze validates and copies the input, scans every file, publishes package-wide units through EvidenceGoPackageResolver, and materializes documentation hosts.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

@@ -20,6 +20,11 @@ import typia from "typia";
  *    with the same identifier.
  * 3. Render text and require its cycle status, failure message, and repair
  *    instruction to remain visible.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Renders a constructed failure cycle with EvidenceWatchReporter and asserts compact JSON validity and visible text.
+ * @evidence contracts/testing.md#independent-expectations Expected fields are the constructed cycle's own literal values, validated with typia against the public type.
+ * @evidence contracts/testing.md#distinguishing-cases Covers JSON framing and text rendering of a failure; check-cycle rendering is covered by test_watch_topology.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_reporter is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_watch_reporter(): void {
   const failure: IEvidenceWatchFailureCycle = {

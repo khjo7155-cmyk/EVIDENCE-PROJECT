@@ -15,6 +15,14 @@ import type { EvidenceReportFormat } from "../typings/EvidenceReportFormat";
  * targets, one target's explanation, or the shipped language catalog. These
  * renderers preserve that structured data without triggering configuration or
  * source I/O.
+ *
+ * @evidence contracts/common.md#principled-implementation List, inspect and languages reports are rendered as JSON or command-specific text from the same structured data.
+ * @evidence contracts/common.md#clear-and-simple-design Rendering is separate from querying; private helpers format each command.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No configuration or source I/O is triggered.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the three report kinds; helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceQueryReporter {
   /**
@@ -23,6 +31,14 @@ export namespace EvidenceQueryReporter {
    * Every representation ends with a newline so callers can write it directly
    * to stdout or a report file. The command discriminator selects the text
    * layout.
+   *
+   * @evidence contracts/common.md#principled-implementation The format selects JSON or the command-specific text layout, each ending with a newline.
+   * @evidence contracts/common.md#clear-and-simple-design Render only dispatches.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No I/O is performed.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the newline contract.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function render(
     report: EvidenceQueryReport,
@@ -36,6 +52,14 @@ export namespace EvidenceQueryReporter {
    *
    * JSON retains all diagnostics and inspection details for tools that should
    * not infer structure from terminal-oriented text.
+   *
+   * @evidence contracts/common.md#principled-implementation The complete query report is serialized as indented JSON.
+   * @evidence contracts/common.md#clear-and-simple-design JSON output is the plain serialization.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No inspection detail is dropped.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why tools should use JSON.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function json(report: EvidenceQueryReport): string {
     return JSON.stringify(report, null, 2) + "\n";
@@ -46,6 +70,14 @@ export namespace EvidenceQueryReporter {
    *
    * Language discovery has no project configuration, list reports enumerate
    * filtered units, and inspection reports retain every applicable population.
+   *
+   * @evidence contracts/common.md#principled-implementation The command discriminator selects the languages, list or inspect layout.
+   * @evidence contracts/common.md#clear-and-simple-design Each layout is a private helper.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Every applicable population is kept in inspect text.
+   * @evidence contracts/common.md#meaningful-documentation The comment describes each layout.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function text(report: EvidenceQueryReport): string {
     if (report.command === "languages") return languages(report);

@@ -103,6 +103,11 @@ const NATIVE_DOCUMENTATION_TYPES: ReadonlySet<string> = new Set<string>([
  *     end.
  * 15. Put native opening and closing delimiters in separate Markdown fences;
  *     require those literals not to span across the real Evidence statement.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Injects fences, HTML examples and comments into every programming and SQL fixture and asserts unchanged certified inventories and checker coverage.
+ * @evidence contracts/testing.md#independent-expectations Expectations are the fixtures' certified inventories and the unmodified SQL baselines, which the mutations must not change.
+ * @evidence contracts/testing.md#distinguishing-cases Covers separated fence literals, pre regions, slash-closed and unclosed HTML, indented and malformed tags, nested examples, HTML comments, C# XML self-closing elements, native code regions and PHP checker runs.
+ * @evidence contracts/testing.md#execution-ownership The exported test_adapter_documentation_precedence is discovered by DynamicExecutor; its cases are registered through EvidenceAdapterCertificationFixtures.all(), which owns the per-language fixtures, and it calls the adapters in-process without installing or spawning anything.
  */
 export async function test_adapter_documentation_precedence(): Promise<void> {
   for (const certification of EvidenceAdapterCertificationFixtures.all()) {

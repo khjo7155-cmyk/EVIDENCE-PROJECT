@@ -27,6 +27,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Build Swagger and counterpart claim inventories.
  * 2. Resolve supported, missing, and review-only operations.
  * 3. Verify graph outcomes and resolution statuses.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates Swagger as a reviewed claim against Markdown and as a reviewed reference for TypeScript, and resolves supported, missing and review-only operation targets.
+ * @evidence contracts/testing.md#independent-expectations Review fingerprints are computed independently with EvidenceFingerprint; expected resolutions are written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers both graph roles, acknowledged and missing operations and review-only targets that must stay distinct from coverage.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swagger_graph(): Promise<void> {
   const specification = await new EvidenceMarkdownAdapter().analyze(

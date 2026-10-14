@@ -30,6 +30,14 @@ import type { IEvidenceConfigReport } from "./IEvidenceConfigReport";
  *       },
  *     ],
  *   };
+ *
+ * @evidence contracts/common.md#principled-implementation A root with claims, optional report bounds and inherited severity mirrors the claim/reference model, where each reference is an independent obligation.
+ * @evidence contracts/common.md#clear-and-simple-design The root holds only global settings; selection and policy live in claims and references.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Repeated references stay independent even when they select identical files.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains claim relationships, loader behavior and gives an example; each field documents its default.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceConfig {
   /**

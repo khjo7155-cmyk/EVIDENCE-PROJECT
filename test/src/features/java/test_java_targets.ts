@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze nested Java declarations.
  * 2. Resolve valid paths.
  * 3. Require missing or ambiguous paths to retain their statuses.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves Java targets for owners, nested declarations, properties and overload families and asserts resolved, missing and ambiguous statuses.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow Java addressing (package-free file-qualified paths, overload families as one unit).
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested types, fields, overload families, and missing or field-versus-method ambiguous paths.
+ * @evidence contracts/testing.md#execution-ownership The exported test_java_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_java_targets(): Promise<void> {
   const adapter = new EvidenceJavaAdapter();

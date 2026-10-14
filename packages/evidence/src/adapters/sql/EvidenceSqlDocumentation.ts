@@ -10,6 +10,14 @@ import type { IEvidenceSqlDocumentation } from "./IEvidenceSqlDocumentation";
  *
  * Shared SQL adapters use the result before passing supported annotations to
  * the tag parser.
+ *
+ * @evidence contracts/common.md#principled-implementation SQL comment carriers are normalized with their delimiters while Markdown and HTML examples are masked, keeping original offsets for tag diagnostics.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace only maps carriers; attachment is decided by scanners.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Example masking keeps tag-shaped examples inert instead of special-casing documents.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains its consumers; the function is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceSqlDocumentation {
   /**
@@ -17,6 +25,14 @@ export namespace EvidenceSqlDocumentation {
    *
    * Preserved offsets keep tag diagnostics aligned with the original SQL
    * source.
+   *
+   * @evidence contracts/common.md#principled-implementation The carrier is read through EvidenceDocumentation with SQL comment syntax and then masked with the shared example rules.
+   * @evidence contracts/common.md#clear-and-simple-design Reading composes the shared documentation and example helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Masking replaces characters in place so offsets never move.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains offset preservation.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in carrier length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each carrier is read once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function read(
     source: IEvidenceSourceFile,

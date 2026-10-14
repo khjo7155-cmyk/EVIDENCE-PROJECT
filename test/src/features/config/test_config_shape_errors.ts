@@ -16,6 +16,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Load the same mistakes from a TypeScript configuration, which type-checks
  *    only because the default export is cast, and require the same locations.
  * 3. Load a well-formed configuration and require it to be accepted.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads JSON and TypeScript configurations with mistyped fields and asserts one rejection naming every location, then a valid load.
+ * @evidence contracts/testing.md#independent-expectations Expected locations are the authored mistyped fields.
+ * @evidence contracts/testing.md#distinguishing-cases Covers both formats with two errors each and a well-formed configuration.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_shape_errors is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_config_shape_errors(): Promise<void> {
   const invalid = {

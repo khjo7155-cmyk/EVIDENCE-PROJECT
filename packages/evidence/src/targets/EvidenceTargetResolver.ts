@@ -41,6 +41,14 @@ import type { EvidenceTargetResolutionStatus } from "../typings/EvidenceTargetRe
  *     host,
  *     selectedIds,
  *   );
+ *
+ * @evidence contracts/common.md#principled-implementation Construction merges the reference inventories and precomputes selected, physical, public and Markdown file maps, so each citation is resolved against one consistent snapshot.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver owns target parsing per artifact and outcome classification; address lookup stays in EvidenceInventory.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Every plausible origin and public spelling is kept until one semantic identity is proven, so aliases and hard links cannot select an arbitrary declaration.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the four failure classes with an example; every field and method is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Construction is linear in sources, addresses and units; each resolution is linear in origins and public spellings with map lookups.
+ * @evidence contracts/performance.md#reuse-equivalent-work One resolver and its maps serve every citation against the same reference.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The resolver holds only maps derived from its inventory snapshot and is discarded with the reference evaluation.
  */
 export class EvidenceTargetResolver {
   /**
@@ -172,6 +180,14 @@ export class EvidenceTargetResolver {
    * Incomplete inventories win before an empty or missing-member result. A scan
    * that omitted declarations cannot prove coverage merely because the
    * remaining selected population has no match.
+   *
+   * @evidence contracts/common.md#principled-implementation After host checks, the artifact grammar parses the target, completeness is checked before any negative result, selected candidates are looked up through every public spelling, and only then are files probed to tell missing from out-of-population.
+   * @evidence contracts/common.md#clear-and-simple-design Candidate reduction, failure construction and file probing are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Incomplete inventories and inaccessible files yield incomplete, never missing, so a failed scan cannot shrink the population.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains specialized grammars, origin handling and completeness precedence; inline comments mark each phase.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in origins and spellings plus one stat per unmatched candidate path, run concurrently.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the resolver's precomputed maps and merged index.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources File probes are awaited before returning; no handle or cache entry is kept.
    */
   public async resolve(
     statement: IEvidenceTargetStatement,
@@ -402,7 +418,7 @@ export class EvidenceTargetResolver {
           ? `The selected Prisma schema has no public selected address '${statement.target}'.`
           : swagger
             ? `The selected Swagger document has no operation '${statement.target}'.`
-            : `Selected target file '${this.files(addresses)}' has no public selected address '${this.accessor(addresses)}'.`,
+            : `Selected target file '${this.files(addresses)}' has no public selected address '${this.formatAccessor(addresses)}'.`,
         prisma
           ? "Correct the model or member name, or include its symbol kind in this reference."
           : swagger
@@ -581,7 +597,7 @@ export class EvidenceTargetResolver {
    * stays empty rather than passing an empty segment list to the accessor
    * formatter.
    */
-  private accessor(addresses: IEvidenceAddress[]): string {
+  private formatAccessor(addresses: IEvidenceAddress[]): string {
     const first: IEvidenceAddress | undefined = addresses[0];
     return first === undefined || first.segments.length === 0
       ? ""

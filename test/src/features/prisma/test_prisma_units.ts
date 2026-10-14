@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze a representative Prisma schema.
  * 2. Verify exact units, owners, identities, and relations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a representative Prisma schema and asserts model, view, column and relation units, owners, identities and relations.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared schema written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers models, views, scalar columns and relation fields with their owners.
+ * @evidence contracts/testing.md#execution-ownership The exported test_prisma_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_prisma_units(): Promise<void> {
   const baseline = await analyze(false, "Int");

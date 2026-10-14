@@ -27,6 +27,14 @@ import { EvidenceMatlabOwnership } from "./EvidenceMatlabOwnership";
  * precedes documentation attachment, preserving shared identities, physical
  * sites, and incomplete-analysis diagnostics across the selected source
  * population.
+ *
+ * @evidence contracts/common.md#principled-implementation Class-folder ownership, external implementations and property accessors are reconciled across the selected snapshot before units are materialized, then help text attaches to the reconciled owners.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and MATLAB help normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts eval, dynamicprops and missing class folders are reported as incomplete; application code is never evaluated.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceMatlabAdapter implements IEvidenceAdapter<"matlab"> {
   /**
@@ -45,6 +53,14 @@ export class EvidenceMatlabAdapter implements IEvidenceAdapter<"matlab"> {
    * Ownership resolution runs across file analyses before publishing units and
    * comment hosts. Failed source discovery or parsing remains an incomplete
    * result.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, resolves class-folder ownership, unifies implementation sites into units, and attaches percent help.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

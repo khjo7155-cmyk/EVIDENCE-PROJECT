@@ -21,6 +21,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 5. Attempt a runtime file write and require rejection without a new file.
  * 6. Exit before returning the export and require rejection. Check that all
  *    evaluations left only authored source and package files.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates configurations with evaluateTypeScriptConfig and asserts values, freshness, IPC fidelity, permission failures and an unchanged file tree.
+ * @evidence contracts/testing.md#independent-expectations Expected values are the authored helper outputs and the exact undefined and BigInt values.
+ * @evidence contracts/testing.md#distinguishing-cases Covers enums, helper edits between evaluations, non-JSON values, invalid package scopes, attempted writes and early exit.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_memory is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_config_memory(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

@@ -24,6 +24,14 @@ import { EvidenceSourceText } from "../../internal/EvidenceSourceText";
  * It keeps physical sites and comment adjacency local to the file while
  * `EvidenceGoAdapter` assigns receiver members to their package-wide semantic
  * owners.
+ *
+ * @evidence contracts/common.md#principled-implementation The package clause and exported declarations (by Go's uppercase rule) are recorded with receivers, grouped specifications and embedded fields, and adjacent same-column comment runs attach to the following declaration.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Trailing code comments never join the next declaration's documentation, and generators are not run.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceGoFileScanner {
   private readonly declarations: IEvidenceGoDeclaration[] = [];
@@ -57,6 +65,14 @@ export class EvidenceGoFileScanner {
    *
    * A missing package clause or unsupported relevant form is retained as an
    * incomplete analysis so package materialization cannot hide it.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceGoFileAnalysis {
     const packageClause = this.session.root.namedChildren.find(

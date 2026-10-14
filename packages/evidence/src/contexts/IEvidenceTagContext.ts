@@ -11,6 +11,14 @@ import type { IEvidenceTagParseResult } from "../structures/IEvidenceTagParseRes
  * then advances the pending tag and Markdown-fence state line by line. Keeping
  * this state per invocation prevents an unterminated tag or code fence in one
  * file from changing how another file is interpreted.
+ *
+ * @evidence contracts/common.md#principled-implementation Source, host, documentation, result and pending-fence state are the mutable state of parsing one annotation block.
+ * @evidence contracts/common.md#clear-and-simple-design Mutable parse state is grouped so the parser's functions take one context.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fence state keeps examples inert instead of special-casing documents.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the parse scope; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceTagContext {
   /**

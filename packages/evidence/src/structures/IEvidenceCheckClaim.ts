@@ -7,6 +7,14 @@ import type { IEvidenceCheckObligation } from "./IEvidenceCheckObligation";
  * Labels and artifact types come from the configuration plan; activation,
  * completeness, and coverage come from graph evaluation. Keeping both lets
  * renderers explain a failure without exposing the full extracted inventory.
+ *
+ * @evidence contracts/common.md#principled-implementation Joining configuration labels with evaluation state lets renderers explain a claim's failure without the full inventory.
+ * @evidence contracts/common.md#clear-and-simple-design The entry carries only identity, activation, completeness and its obligations; detailed records stay in the graph result.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Authored claim indices are kept instead of renumbering after filtering.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains which fields come from the plan and which from evaluation; every member is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCheckClaim {
   /**

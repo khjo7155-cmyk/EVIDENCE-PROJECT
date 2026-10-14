@@ -20,6 +20,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    inventory-cycle diagnostic, rather than unbounded ancestor traversal.
  * 4. Remove the parent and merge copies assigning different symbol categories to
  *    the same ID; the contradictory identity must remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds inventories with failed, missing-parent, self-parent and contradictory input and asserts completeness, statuses and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the reconciliation contract: inconsistencies mark the inventory incomplete.
+ * @evidence contracts/testing.md#distinguishing-cases Covers healthy versus incomplete empty input, an absent parent, a parent cycle, and conflicting symbol kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_failures(): Promise<void> {
   const empty = EvidenceTestInventory.create();

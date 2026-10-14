@@ -23,6 +23,11 @@ import { EvidenceTestSignal } from "../../internal/EvidenceTestSignal";
  * 3. Release the callbacks and require the separate identifier results `alpha` and
  *    `beta` in their original request order.
  * 4. Close the parser and require every active slot to be released.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs two concurrent parses and passes one session's node to the other, asserting the rejection and independent results.
+ * @evidence contracts/testing.md#independent-expectations Expected identifiers are the authored alpha and beta names.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cross-session node use and ordered concurrent results; single-session lifetime is owned by test_parser_lifetime.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_concurrent is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_concurrent(): Promise<void> {
   const parser = new EvidenceParser({ concurrency: 2 });

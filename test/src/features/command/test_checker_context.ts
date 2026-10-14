@@ -23,6 +23,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *
  *    - The fresh report fails with one missing unit.
  *    - The earlier report remains successful and independently owned.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker.evaluate concurrently on a valid and a missing-root plan, then check after removing an annotation, asserting status, coverage and report independence.
+ * @evidence contracts/testing.md#independent-expectations Expected results follow the fixture: one cited requirement passes, a missing root is incomplete, and removing the citation leaves one missing unit; the earlier report is compared with its own success, not a snapshot.
+ * @evidence contracts/testing.md#distinguishing-cases Covers caller mutation of a captured plan, concurrent independent evaluations, and a later check reflecting current source while the earlier report stays intact. Pipeline rendering is owned by test_checker_pipeline.
+ * @evidence contracts/testing.md#execution-ownership The exported test_checker_context is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_checker_context(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

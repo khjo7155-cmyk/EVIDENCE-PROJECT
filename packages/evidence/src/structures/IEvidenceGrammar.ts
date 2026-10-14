@@ -7,6 +7,14 @@ import type { IEvidenceGrammarAsset } from "./IEvidenceGrammarAsset";
  * source, verified WASM bytes, and license provenance. Listing this metadata
  * does not download the grammar or certify an artifact adapter's declaration
  * coverage.
+ *
+ * @evidence contracts/common.md#principled-implementation Repository, version, commit and two verified assets pin a grammar's provenance so acquisition is reproducible.
+ * @evidence contracts/common.md#clear-and-simple-design The record is metadata; acquisition and verification belong to the asset cache.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Listing metadata neither downloads a grammar nor certifies an adapter.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the provenance role; each field documents why it is pinned.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGrammar {
   /**

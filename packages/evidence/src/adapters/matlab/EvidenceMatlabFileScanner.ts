@@ -16,6 +16,14 @@ import type { IEvidenceMatlabFileAnalysis } from "./IEvidenceMatlabFileAnalysis"
  * The scanner keeps class-folder facts, external signatures, and property
  * accessors separate because their public owner may be established in another
  * file.
+ *
+ * @evidence contracts/common.md#principled-implementation classdef types, primary functions, public members and static class metadata are read without evaluation, keeping external signatures and accessors apart because their owner may live in another file, and help attaches after signatures or before members.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unknown surface-changing metadata is rejected instead of being ignored.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceMatlabFileScanner {
   /**
@@ -91,6 +99,14 @@ export class EvidenceMatlabFileScanner {
    * MATLAB file layout determines ownership, so unsupported leading forms
    * become diagnostics instead of being skipped and shrinking the public
    * population.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceMatlabFileAnalysis {
     const nodes = this.session.root.namedChildren.filter(

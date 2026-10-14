@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze leading and trailing annotated comments.
  * 2. Compare attached declarations.
  * 3. Require trailing annotations to remain inert.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Go leading and trailing annotated comments and asserts which declarations they attach to.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the rule that only the leading run documents a declaration.
+ * @evidence contracts/testing.md#distinguishing-cases Covers leading runs and trailing comments at matching columns.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_comment_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_comment_boundaries(): Promise<void> {
   const source = dedent`

@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    repair.
  * 3. Retain an unreadable-source failure and exclude a temporary table while
  *    retaining the persistent table and column.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes unsupported, conflicting, invalid, dynamic and malformed GoogleSQL plus an unreadable source and asserts incomplete inventories with repairable diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Each case's expected incompleteness follows the adapter's declared GoogleSQL surface; the retained persistent table and column are the authored ones.
+ * @evidence contracts/testing.md#distinguishing-cases Covers unsupported table forms, conflicting declarations, invalid keys and types, dynamic options, malformed syntax, an unreadable file, and a temporary table excluded beside a retained persistent table.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_failures(): Promise<void> {
   const adapter = new EvidenceBigQueryAdapter();

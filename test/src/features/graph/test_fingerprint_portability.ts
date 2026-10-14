@@ -37,6 +37,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    require distinct hashes, preserving declaration rebinding sensitivity.
  * 6. Add an unrelated source whose process-local ID prefixes the reviewed source
  *    ID; require the reviewed TypeScript fingerprint to remain stable.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Discovers and analyzes real checkouts, renamed replacements and CRLF pairs, asserting snapshot identities and fingerprint equality or difference.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational (stable versus changed across controlled edits) and follow the documented fingerprint contract, not recorded hash values.
+ * @evidence contracts/testing.md#distinguishing-cases Covers two checkout roots, an inode-changing identical replacement, a semantic prose edit, LF versus CRLF, different declaring paths with identical content, and a source ID that prefixes another.
+ * @evidence contracts/testing.md#execution-ownership The exported test_fingerprint_portability is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_fingerprint_portability(): Promise<void> {
   const location: string = join(

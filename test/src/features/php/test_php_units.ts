@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze PHP namespaces, declarations, properties, and aliases.
  * 2. Verify exact units, identities, ownership, and target resolution.
  * 3. Require collision and unsupported cases to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes PHP namespaces, declarations, properties and aliases and asserts units, identities, ownership, target resolution and incompleteness for collisions.
+ * @evidence contracts/testing.md#independent-expectations Expected units follow PHP's public-by-default visibility and namespace resolution, written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers independent declarators, property spelling, namespace imports, and collision and unsupported cases that must stay incomplete.
+ * @evidence contracts/testing.md#execution-ownership The exported test_php_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_php_units(): Promise<void> {
   const source = dedent`

@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Resolve corresponding evidence tags and require every target to resolve.
  * 3. Require aliases to share the Sale unit while colliding inherent and trait
  *    methods remain distinct units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves Rust targets through modules, declaration files, aliases, fields and inherent and trait implementations.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the authored declarations; aliases must share one unit, colliding inherent and trait methods must not.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each access path and the inherent-versus-trait collision.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_targets(): Promise<void> {
   const adapter = new EvidenceRustAdapter();

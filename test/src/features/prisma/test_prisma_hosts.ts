@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented models and fields with withdrawals and exclusions.
  * 2. Verify attachment, targets, and ledger records.
  * 3. Compare the resulting host and declaration populations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes documented Prisma models and fields with withdrawals and exclusions and asserts attachment, targets, ledger records and host populations.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the triple-slash documentation rule; withdrawals and exclusions are checked as independent records.
+ * @evidence contracts/testing.md#distinguishing-cases Covers model and field documentation across blank lines, a withdrawn model and its descendants, a file exclusion with its review, misplaced annotations on indexes and enums, and double- and quadruple-slash comments that must not host.
+ * @evidence contracts/testing.md#execution-ownership The exported test_prisma_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_prisma_hosts(): Promise<void> {
   const schema = dedent`

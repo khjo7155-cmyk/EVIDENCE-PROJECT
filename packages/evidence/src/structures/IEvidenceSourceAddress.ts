@@ -5,6 +5,14 @@
  * spelling preserves population selection and relative citation origins without
  * reading or counting the physical source repeatedly. Dependency-only addresses
  * support extraction but do not automatically join the selected population.
+ *
+ * @evidence contracts/common.md#principled-implementation Absolute, relative and display spellings plus an optional selection flag describe how one physical file participates in analysis.
+ * @evidence contracts/common.md#clear-and-simple-design Logical spellings are kept per address so one physical file can have several.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Support-only files are marked unselected instead of being cited directly.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains logical spelling; each field documents its use.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSourceAddress {
   /**

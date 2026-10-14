@@ -27,6 +27,14 @@ import { EvidenceSwiftOwnership } from "./EvidenceSwiftOwnership";
  * root identity so equal declarations in separate module selections stay
  * distinct. Documentation then attaches to the reconciled owners, while source
  * dependencies retain every physical file needed to invalidate the analysis.
+ *
+ * @evidence contracts/common.md#principled-implementation Explicit declarations are scanned per file, extensions and aliases are reconciled with nominal types across the configured module, and units include the root identity so equal declarations in separate module selections stay distinct.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and DocC normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Macros and conditional compilation are reported as incomplete; extensions never attach to an unverified owner.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceSwiftAdapter implements IEvidenceAdapter<"swift"> {
   /**
@@ -46,6 +54,14 @@ export class EvidenceSwiftAdapter implements IEvidenceAdapter<"swift"> {
    * input, unsupported ownership, and syntax failures remain incomplete
    * findings; the invocation releases its parser regardless of the
    * materialization outcome.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, reconciles extension ownership module-wide, groups overloads into units, and attaches DocC to the reconciled owners.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

@@ -18,6 +18,14 @@ import type { IEvidenceReferenceBase } from "./IEvidenceReferenceBase";
  *   // With two selected test functions and three checklist headings, each
  *   // function owes three answers. Six required answers cannot be pooled into
  *   // three citations supplied by only one of the functions.
+ *
+ * @evidence contracts/common.md#principled-implementation Markdown files plus an optional checklist flag specialize the reference base for outline evidence.
+ * @evidence contracts/common.md#clear-and-simple-design Only files and checklist are added; shared policy comes from the base.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Checklist incompatibilities are validated at configuration loading rather than ignored.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains selection; each field documents rooted addresses and checklist semantics.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceMarkdownReference extends IEvidenceReferenceBase<
   "markdown",

@@ -9,6 +9,14 @@ import type { IEvidenceListItem } from "./IEvidenceListItem";
  * Inspection uses this for resolved, ambiguous, or hidden candidates. Children
  * follow explicit parent links, and fingerprints are omitted when incomplete
  * extraction cannot establish trustworthy content for the candidate.
+ *
+ * @evidence contracts/common.md#principled-implementation A candidate list item expanded with direct children, hosts and fingerprint gives inspection its local structural context.
+ * @evidence contracts/common.md#clear-and-simple-design Children are only direct explicit children; deeper structure is reached by further inspection.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fingerprint is omitted when the inventory cannot provide one rather than fabricated.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the expansion; each field documents its source and omission.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInspectedUnit {
   /**

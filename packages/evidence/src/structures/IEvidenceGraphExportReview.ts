@@ -8,6 +8,14 @@ import type { IEvidenceReview } from "./IEvidenceReview";
  * Target-resolution candidates become endpoints even when the result is
  * ambiguous. The status describes identity lookup, not review freshness or
  * successful pairing; no review relation creates coverage by itself.
+ *
+ * @evidence contracts/common.md#principled-implementation Reviews are exported as their own relation with resolution status, so validation never appears as a coverage edge.
+ * @evidence contracts/common.md#clear-and-simple-design The relation references boundary and nodes by ID instead of embedding them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolved reviews keep their status rather than being dropped from export.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains why reviews are separate from acknowledgement edges; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphExportReview {
   /**

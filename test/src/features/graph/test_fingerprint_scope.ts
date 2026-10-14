@@ -44,6 +44,11 @@ import { EvidenceTestGraph } from "../../internal/EvidenceTestGraph";
  *    change again, proving hidden descendants remain part of reviewed content.
  * 8. Edit only an HTML-comment annotation inside a generated-anchor heading and
  *    require its public identity and fingerprint to remain stable.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Computes scope fingerprints over Markdown and TypeScript edits and evaluates requireReview on a shifted document, asserting digests, ranges and graph results.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational (stable versus changed across controlled edits) and follow the documented fingerprint contract, not recorded hash values.
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested edits, shifting prose and accepted metadata, prose after HTML comments, unrelated siblings, identity rebinding, withdrawal of a member, edits to a withdrawn member, and annotation-only edits in generated-anchor headings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_fingerprint_scope is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_fingerprint_scope(): Promise<void> {
   const markdown = dedent`

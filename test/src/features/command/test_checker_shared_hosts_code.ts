@@ -31,6 +31,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 5. Mistype a Prisma model so that neither schema contains it and require both
  *    claims to report the missing member instead of letting either claim own
  *    it.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks TypeScript and Prisma claims sharing host files and asserts exit codes and that each claim reports only its own citations and missing acknowledgements.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the documented ownership rule: a claim owns a citation its references resolve, and a citation no claim accepts fails in every claim.
+ * @evidence contracts/testing.md#distinguishing-cases Covers clean ownership, both citations removed, a citation to an unselected existing file, a nonexistent file, and a mistyped Prisma model across two schemas. The Markdown variant is test_checker_shared_hosts_markdown.
+ * @evidence contracts/testing.md#execution-ownership The exported test_checker_shared_hosts_code is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_checker_shared_hosts_code(): Promise<void> {
   const location = join(__dirname, `shared hosts code ${randomUUID()}`);

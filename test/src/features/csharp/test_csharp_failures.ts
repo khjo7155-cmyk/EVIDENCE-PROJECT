@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Analyze malformed and otherwise unsupported C# forms that prevent static
  *    ownership.
  * 3. Require every affected inventory to be incomplete with a diagnostic.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes conflicting partials, preprocessor-separated declarations, malformed and unsupported C# and asserts incomplete inventories with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented C# boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers conflicting partial accessibility and forms, declaration-position conditionals, syntax errors and other forms that prevent static ownership.
+ * @evidence contracts/testing.md#execution-ownership The exported test_csharp_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_csharp_failures(): Promise<void> {
   const adapter = new EvidenceCSharpAdapter();

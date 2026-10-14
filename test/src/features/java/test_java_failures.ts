@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze uncertain Java source.
  * 2. Require incompleteness and diagnostics.
  * 3. Preserve source-boundary behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Java with syntax errors, conflicting identities and unreadable input and asserts incomplete inventories with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Java boundary (source visibility, no annotation processing).
+ * @evidence contracts/testing.md#distinguishing-cases Covers parse errors, duplicate non-method identities and unreadable selected sources; module-info and generated sources keep their documented behavior.
+ * @evidence contracts/testing.md#execution-ownership The exported test_java_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_java_failures(): Promise<void> {
   const adapter = new EvidenceJavaAdapter();

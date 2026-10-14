@@ -31,17 +31,17 @@ catalogs:
       version: 0.27.0
   typescript:
     '@ttsc/evidence':
-      specifier: ^0.30.1
-      version: 0.30.1
+      specifier: ^0.32.1
+      version: 0.32.1
     '@ttsc/lint':
-      specifier: ^0.30.1
-      version: 0.30.1
+      specifier: ^0.32.1
+      version: 0.32.1
     prettier:
       specifier: ^3.9.6
       version: 3.9.6
     ttsc:
-      specifier: ^0.30.1
-      version: 0.30.1
+      specifier: ^0.32.1
+      version: 0.32.1
     typescript:
       specifier: ^7.0.2
       version: 7.0.2
@@ -83,16 +83,16 @@ importers:
     devDependencies:
       '@ttsc/evidence':
         specifier: catalog:typescript
-        version: 0.30.1(@ttsc/lint@0.30.1)
+        version: 0.32.1(@ttsc/lint@0.32.1)
       '@ttsc/lint':
         specifier: catalog:typescript
-        version: 0.30.1
+        version: 0.32.1
       '@types/node':
         specifier: catalog:utils
         version: 22.20.2
       ttsc:
         specifier: catalog:typescript
-        version: 0.30.1
+        version: 0.32.1
       typescript:
         specifier: catalog:typescript
         version: 7.0.2
@@ -119,7 +119,7 @@ importers:
         version: typescript@6.0.3
       typia:
         specifier: catalog:samchon
-        version: 15.1.0(ttsc@0.30.1)
+        version: 15.1.0(ttsc@0.32.1)
       web-tree-sitter:
         specifier: catalog:tree-sitter
         version: 0.27.0
@@ -129,16 +129,16 @@ importers:
     devDependencies:
       '@ttsc/evidence':
         specifier: catalog:typescript
-        version: 0.30.1(@ttsc/lint@0.30.1)
+        version: 0.32.1(@ttsc/lint@0.32.1)
       '@ttsc/lint':
         specifier: catalog:typescript
-        version: 0.30.1
+        version: 0.32.1
       rimraf:
         specifier: catalog:utils
         version: 6.1.3
       ttsc:
         specifier: catalog:typescript
-        version: 0.30.1
+        version: 0.32.1
       typescript:
         specifier: catalog:typescript
         version: 7.0.2
@@ -154,10 +154,10 @@ importers:
     devDependencies:
       '@ttsc/evidence':
         specifier: catalog:typescript
-        version: 0.30.1(@ttsc/lint@0.30.1)
+        version: 0.32.1(@ttsc/lint@0.32.1)
       '@ttsc/lint':
         specifier: catalog:typescript
-        version: 0.30.1
+        version: 0.32.1
       '@types/node':
         specifier: catalog:utils
         version: 22.20.2
@@ -166,13 +166,13 @@ importers:
         version: 15.1.0
       ttsc:
         specifier: catalog:typescript
-        version: 0.30.1
+        version: 0.32.1
       typescript:
         specifier: catalog:typescript
         version: 7.0.2
       typia:
         specifier: catalog:samchon
-        version: 15.1.0(ttsc@0.30.1)
+        version: 15.1.0(ttsc@0.32.1)
 
 packages:
 
@@ -254,46 +254,46 @@ packages:
       svelte:
         optional: true
 
-  '@ttsc/darwin-arm64@0.30.1':
-    resolution: {integrity: sha512-NiCw7g3XbODbAVip0y3RV0hvHEM9s8zTJZTsDn1yDHpt7cL799PtRp+Fz6Z3xHCBabRWF3FiOoifnO4/uJCl0Q==}
+  '@ttsc/darwin-arm64@0.32.1':
+    resolution: {integrity: sha512-eb5KDJCu/LbBqwv1fCDBWggWMCqZ+izSA0wgSOlkGdWqdqSZls7U+xPoN6pKcfl7fU8GjEg7kWeNnpaMeyLygw==}
     cpu: [arm64]
     os: [darwin]
 
-  '@ttsc/darwin-x64@0.30.1':
-    resolution: {integrity: sha512-DT6Yj5Tw9pR4PMGRbPS/bONDkvJ4TrJQ+g84Cyy+z9ShvvrICA2AsHD9hHXuN6agN7b0lmRRAaGf18l+1KsRTw==}
+  '@ttsc/darwin-x64@0.32.1':
+    resolution: {integrity: sha512-YeNizoUm3skvUFZ0hFvieI33djpNqAUqBOWCjI/QM0wClYfnbAQ1OMyOW23pfGzKMCU0uKVUpQ76UniA9ruXqQ==}
     cpu: [x64]
     os: [darwin]
 
-  '@ttsc/evidence@0.30.1':
-    resolution: {integrity: sha512-55+I9QgA//FRJrGiEVx+EWjQwL4jYgqX5Cr0oE1u3f/MVXzSsemEj7EMscnLr+tYEw5zgxTNlr3U76M/FjJcbg==}
+  '@ttsc/evidence@0.32.1':
+    resolution: {integrity: sha512-rRzyJ5D3JKO2eoYpAip+mWVAF5zkF3GHxOT5bMMc0GfrX/yjqyeZ+TcefSkV59dtJXmReQanFpLcGwSfDyHrkw==}
     peerDependencies:
-      '@ttsc/lint': '>0.28.6'
+      '@ttsc/lint': '>=0.31.0'
 
-  '@ttsc/lint@0.30.1':
-    resolution: {integrity: sha512-qCNxvUDizEm/RpMeTejtVMBWKFoOvAbh1FvlobydLuoIeniqaiZT0PltwSJ2hvSM83Aa2IyGYvA+1OylxdFifQ==}
+  '@ttsc/lint@0.32.1':
+    resolution: {integrity: sha512-2fK65wjHDBpZ1tDpdR+JoYsXTij75h5KpPKP2nDuGj5gr55o4Ih/7S1fs+DB7tdHOvhSxgXJfKmv2LHzd8RKOw==}
 
-  '@ttsc/linux-arm64@0.30.1':
-    resolution: {integrity: sha512-Gnlta91pz8VtMyQm8Kgo1/cpZY0EEJWaVsyMhdaVuY05Ew7rV4qE2FnW7J1/XMEVbBNEYMR8oZq4fSHVGWE7Rg==}
+  '@ttsc/linux-arm64@0.32.1':
+    resolution: {integrity: sha512-yiUp82m9cAlW1/JGkJmtj+fut6UQiIRO/wCiMM/YzvKJaEmz1WPQjpSNU0ffmaucSeOEnNMxuPC2tttsfaxgNw==}
     cpu: [arm64]
     os: [linux]
 
-  '@ttsc/linux-arm@0.30.1':
-    resolution: {integrity: sha512-EFfD+1nIKk50VsmhPBTjjYOkug5ulkrB1MDZBS+pI4KL0kCk+dsjrA4GmvfdF9LMpRDfZ+x71Dh3GSu+64i0fQ==}
+  '@ttsc/linux-arm@0.32.1':
+    resolution: {integrity: sha512-YmvVPKnocJVOl/26OaRG2CcC2iLcSLQ4WpE0hVUD8rC3C+l7Dxv/A5ZNKXCzBOMjVvxM4PpU68Ww9pjVzHnQSQ==}
     cpu: [arm]
     os: [linux]
 
-  '@ttsc/linux-x64@0.30.1':
-    resolution: {integrity: sha512-dW8m/4nVHycFIlzQSBwXqGligh8R/exjQwuaP9abdJNISvm4iBcVQngbnqKikv7vgAWy4+ezm42QS+62qKCgBQ==}
+  '@ttsc/linux-x64@0.32.1':
+    resolution: {integrity: sha512-QzfTJRkpEFO7P5YfsghCoS61cmztVMF/Ga47AcWrv5NbBL1KSXMdKQdLz9VUw6MWLP81Lo4imSW594Gvp/sxDQ==}
     cpu: [x64]
     os: [linux]
 
-  '@ttsc/win32-arm64@0.30.1':
-    resolution: {integrity: sha512-zZGEh0Rd9PRcdsAyrVKKRTRzhlb7GqI2B1+lqwud0Jk6FIUfFYgBChfIxtqsxsNtBLwsyiEdDtLFMBB8m/5M1Q==}
+  '@ttsc/win32-arm64@0.32.1':
+    resolution: {integrity: sha512-l01Rru1o/GR6rYVGtbrVC4NT3bsysTTirCZHzU+YaXB08HDTDopMkb15YIrXMVlUQtu5ykHdcu+UdtTWuFMv7Q==}
     cpu: [arm64]
     os: [win32]
 
-  '@ttsc/win32-x64@0.30.1':
-    resolution: {integrity: sha512-+zn4uYNJWq0wPoixyGJrLh5/RWRHCMOywcOnak8dno4xEk6HitUpe/HR5tipnV2hoB2PGBoC6UZsHe+116mIkw==}
+  '@ttsc/win32-x64@0.32.1':
+    resolution: {integrity: sha512-WMqGC0hEVFkrTb//sEduZiSdCbzfwZ7WL/EubMp+gwTWvFWooaaAAo9Uh0oO4VjCF/tiXK/+ShyycR4LzoE19g==}
     cpu: [x64]
     os: [win32]
 
@@ -432,14 +432,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@typia/interface@14.0.6':
-    resolution: {integrity: sha512-Ct4cW8vt1OfZNFlRBrVFeWZZrM/KvNUg4bmeIU4amXgYYp1sZkY71h+6GdrL+ApdF0KNnRxZ92hrrlbDodsjNg==}
-
   '@typia/interface@15.1.0':
     resolution: {integrity: sha512-kiKKWTAmJ8x48eUAkzTwH4AsX3CSe5AcsxGUkzkOqhqwlklxUWIACw93DXTr2F5aDIse3YBExJerWdgURsring==}
-
-  '@typia/utils@14.0.6':
-    resolution: {integrity: sha512-g1LLQiOdPNyFR6dEQKsaa8HQnpZAAW+XAG0tVQ3/fVCARR5n4Yn59jBSI1UcNEv4F9DaM7vzHZi0b4iS+liajw==}
 
   '@typia/utils@15.1.0':
     resolution: {integrity: sha512-9NLCbKI2rQOA4M9EbEx0HwXfKIUIdkvO2J+6mZQttx2CBfiIspgt0VdJSvmD0hqMKa6LvDdmeBKl13wTizVGog==}
@@ -522,6 +516,11 @@ packages:
     peerDependenciesMeta:
       picomatch:
         optional: true
+
+  fsevents@2.3.3:
+    resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
+    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
+    os: [darwin]
 
   glob@13.0.6:
     resolution: {integrity: sha512-Wjlyrolmm8uDpm/ogGyXZXb1Z+Ca2B8NbJwqBVg0axK9GbBeoS7yGV6vjXnYdGm6X53iehEuxxbyiKp8QmN4Vw==}
@@ -697,8 +696,8 @@ packages:
   tstl@3.0.0:
     resolution: {integrity: sha512-pR83y6/tbJx6jeGRqGJXk2t/eCUynaHEE6zsOLB0Zga8ej61LXtPfoeiROdhezpoCT15+1QMbqKB1Um5kasSKg==}
 
-  ttsc@0.30.1:
-    resolution: {integrity: sha512-z8OuL+3WZv7jgsgvt7eLnMSNtVjSGXFE2F4tZCTDIL5NXzR7mZKGpog6/6Re0pjsaZe4gxpj9T/y+e8JEswSdw==}
+  ttsc@0.32.1:
+    resolution: {integrity: sha512-rwgKLpyOX73nykI/nrshZgHvJ0w+WAZVt9r0zBLrXO6XxEPuP6B9CoX7OtUO8cjLT5Nt2oDqcoyw7LvxkFGXIg==}
     engines: {node: '>=22.15.0'}
     hasBin: true
 
@@ -829,35 +828,35 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@ttsc/darwin-arm64@0.30.1':
+  '@ttsc/darwin-arm64@0.32.1':
     optional: true
 
-  '@ttsc/darwin-x64@0.30.1':
+  '@ttsc/darwin-x64@0.32.1':
     optional: true
 
-  '@ttsc/evidence@0.30.1(@ttsc/lint@0.30.1)':
+  '@ttsc/evidence@0.32.1(@ttsc/lint@0.32.1)':
     dependencies:
       '@prisma/prisma-schema-wasm': 7.10.0-2.d0368e25c88e68caa4d283b5f2d88d1b76ed9356
-      '@ttsc/lint': 0.30.1
-      '@typia/interface': 14.0.6
-      '@typia/utils': 14.0.6
+      '@ttsc/lint': 0.32.1
+      '@typia/interface': 15.1.0
+      '@typia/utils': 15.1.0
       yaml: 2.9.0
 
-  '@ttsc/lint@0.30.1': {}
+  '@ttsc/lint@0.32.1': {}
 
-  '@ttsc/linux-arm64@0.30.1':
+  '@ttsc/linux-arm64@0.32.1':
     optional: true
 
-  '@ttsc/linux-arm@0.30.1':
+  '@ttsc/linux-arm@0.32.1':
     optional: true
 
-  '@ttsc/linux-x64@0.30.1':
+  '@ttsc/linux-x64@0.32.1':
     optional: true
 
-  '@ttsc/win32-arm64@0.30.1':
+  '@ttsc/win32-arm64@0.32.1':
     optional: true
 
-  '@ttsc/win32-x64@0.30.1':
+  '@ttsc/win32-x64@0.32.1':
     optional: true
 
   '@types/debug@4.1.13':
@@ -936,13 +935,7 @@ snapshots:
   '@typescript/typescript-win32-x64@7.0.2':
     optional: true
 
-  '@typia/interface@14.0.6': {}
-
   '@typia/interface@15.1.0': {}
-
-  '@typia/utils@14.0.6':
-    dependencies:
-      '@typia/interface': 14.0.6
 
   '@typia/utils@15.1.0':
     dependencies:
@@ -1007,6 +1000,9 @@ snapshots:
   fdir@6.5.0(picomatch@4.0.7):
     optionalDependencies:
       picomatch: 4.0.7
+
+  fsevents@2.3.3:
+    optional: true
 
   glob@13.0.6:
     dependencies:
@@ -1247,18 +1243,19 @@ snapshots:
 
   tstl@3.0.0: {}
 
-  ttsc@0.30.1:
+  ttsc@0.32.1:
     dependencies:
       acorn: 8.16.0
       cjs-module-lexer: 2.2.1
     optionalDependencies:
-      '@ttsc/darwin-arm64': 0.30.1
-      '@ttsc/darwin-x64': 0.30.1
-      '@ttsc/linux-arm': 0.30.1
-      '@ttsc/linux-arm64': 0.30.1
-      '@ttsc/linux-x64': 0.30.1
-      '@ttsc/win32-arm64': 0.30.1
-      '@ttsc/win32-x64': 0.30.1
+      '@ttsc/darwin-arm64': 0.32.1
+      '@ttsc/darwin-x64': 0.32.1
+      '@ttsc/linux-arm': 0.32.1
+      '@ttsc/linux-arm64': 0.32.1
+      '@ttsc/linux-x64': 0.32.1
+      '@ttsc/win32-arm64': 0.32.1
+      '@ttsc/win32-x64': 0.32.1
+      fsevents: 2.3.3
 
   typescript@6.0.3: {}
 
@@ -1285,13 +1282,13 @@ snapshots:
       '@typescript/typescript-win32-arm64': 7.0.2
       '@typescript/typescript-win32-x64': 7.0.2
 
-  typia@15.1.0(ttsc@0.30.1):
+  typia@15.1.0(ttsc@0.32.1):
     dependencies:
       '@typia/interface': 15.1.0
       '@typia/utils': 15.1.0
       randexp: 0.5.3
     optionalDependencies:
-      ttsc: 0.30.1
+      ttsc: 0.32.1
 
   unconfig-core@7.5.0:
     dependencies:

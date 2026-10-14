@@ -1,11 +1,11 @@
 ---
 name: contracts
-description: Defines the @evidence checklists every maintained evidence declaration and test answers, and their Evidence configuration wiring. Use when writing or reviewing maintained source or tests, or changing Evidence selection.
+description: Defines the @evidence checklists every maintained evidence declaration and test answers, and their lint.config.ts wiring. Use when writing or reviewing maintained source or tests, or changing Evidence selection.
 ---
 
 # Contracts
 
-Each checklist H2 is a question that every selected declaration answers in its doc comment. A package's Evidence configuration selects the checklists; the Evidence check verifies that answers exist, and [review](../review/SKILL.md) checks that they are true and complete.
+Each checklist H2 is a question that every selected declaration answers in its doc comment. Each workspace's `lint.config.ts` selects the checklists through the `@ttsc/evidence` rule `evidence/graph`; `ttsc` reports every unanswered item as a compile error, and [review](../review/SKILL.md) checks that the answers are true and complete.
 
 | Checklist | Asks about |
 | --- | --- |
@@ -22,8 +22,9 @@ Each checklist H2 is a question that every selected declaration answers in its d
 
 ## Selection
 
-- The Evidence CLI's `list` and `inspect '<target>'` show what a selector reaches.
-- For a declaration the adapter cannot address, keep its native doc comment and place its checklist answers and tags on the nearest supported owner shown by `list` and `inspect`.
+- `packages/evidence` selects production `type` and `function` declarations against `common.md` and `performance.md`; `test` selects `test_*` functions against `testing.md`.
+- A selector that reaches nothing reports no error. After changing one, remove a single answer and confirm `ttsc` reports that host.
+- For a declaration the adapter cannot address, keep its native doc comment and place its checklist answers and tags on the nearest supported owner the diagnostics name.
 - Exclude only generated, copied, or dependency material with verified provenance, and omit a pure re-export barrel whose targets span disjoint claims.
 - Never narrow a selector or lower a severity to pass the check.
 - Record entries the adapter cannot address, such as anonymous callbacks or dynamic registrations, for [review](../review/SKILL.md).

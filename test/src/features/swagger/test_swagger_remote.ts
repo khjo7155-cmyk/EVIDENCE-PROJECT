@@ -14,6 +14,11 @@ import { join } from "node:path";
  * 1. Serve valid, failing, and oversized document responses.
  * 2. Analyze each remote source.
  * 3. Verify complete success only for the bounded valid response.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Serves valid, failing and oversized Swagger documents from a loopback HTTP server and asserts inventories for each remote source.
+ * @evidence contracts/testing.md#independent-expectations Expected outcomes follow the bounded remote-loading contract: only the valid bounded response completes.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a valid document, an HTTP failure and an oversized response.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_remote is discovered by DynamicExecutor and calls maintained source in-process; its only server is an in-process node:http listener on 127.0.0.1, and it installs nothing and spawns no CLI.
  */
 export async function test_swagger_remote(): Promise<void> {
   let requests = 0;

@@ -21,6 +21,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 4. Alter the line coordinate of a duplicate content range while keeping its
  *    offset and require incomplete analysis rather than deduplicating away the
  *    conflict.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Merges matching inventories in both orders and asserts identical serialization, retained records and coordinate conflicts.
+ * @evidence contracts/testing.md#independent-expectations Order independence and the retained counts are derived from the fixture; a coordinate conflict must make the result incomplete.
+ * @evidence contracts/testing.md#distinguishing-cases Covers reviews, tag diagnostics, aliases, repeated ranges, dependency-only copies, and a conflicting duplicate range.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_serialization is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_serialization(): Promise<void> {
   const input = EvidenceTestInventory.create();

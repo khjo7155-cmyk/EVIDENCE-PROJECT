@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze dynamic exports. 2. Require incompleteness. 3. Analyze a fresh static
  *    snapshot and require recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes dynamic Lua exports and then static source, asserting incompleteness and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expected outcomes follow the adapter's static module convention.
+ * @evidence contracts/testing.md#distinguishing-cases Covers dynamic module publication and recovery on a fresh static snapshot.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_lua_boundaries(): Promise<void> {
   const adapter = new EvidenceLuaAdapter();

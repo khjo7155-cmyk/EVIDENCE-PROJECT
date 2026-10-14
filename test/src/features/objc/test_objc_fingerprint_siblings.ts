@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze sibling declarations with separate cited units.
  * 2. Edit each sibling independently.
  * 3. Verify only the affected unit's fingerprint changes.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes sibling Objective-C declarations and asserts that editing one changes only its own fingerprint.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational across independent sibling edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers edits to each sibling.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_fingerprint_siblings is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_fingerprint_siblings(): Promise<void> {
   const source = dedent`

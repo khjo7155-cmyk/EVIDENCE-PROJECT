@@ -4,6 +4,14 @@
  * This supports lifecycle inspection without allocating a parser or loading a
  * grammar. Closing prevents new admission before accepted work finishes, so a
  * closed runtime can temporarily retain active sessions and queued requests.
+ *
+ * @evidence contracts/common.md#principled-implementation Active, waiting, loaded languages and closed state give a point-in-time view without acquiring resources.
+ * @evidence contracts/common.md#clear-and-simple-design The record is a snapshot; it does not expose internal queues.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Reading state does not wait for parses or acquire assets.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the snapshot; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceParserState {
   /**

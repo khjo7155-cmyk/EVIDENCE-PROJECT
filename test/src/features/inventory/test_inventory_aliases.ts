@@ -21,6 +21,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 3. Publish the second identity under the same address and require ambiguity.
  * 4. Clear the caller's input, a returned population, and a returned snapshot; the
  *    previously constructed index must still select the original class.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds EvidenceInventory instances and asserts selection, alias resolution, missing paths, ambiguity and isolation from caller mutation.
+ * @evidence contracts/testing.md#independent-expectations Expected units and statuses come from the fixture's declared addresses.
+ * @evidence contracts/testing.md#distinguishing-cases Covers duplicated input, a renamed export, an absent file, a case-changed filename, a competing identity at one address, and mutation of inputs and outputs.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_aliases is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_aliases(): Promise<void> {
   const input = EvidenceTestInventory.create();

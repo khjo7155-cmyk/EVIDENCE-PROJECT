@@ -7,6 +7,14 @@ import type { IEvidenceSupportedLanguage } from "./IEvidenceSupportedLanguage";
  * This report requires no project analysis or grammar initialization. It
  * excludes grammar-only candidates and exposes each shipped adapter's
  * selectors, public surface, documentation forms, and unsupported boundaries.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned catalog lists programming and database entries with certified adapters and their total.
+ * @evidence contracts/common.md#clear-and-simple-design Entries reuse the supported-language interfaces instead of a separate report shape.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only certified entries appear; candidates are excluded.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the catalog; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLanguagesReport {
   /**

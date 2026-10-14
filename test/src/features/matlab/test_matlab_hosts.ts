@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    placements.
  * 2. Verify the exact eligible targets, UTF-16 positions, and withdrawal handling.
  * 3. Compare fingerprints after documentation-only and semantic edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF MATLAB help in competing placements and asserts targets, UTF-16 positions, withdrawals and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected positions are computed by hand; fingerprint expectations are relational across documentation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers preceding and inline help, executable comments, examples, blocks and strings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_matlab_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_matlab_hosts(): Promise<void> {
   const content = dedent`

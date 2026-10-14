@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze reordered extensions and owners.
  * 2. Verify ownership, dependencies, and rejected boundaries.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Swift extensions and owners in reordered sources and asserts ownership, dependencies, fingerprints and rejected boundaries.
+ * @evidence contracts/testing.md#independent-expectations Expected ownership follows Swift extension semantics; order independence is an independent property.
+ * @evidence contracts/testing.md#distinguishing-cases Covers reordered extensions, protocol implementation ownership and unsupported ownership boundaries.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_extension_ownership is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_extension_ownership(): Promise<void> {
   const sources = [

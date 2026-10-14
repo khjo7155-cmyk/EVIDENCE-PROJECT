@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze unsupported and malformed schema variants.
  * 2. Require each result to be incomplete with its boundary diagnostic.
  * 3. Verify failed snapshots and wrong extensions remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes unsupported and malformed MySQL schema variants, failed snapshots and wrong extensions and asserts incompleteness with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented MySQL boundary (no server state).
+ * @evidence contracts/testing.md#distinguishing-cases Covers dialect-dependent options, migration state, executable comments, invalid names, failed snapshots and wrong extensions.
+ * @evidence contracts/testing.md#execution-ownership The exported test_mysql_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_mysql_boundaries(): Promise<void> {
   const adapter = new EvidenceMysqlAdapter();

@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze eligible and ineligible descriptions.
  * 2. Verify extracted targets, coordinates, and host diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Swagger descriptions on operations and unrelated document nodes and asserts extracted targets, coordinates and host diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts follow the rule that only operation descriptions acknowledge operations.
+ * @evidence contracts/testing.md#distinguishing-cases Covers eligible operation descriptions and tagged descriptions on unrelated nodes.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swagger_hosts(): Promise<void> {
   const inventory = await new EvidenceSwaggerAdapter().analyze(

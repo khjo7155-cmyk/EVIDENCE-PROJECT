@@ -40,6 +40,14 @@ import type { IEvidenceWithdrawal } from "../structures/IEvidenceWithdrawal";
  *     [methodId],
  *   );
  *   // Client may resolve as an aggregate owner while only its method is required.
+ *
+ * @evidence contracts/common.md#principled-implementation Construction asserts the input shape with typia, merges inventories, validates source ranges, sites, parents, cycles, addresses and hosts against the original text, caches inherited withdrawals per unit, and normalizes ordering.
+ * @evidence contracts/common.md#clear-and-simple-design The class owns reconciliation, validation, selection and exact address resolution; merging and canonical keys come from EvidenceInventoryMerge.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Semantic contradictions become diagnostics that mark the inventory incomplete instead of disappearing from the denominator.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains construction, selection, resolution and ownership of results with an example; every public and private member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Construction is linear in records with map lookups, plus one line index per source for range validation; inherited withdrawals are computed once per unit.
+ * @evidence contracts/performance.md#reuse-equivalent-work Unit and withdrawal maps are built once; resolution adds a lazily built address index and caches each selection's visible and hidden scopes per ID array, so repeated citations against one reference reuse that work.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The index owns a cloned copy of its inputs and plain maps; the address index is one entry per public address, scope caches are keyed weakly by the caller's ID arrays with one copied array per entry, and everything is released with the index.
  */
 export class EvidenceInventory {
   /**
@@ -69,6 +77,38 @@ export class EvidenceInventory {
   private readonly withdrawals = new Map<string, IEvidenceWithdrawal[]>();
 
   /**
+   * Unit IDs grouped by public address, keyed by file and serialized segments.
+   *
+   * Built on first resolution from the normalized addresses so each lookup is a
+   * map access instead of a scan of every address.
+   */
+  private addressIndex: Map<string, string[]> | undefined;
+
+  /**
+   * Position of each unit in the normalized unit order.
+   *
+   * Resolution sorts matches by it so results keep the deterministic order a
+   * full scan would produce.
+   */
+  private unitOrder: Map<string, number> | undefined;
+
+  /**
+   * Visible and hidden structural scopes computed for one selected ID array.
+   *
+   * A reference resolves many citations against the same selection, so the
+   * scopes are cached by array identity and dropped with the caller's array.
+   * Each entry keeps a copy of the IDs it was computed from; a caller that
+   * mutates its array between calls fails the comparison and recomputes.
+   */
+  private readonly scopeCache = new WeakMap<
+    string[],
+    {
+      ids: string[];
+      scopes: readonly [ReadonlySet<string>, ReadonlySet<string>];
+    }
+  >();
+
+  /**
    * Captures, reconciles, and validates one or more adapter inventories.
    *
    * Shape validation rejects malformed input. Semantic inconsistencies become
@@ -90,6 +130,14 @@ export class EvidenceInventory {
    * The copy includes diagnostics and incomplete records. Callers may inspect
    * or mutate it without changing future selections or resolutions on this
    * index.
+   *
+   * @evidence contracts/common.md#principled-implementation A structured clone of the reconciled data, including diagnostics and incomplete records, is returned.
+   * @evidence contracts/common.md#clear-and-simple-design Snapshot only copies.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts The copy protects the index from caller mutation.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the copy and what it includes.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in inventory size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each caller receives an independent copy by design.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The copy is owned by the caller.
    */
   public snapshot(): IEvidenceInventory {
     return structuredClone(this.data);
@@ -101,6 +149,14 @@ export class EvidenceInventory {
    * Construction has already reconciled and sorted the collections. Serializing
    * therefore preserves deterministic output without changing selection state
    * or requiring callers to normalize a snapshot themselves.
+   *
+   * @evidence contracts/common.md#principled-implementation typia's JSON serializer writes the already normalized data in schema order.
+   * @evidence contracts/common.md#clear-and-simple-design Serialization relies on construction-time normalization.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No ordering is recomputed or altered here.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains determinism.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in inventory size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Serialization is requested once per output.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The string is owned by the caller.
    */
   public serialize(): string {
     return typia.json.stringify(this.data);
@@ -118,6 +174,14 @@ export class EvidenceInventory {
    * @example
    *   // Selecting a method retains its class as a resolvable aggregate scope.
    *   // The class does not become an extra required unit unless its ID is selected.
+   *
+   * @evidence contracts/common.md#principled-implementation Requested IDs are validated, their ancestor closure kept for explanations, withdrawn units removed, visible scopes rebuilt from surviving units, and attached hosts narrowed to selected owners.
+   * @evidence contracts/common.md#clear-and-simple-design Selection uses the private ancestor and hidden helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unknown IDs throw instead of producing an empty population, and owners of only withdrawn units do not re-enter as scopes.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains units, scopes and hosts with an example; inline comments explain closure and scope rules.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in units and hosts plus ancestor walks of the requested IDs.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the precomputed unit and withdrawal maps.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned population is a clone owned by the caller.
    */
   public select(ids: string[]): IEvidencePopulation {
     const requested = new Set(ids);
@@ -170,29 +234,26 @@ export class EvidenceInventory {
    * locations. Incomplete inventory takes precedence over all apparent matches
    * because missing extraction may hide another candidate or invalidate the
    * population.
+   *
+   * @evidence contracts/common.md#principled-implementation The exact file and segments are matched against public addresses within the selected population's visible and hidden scopes, deduplicating aliases by unit ID.
+   * @evidence contracts/common.md#clear-and-simple-design Resolution uses the cached selection scopes, the address index and the withdrawal map; select remains the owner of population projection.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Incompleteness takes precedence over any apparent match, and several distinct units are ambiguous rather than arbitrarily chosen.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains alias deduplication, withdrawal and incompleteness precedence.
+   * @evidence contracts/performance.md#efficient-algorithms After the first call per selection, a resolution costs a linear comparison of the ID array against the cached copy, one map lookup and sorting its few matches; computing a selection's scopes is linear in units, once per ID array.
+   * @evidence contracts/performance.md#reuse-equivalent-work Selection scopes are reused for every citation resolved against the same ID array, and the address index is shared by all resolutions.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned resolution is a clone owned by the caller.
    */
   public resolve(
     address: IEvidenceAddress,
     ids: string[],
   ): IEvidenceResolution {
-    const population = this.select(ids);
-    const visible = new Set(population.scopes.map((unit) => unit.id));
-    const hidden = new Set(population.hidden.map((unit) => unit.id));
-    const matching = new Set(
-      this.data.addresses
-        .filter(
-          (candidate) =>
-            candidate.file === address.file &&
-            JSON.stringify(candidate.segments) ===
-              JSON.stringify(address.segments),
-        )
-        .map((candidate) => candidate.unitId),
+    const [visible, hidden] = this.scopes(ids);
+    const matching: IEvidenceUnit[] = this.matches(address);
+    const found: IEvidenceUnit[] = matching.filter((unit) =>
+      visible.has(unit.id),
     );
-    const found = this.data.units.filter(
-      (unit) => matching.has(unit.id) && visible.has(unit.id),
-    );
-    const withdrawn = this.data.units.filter(
-      (unit) => matching.has(unit.id) && hidden.has(unit.id),
+    const withdrawn: IEvidenceUnit[] = matching.filter((unit) =>
+      hidden.has(unit.id),
     );
     // A partial inventory cannot prove uniqueness or absence. Preserve that
     // uncertainty before choosing resolved, ambiguous, hidden, or missing.
@@ -212,6 +273,84 @@ export class EvidenceInventory {
         (value) => typia.json.stringify(value),
       ),
     });
+  }
+
+  /**
+   * Returns the visible and hidden structural scopes of a selection.
+   *
+   * This mirrors select without cloning: visible scopes are the ancestors of
+   * requested units that are not withdrawn, and hidden units are withdrawn
+   * members of the requested units' ancestry. Unknown IDs throw like select.
+   */
+  private scopes(
+    ids: string[],
+  ): readonly [ReadonlySet<string>, ReadonlySet<string>] {
+    const cached = this.scopeCache.get(ids);
+    if (
+      cached !== undefined &&
+      cached.ids.length === ids.length &&
+      cached.ids.every(
+        (id: string, index: number): boolean => id === ids[index],
+      )
+    )
+      return cached.scopes;
+    const closure: Set<string> = new Set<string>();
+    const visible: Set<string> = new Set<string>();
+    for (const id of new Set(ids)) {
+      if (!this.units.has(id))
+        throw new Error(`Unknown selected semantic identity: ${id}`);
+      const ancestors: IEvidenceUnit[] = this.ancestors(id);
+      for (const ancestor of ancestors) closure.add(ancestor.id);
+      if (!this.hidden(id))
+        for (const ancestor of ancestors) visible.add(ancestor.id);
+    }
+    const hidden: Set<string> = new Set(
+      [...closure].filter((id: string): boolean => this.hidden(id)),
+    );
+    const scopes = [visible, hidden] as const;
+    this.scopeCache.set(ids, { ids: [...ids], scopes });
+    return scopes;
+  }
+
+  /**
+   * Returns the units that publish an exact address, in normalized unit order.
+   *
+   * The address index and unit order are built on first use from the normalized
+   * records, which never change afterward.
+   */
+  private matches(address: IEvidenceAddress): IEvidenceUnit[] {
+    if (this.addressIndex === undefined || this.unitOrder === undefined) {
+      const index: Map<string, string[]> = new Map<string, string[]>();
+      for (const candidate of this.data.addresses) {
+        const key: string = JSON.stringify([
+          candidate.file,
+          candidate.segments,
+        ]);
+        const entries: string[] = index.get(key) ?? [];
+        if (!entries.includes(candidate.unitId)) entries.push(candidate.unitId);
+        index.set(key, entries);
+      }
+      this.addressIndex = index;
+      this.unitOrder = new Map(
+        this.data.units.map((unit: IEvidenceUnit, position: number) => [
+          unit.id,
+          position,
+        ]),
+      );
+    }
+    const order: Map<string, number> = this.unitOrder;
+    const ids: string[] =
+      this.addressIndex.get(JSON.stringify([address.file, address.segments])) ??
+      [];
+    return ids
+      .flatMap((id: string): IEvidenceUnit[] => {
+        const unit: IEvidenceUnit | undefined = this.units.get(id);
+        return unit === undefined ? [] : [unit];
+      })
+      .sort(
+        (x: IEvidenceUnit, y: IEvidenceUnit): number =>
+          (order.get(x.id) ?? 0) - (order.get(y.id) ?? 0),
+      );
   }
 
   /**

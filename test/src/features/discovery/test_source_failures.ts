@@ -23,6 +23,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    snapshot with the encoding diagnostic while retaining the valid neighbor.
  * 4. Exclude the malformed file and require the selected population to become
  *    complete because discovery does not open deliberately excluded input.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads sources with EvidenceSourceLoader in failing layouts and asserts completeness, diagnostics, dependencies and retained neighbors.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostic codes come from the discovery contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an absent pattern, a missing root, a file as root, missing and directory exact files, invalid UTF-8, and excluding the bad file.
+ * @evidence contracts/testing.md#execution-ownership The exported test_source_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_source_failures(): Promise<void> {
   const location = join(__dirname, "failures-" + randomUUID());

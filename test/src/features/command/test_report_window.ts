@@ -25,6 +25,11 @@ import typia from "typia";
  *    bound keeps a report-order prefix; both bounds compose.
  * 3. Require counts to remain complete, an omission count and text notice when
  *    findings are withheld, and an untouched report when nothing is.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses report bounds and narrows a constructed report with EvidenceReporter.narrow, asserting kept findings, counts and omission notices.
+ * @evidence contracts/testing.md#independent-expectations Expected kept findings are derived by hand from the window rules: units admitted in first-seen order, unscoped findings kept, count bound as a prefix.
+ * @evidence contracts/testing.md#distinguishing-cases Covers invalid bounds, unit-only, count-only and combined bounds, a host-only finding, an unscoped finding, and an untouched report when nothing is withheld.
+ * @evidence contracts/testing.md#execution-ownership The exported test_report_window is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_report_window(): void {
   TestValidator.equals(

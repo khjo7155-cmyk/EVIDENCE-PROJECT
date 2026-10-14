@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze Doxygen comments before supported declarations.
  * 2. Compare the resulting declarations and attached hosts.
  * 3. Require misplaced comment tags to produce unsupported-host diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C with leading and misplaced Doxygen and asserts attached hosts, declarations and unsupported-host diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the Doxygen placement rules documented for the adapter.
+ * @evidence contracts/testing.md#distinguishing-cases Covers leading Doxygen on supported declarations and tags in unsupported positions.
+ * @evidence contracts/testing.md#execution-ownership The exported test_c_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_c_hosts(): Promise<void> {
   const inventory = await new EvidenceCAdapter().analyze(

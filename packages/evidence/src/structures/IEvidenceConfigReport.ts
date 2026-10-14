@@ -10,6 +10,14 @@
  *
  * @example
  *   const report: IEvidenceConfigReport = { unit: 1, limit: 20 };
+ *
+ * @evidence contracts/common.md#principled-implementation Two optional positive bounds narrow printed diagnostics while counts and exit status still describe the whole analysis.
+ * @evidence contracts/common.md#clear-and-simple-design One shape serves configuration and command options, with command values taking priority.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Bounds trim presentation only; a narrowed report states what it withheld.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the presentation-only effect and gives an example; both bounds document their ordering rules.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceConfigReport {
   /**

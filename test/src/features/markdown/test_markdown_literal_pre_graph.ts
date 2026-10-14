@@ -32,6 +32,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    close.
  * 6. Require only the real citation to cover its target, retaining one missing
  *    requirement and exit code one.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker on Markdown claims and references containing literal and genuine pre blocks and asserts selected units, missing acknowledgements and exit codes.
+ * @evidence contracts/testing.md#independent-expectations Expected populations follow CommonMark raw-HTML rules: literals in code do not open blocks, genuine blocks hide fake headings until their close.
+ * @evidence contracts/testing.md#distinguishing-cases Covers inline pre literals, a genuine multiline pre block, and a close/open line that keeps a fake citation rendered.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_literal_pre_graph is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator. It installs nothing and spawns no CLI.
  */
 export async function test_markdown_literal_pre_graph(): Promise<void> {
   const location: string = join(__dirname, `literal pre graph ${randomUUID()}`);

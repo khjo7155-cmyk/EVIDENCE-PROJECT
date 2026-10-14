@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    - Retain the invalid alias diagnostic.
  * 3. Combine a failed source snapshot with malformed heading syntax and require
  *    incomplete status with both diagnostic classes.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Markdown with a whitespace path, invalid and valid aliases, and a failed snapshot with malformed headings, asserting units and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics follow the Markdown target grammar (no whitespace in paths) and the discovery contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an unaddressable path, mixed valid and invalid aliases, and a failed snapshot combined with parser findings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_failures(): Promise<void> {
   const adapter = new EvidenceMarkdownAdapter();

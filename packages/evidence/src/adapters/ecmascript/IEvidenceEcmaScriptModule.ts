@@ -9,6 +9,14 @@ import type { IEvidenceEcmaScriptOwnedUnit } from "./IEvidenceEcmaScriptOwnedUni
  * `EvidenceEcmaScriptExportResolver` converts scanner output into this mutable
  * graph node, then uses it to follow local declarations, imports, and re-export
  * edges while assigning public addresses to the inventory.
+ *
+ * @evidence contracts/common.md#principled-implementation Resolver state per module holds its source, units, export edges, imports and exported names for graph traversal.
+ * @evidence contracts/common.md#clear-and-simple-design The export resolver owns and mutates this state during one publication.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are filled from parsed syntax; no project, package or fixture value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceEcmaScriptModule {
   /**

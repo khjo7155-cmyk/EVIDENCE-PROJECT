@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented PHP declarations with hooks and imports.
  * 2. Apply annotation, sibling, hook, and import edits.
  * 3. Verify only semantic changes to the cited unit invalidate its review.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes documented PHP declarations with property hooks and namespace imports and compares fingerprints across annotation, sibling, hook and import edits.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational: stable for annotation and unrelated sibling edits, changed for hook and import edits that alter cited meaning.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each edit kind against the same cited unit.
+ * @evidence contracts/testing.md#execution-ownership The exported test_php_fingerprints is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_php_fingerprints(): Promise<void> {
   const content = dedent`

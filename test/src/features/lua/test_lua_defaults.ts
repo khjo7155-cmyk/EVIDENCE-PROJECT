@@ -13,6 +13,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *
  * 1. Configure a default type reference for Lua. 2. Run graph evaluation. 3.
  *    Require the empty selection to fail visibly.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker with a default type selector over Lua and asserts a visible failure.
+ * @evidence contracts/testing.md#independent-expectations Lua has no type units, so the documented expectation is an empty-reference failure rather than coverage.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the default selector producing an empty denominator.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_defaults is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator. It installs nothing and spawns no CLI.
  */
 export async function test_lua_defaults(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

@@ -22,6 +22,11 @@ import { EvidenceTestDocumentation } from "../../internal/EvidenceTestDocumentat
  *    withdrawal.
  * 6. Verify evidence and exclusion reviews stay distinct, only a shaped
  *    fingerprint is consumed, and review description prose remains intact.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses tags beside prose, fences and reviews and asserts acknowledgements, review records, fingerprints and inert examples.
+ * @evidence contracts/testing.md#independent-expectations Fence and review expectations follow CommonMark fence rules and the review grammar, written by hand from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers zero- and three-column fences, a shorter closing fence, a four-column indented delimiter, fences ending pending tags, an unclosed fence, multiline reasons, and both review kinds with and without fingerprints.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_reviews_and_fences is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_reviews_and_fences(): Promise<void> {
   const fixture = EvidenceTestDocumentation.create(dedent`

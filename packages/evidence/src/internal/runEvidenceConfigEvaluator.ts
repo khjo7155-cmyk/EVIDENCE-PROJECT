@@ -16,6 +16,14 @@ import type { IEvidenceConfigPackageScope } from "./IEvidenceConfigPackageScope"
  * Runtime dependencies arrive as parameters so the function has no enclosing
  * module state. Compiler writes and Node module loads use the same in-memory
  * output map; no project, emitted module, cache, or result file is created.
+ *
+ * @evidence contracts/common.md#principled-implementation Inside the isolated child, TypeScript's own Program type-checks the configuration graph, transpiles each source into an in-memory map, and Node's synchronous registerHooks API serves those outputs to import and require.
+ * @evidence contracts/common.md#clear-and-simple-design Runtime dependencies arrive as parameters so the function has no enclosing module state and can be embedded as source text; module format and source format are local helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No file, cache or project is written; unchecked Node type stripping is never used as a fallback.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the embedding and the in-memory output map; local helpers and hooks carry comments for format choice and resolution order.
+ * @evidence contracts/performance.md#efficient-algorithms Each newly reached TypeScript root is checked with its own Program; transpiled text is stored per real path so a module is compiled at most once per evaluation.
+ * @evidence contracts/performance.md#reuse-equivalent-work The output map reuses compiled text across import and require of the same physical file within the process.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The child process is dedicated to one evaluation; hooks are deregistered on exit and the IPC channel is disconnected in finally.
  */
 export async function runEvidenceConfigEvaluator(
   compiler: typeof ts,

@@ -28,6 +28,11 @@ import { EvidenceTestSignal } from "../../internal/EvidenceTestSignal";
  *    - Closing finishes with no active or waiting requests.
  * 4. Query a retained session after disposal and require session-closed.
  * 5. Close again and require the runtime to remain closed without failure.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Holds a callback in a one-slot parser, queues and closes, asserting active and waiting counts, propagated errors, drained work and closed sessions.
+ * @evidence contracts/testing.md#independent-expectations Expected counts and the drained identifier follow the authored request sequence.
+ * @evidence contracts/testing.md#distinguishing-cases Covers queueing, closed admission, callback failure, draining, disposed sessions and repeated close.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_lifetime is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_lifetime(): Promise<void> {
   const parser = new EvidenceParser({ concurrency: 1 });

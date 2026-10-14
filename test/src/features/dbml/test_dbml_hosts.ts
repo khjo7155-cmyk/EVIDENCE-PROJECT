@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze annotated notes and comments on supported schema declarations.
  * 2. Compare their declarations, hosts, and physical-source aliases.
  * 3. Require annotations in values and examples to remain inert.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes DBML notes and comments on schema declarations and duplicate physical aliases, asserting hosts and inert values.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the documented ownership rules for notes and comments.
+ * @evidence contracts/testing.md#distinguishing-cases Covers declaration notes, adjacent comments, values and examples that stay inert, and physical-source aliases.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_hosts(): Promise<void> {
   const source = dedent`

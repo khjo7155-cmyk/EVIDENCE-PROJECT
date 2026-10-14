@@ -10,6 +10,14 @@ import type { IEvidenceLanguageGrammar } from "./IEvidenceLanguageGrammar";
  * identity, visibility, and documentation ownership. Optional adapter metadata
  * prevents grammar availability from being advertised as certified graph
  * support.
+ *
+ * @evidence contracts/common.md#principled-implementation Grammar variants and optional certified adapter metadata separate parsing availability from Evidence extraction support.
+ * @evidence contracts/common.md#clear-and-simple-design The entry is catalog data; acquisition and extraction are elsewhere.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Adapter metadata is present only when certified.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the separation; each field documents role and omission.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLanguage {
   /**

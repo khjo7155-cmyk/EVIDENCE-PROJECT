@@ -6,6 +6,14 @@ import type { EvidencePrismaCommentForm } from "./EvidencePrismaCommentForm";
  *
  * The line scanner records text and coordinate maps separately so grouping can
  * insert line breaks without losing the original source positions.
+ *
+ * @evidence contracts/common.md#principled-implementation A pending fragment keeps text and coordinate maps until grouping into a run.
+ * @evidence contracts/common.md#clear-and-simple-design The line scanner records fragments.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are copied from parsed schema data; no schema- or project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePrismaPendingComment {
   /**

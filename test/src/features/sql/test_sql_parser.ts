@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze SQL source cold while recording asset requests.
  * 2. Verify complete extraction and SQL-only parser state.
  * 3. Analyze again offline and require equivalent inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes SQL with a cold grammar cache while recording requests, then offline, asserting requests, parser state and equal inventories.
+ * @evidence contracts/testing.md#independent-expectations Only SQL parser assets may be requested; the offline inventory must equal the cold one.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition and offline reuse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sql_parser is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sql_parser(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("sql");

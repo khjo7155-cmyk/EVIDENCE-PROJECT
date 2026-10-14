@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    their physical fields.
  * 3. Resolve existing and absent numeric targets, then compare fingerprints after
  *    review-text and field-type edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes tuple fields interleaved with comments, documentation and attributes and asserts published indexes, attachment, resolution and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected indexes follow Rust's positional fields; fingerprint expectations are relational across review-text and field-type edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers public and private fields, interleaved trivia, existing and absent numeric targets and both edit kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_tuple_comments is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_tuple_comments(): Promise<void> {
   const content = dedent`

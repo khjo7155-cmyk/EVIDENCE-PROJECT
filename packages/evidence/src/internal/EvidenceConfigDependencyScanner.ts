@@ -28,6 +28,14 @@ import { evidenceConfigModuleCandidates } from "./evidenceConfigModuleCandidates
  * It records dependencies before reads and resolution complete, allowing watch
  * mode to observe a repaired import rather than remaining stuck on a failed
  * scan.
+ *
+ * @evidence contracts/common.md#principled-implementation Static import and require specifiers are collected with the pinned Tree-sitter grammars (honoring shadowed require bindings), then resolved with Node's own algorithms: relative and file URLs, data URLs, package imports and exports with condition sets, and CommonJS main and index fallbacks.
+ * @evidence contracts/common.md#clear-and-simple-design The class owns one scan's dependency map, visited sets and private parser; specifier collection, package-map matching and validation are module helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Dependencies are recorded before reads and resolution so a failed scan still returns paths whose repair restarts watch; nothing in resolution is special-cased for particular packages.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains early recording; every field, method and module helper is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each physical module is read and parsed once; resolution costs a bounded number of stat and manifest reads per specifier.
+ * @evidence contracts/performance.md#reuse-equivalent-work Visited sets reuse completed scans of a physical file or data URL within one scan so cycles and shared modules are not reparsed.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The private single-worker parser is closed in scan's finally block; the dependency map lives only as long as the scanner.
  */
 export class EvidenceConfigDependencyScanner {
   /**
@@ -86,6 +94,14 @@ export class EvidenceConfigDependencyScanner {
    * discovered dependencies remain available through `list` for watch recovery.
    * Data configuration entries have no executable module scope and do not read
    * package metadata.
+   *
+   * @evidence contracts/common.md#principled-implementation Logical and physical entry paths and their directories are watched, the module mode is fixed from the entry, and every statically reachable module is scanned recursively.
+   * @evidence contracts/common.md#clear-and-simple-design Scan sets up the entry and delegates traversal to scanFile and resolution to resolve.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Data configuration entries skip package-scope reads so unrelated malformed metadata cannot fail JSON loading.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains resource closing, partial results for recovery, and the data-entry case.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in reachable modules plus their specifier resolutions.
+   * @evidence contracts/performance.md#reuse-equivalent-work Each physical module is scanned once per call through the visited set.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed on success and failure in finally.
    */
   public async scan(): Promise<IEvidenceSourceDependency[]> {
     try {
@@ -115,6 +131,14 @@ export class EvidenceConfigDependencyScanner {
    *
    * Watch setup uses this partial result so a repaired module or package
    * boundary can restart a failed configuration cycle.
+   *
+   * @evidence contracts/common.md#principled-implementation The dependency map is returned sorted by path so watch snapshots are deterministic.
+   * @evidence contracts/common.md#clear-and-simple-design List only exposes recorded dependencies.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Partial results after a failure are returned rather than discarded.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains its use for recovery after failed scans.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n) for n dependencies.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Listing copies the current map; nothing is recomputed.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The returned array is a fresh copy owned by the caller.
    */
   public list(): IEvidenceSourceDependency[] {
     return Array.from(this.dependencies.values()).sort((left, right) =>

@@ -10,6 +10,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze reexports crossing each root boundary.
  * 2. Require incomplete status and the corresponding diagnostic.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes TypeScript re-exports that cross logical and physical population roots and asserts incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics follow the rule that both roots bound the selected population.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a crossing of each root kind.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_root_boundary is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_root_boundary(): Promise<void> {
   const inside = EvidenceTestSourceSnapshot.create(

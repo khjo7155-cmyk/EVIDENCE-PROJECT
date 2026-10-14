@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze each unsupported or malformed source form.
  * 2. Require incomplete status and actionable diagnostics.
  * 3. Verify a source failure remains incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Objective-C with preprocessing, Objective-C++, aliases, C declarations, malformed syntax and failed snapshots and asserts incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Objective-C boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each unsupported form and a source failure.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_boundaries(): Promise<void> {
   const adapter = new EvidenceObjcAdapter();

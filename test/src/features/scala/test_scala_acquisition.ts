@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    request is only for that grammar and the inventory completes.
  * 3. Reopen the warmed cache with network access disabled and verify its inventory
  *    equals the cold result.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads the pinned Scala grammar, analyzes through a cold cache while recording requests, then offline, asserting requests and equal inventories.
+ * @evidence contracts/testing.md#independent-expectations Only the Scala grammar may be requested; the offline inventory must equal the cold one.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition and offline reuse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_acquisition(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("scala");

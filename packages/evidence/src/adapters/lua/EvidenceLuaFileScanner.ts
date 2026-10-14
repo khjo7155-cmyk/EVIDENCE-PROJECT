@@ -15,6 +15,14 @@ import type { IEvidenceLuaValue } from "./IEvidenceLuaValue";
  * Lua exports arise from values and table writes, so the scanner follows only
  * supported static initialization and reports dynamic boundaries it cannot
  * prove.
+ *
+ * @evidence contracts/common.md#principled-implementation A non-executing walk follows the supported module convention: explicit globals and one returned literal table, with dot and colon methods sharing one address and lexical locals resolved at each source position.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Initialization the scanner cannot prove statically is reported as a dynamic boundary instead of being guessed.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceLuaFileScanner {
   /**
@@ -85,6 +93,14 @@ export class EvidenceLuaFileScanner {
    *
    * Public aliases must resolve first so a comment attaches to the canonical
    * declaration instead of a temporary local table projection.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceLuaFileAnalysis {
     this.comments();

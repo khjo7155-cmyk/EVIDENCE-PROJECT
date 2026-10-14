@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Extract schema and claims for every SQLite selector.
  * 2. Evaluate covered and missing populations in both roles.
  * 3. Verify review-only resolutions leave coverage missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates SQLite as claim and as reference for every selector against Markdown and TypeScript counterparts, including review-only resolutions.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared schema units for each role; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every selector in both roles, covered and missing, and the review-only case.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sqlite_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sqlite_graph(): Promise<void> {
   const schema = await new EvidenceSqliteAdapter().analyze(

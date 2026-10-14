@@ -11,6 +11,14 @@ import type { IEvidenceGoMaterializedDeclaration } from "./IEvidenceGoMaterializ
  * EvidenceGoAdapter supplies one analysis per source file because receiver
  * methods may depend on types in another file; this resolver restores Go's
  * package boundary before the shared inventory is published.
+ *
+ * @evidence contracts/common.md#principled-implementation File analyses are grouped by directory and package clause, receiver methods resolve to a selected local defined type, and each declaration publishes addresses through its own file and, for methods, every file declaring the owner.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver owns package-wide identity and addresses; scanning and documentation are elsewhere.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Incompatible package clauses, missing receiver types and duplicate selected identities mark the inventory incomplete.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains why ownership waits for all files; every member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in declarations with map lookups by package and type.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Publication runs once per analysis.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The resolver writes into the shared inventory and keeps only per-call maps.
  */
 export class EvidenceGoPackageResolver {
   /**
@@ -77,6 +85,13 @@ export class EvidenceGoPackageResolver {
    * reconciliation.
    *
    * @returns Scanner-local declaration IDs mapped to their published unit IDs.
+   * @evidence contracts/common.md#principled-implementation Package boundaries, including ordinary and external test packages, are validated, then every declaration is added to its unit and its public addresses emitted; the returned map links scanner IDs to unit IDs.
+   * @evidence contracts/common.md#clear-and-simple-design Unit IDs and addresses come from private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolvable receivers and conflicts are reported rather than dropped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned map's purpose.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in declarations and their address files.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned map is owned by the caller; units are written into the bound inventory.
    */
   public publish(): Map<string, string> {
     this.validatePackages();

@@ -19,6 +19,14 @@ import type { IEvidenceTagParseResult } from "../structures/IEvidenceTagParseRes
  * @example
  *   const result = EvidenceTagProgrammer.parse(context);
  *   // result.declarations contains valid @evidence and @link annotations.
+ *
+ * @evidence contracts/common.md#principled-implementation Tag semantics are a line-oriented state machine over mapped documentation: HTML comments and Markdown code are masked first, then compact tags, H2-H4 heading sections and fences are recognized with coordinates mapped back to the source.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns only tag grammar; comment syntax and attachment belong to adapters and EvidenceDocumentation, and state lives in the caller's context.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Invalid tags become diagnostics without aborting siblings, and examples, strings and HTML comments never create annotations.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains its boundary with an example; private helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceTagProgrammer {
   /**
@@ -31,6 +39,14 @@ export namespace EvidenceTagProgrammer {
    * or HTML comments, and ends heading explanations at structural section
    * boundaries. Invalid tags become diagnostics rather than aborting sibling
    * tags.
+   *
+   * @evidence contracts/common.md#principled-implementation After validating the context, the documentation is masked, split into lines with a shared baseline, and each line updates fence state, opens or continues a pending tag, or closes a heading section at a structural boundary.
+   * @evidence contracts/common.md#clear-and-simple-design Parse drives private recognizers and finalizers; masking and fence detection come from EvidenceDocumentationExamples.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Malformed tags are reported, not dropped, and heading explanations end at the next tag or same-or-higher ordinary heading as documented.
+   * @evidence contracts/common.md#meaningful-documentation The comment states consumption limits and section rules; inline comments explain coordinate tracking.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in documentation length: masking, code mapping and the line scan are each single passes.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each host's documentation is parsed once per extraction.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The mutable context is owned by the caller; masking buffers are local and released after the call.
    */
   export function parse(context: IEvidenceTagContext): IEvidenceTagParseResult {
     validate(context);

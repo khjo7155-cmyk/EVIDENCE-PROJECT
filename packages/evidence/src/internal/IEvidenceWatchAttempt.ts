@@ -8,6 +8,14 @@ import type { EvidenceWatchDependencySnapshot } from "./EvidenceWatchDependencyS
  *
  * Publication compares this snapshot after evaluation, preventing source edits
  * during an asynchronous check from being reported as a coherent cycle.
+ *
+ * @evidence contracts/common.md#principled-implementation A cycle, its dependencies, a dependency snapshot and a parser-retry flag let watch publish only results whose inputs stayed stable.
+ * @evidence contracts/common.md#clear-and-simple-design The attempt holds data; stability comparison is in the watcher.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unstable attempts are discarded rather than published as coherent cycles.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the stability check; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceWatchAttempt {
   /**

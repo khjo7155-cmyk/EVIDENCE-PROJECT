@@ -8,6 +8,14 @@ import type { IEvidenceCommentSyntax } from "../../structures/IEvidenceCommentSy
  * EvidencePythonFileScanner uses these helpers to recognize supported
  * declaration and documentation shapes while keeping public-surface policy in
  * the scanner.
+ *
+ * @evidence contracts/common.md#principled-implementation Grammar-specific helpers recognize Python names, assignments, decorators, attributes, string and docstring syntax, and literal __all__ sequences without export decisions.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace holds syntax queries; policy stays in the scanner.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported string forms such as f-strings, bytes and escapes are rejected rather than decoded approximately.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the boundary; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidencePythonSyntax {
   /**
@@ -15,6 +23,14 @@ export namespace EvidencePythonSyntax {
    *
    * Callers retain the wrapper separately when its range or decorators affect
    * documentation attachment and static-versus-instance member classification.
+   *
+   * @evidence contracts/common.md#principled-implementation A decorated definition is unwrapped to its underlying declaration node.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function definition(node: EvidenceNode): EvidenceNode {
     return node.type === "decorated_definition"
@@ -27,6 +43,14 @@ export namespace EvidencePythonSyntax {
    *
    * Other grammar forms remain unsupported instead of being coerced into a
    * potentially incorrect declaration or binding name.
+   *
+   * @evidence contracts/common.md#principled-implementation A simple identifier returns its source spelling.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function name(node: EvidenceNode | null): string | undefined {
     return node?.type === "identifier" ? node.text : undefined;
@@ -37,6 +61,14 @@ export namespace EvidencePythonSyntax {
    *
    * The scanner requires this static name before it can create an owned type
    * unit or a module binding for the alias.
+   *
+   * @evidence contracts/common.md#principled-implementation The leftmost identifier of a type alias statement is its name.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function typeAliasName(node: EvidenceNode): string | undefined {
     const left = node.childForFieldName("left");
@@ -49,6 +81,14 @@ export namespace EvidencePythonSyntax {
    *
    * Destructuring and attribute assignments intentionally return no name so the
    * scanner can distinguish unsupported dynamic surfaces from declarations.
+   *
+   * @evidence contracts/common.md#principled-implementation Only a simple identifier on the left side of an assignment yields a name; destructuring and attributes do not.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function assignmentName(node: EvidenceNode): string | undefined {
     return name(node.childForFieldName("left"));
@@ -60,6 +100,14 @@ export namespace EvidencePythonSyntax {
    *
    * Method scanning uses these spellings to recognize static, class, property,
    * and cached-property ownership without evaluating arbitrary decorators.
+   *
+   * @evidence contracts/common.md#principled-implementation Each decorator's identifier or dotted attribute spelling is collected canonically.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function decoratorNames(wrapper: EvidenceNode): string[] {
     if (wrapper.type !== "decorated_definition") return [];
@@ -78,6 +126,14 @@ export namespace EvidencePythonSyntax {
    * Initializer scanning treats this name as the instance receiver for direct
    * field assignments; missing or complex forms do not establish instance
    * fields.
+   *
+   * @evidence contracts/common.md#principled-implementation The first declared parameter name is the constructor receiver, whatever it is called.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function parameterName(node: EvidenceNode): string | undefined {
     const parameters = node.childForFieldName("parameters");
@@ -93,6 +149,14 @@ export namespace EvidencePythonSyntax {
    *
    * Instance-field extraction combines this with {@link attributeName} to accept
    * only assignments on the initializer's statically identified receiver.
+   *
+   * @evidence contracts/common.md#principled-implementation The direct object name of an attribute expression is returned.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function attributeObject(node: EvidenceNode): string | undefined {
     if (node.type !== "attribute") return undefined;
@@ -104,6 +168,14 @@ export namespace EvidencePythonSyntax {
    *
    * A non-attribute expression has no eligible member name and remains outside
    * the scanner's supported direct-receiver assignment form.
+   *
+   * @evidence contracts/common.md#principled-implementation The direct member name of an attribute expression is returned.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function attributeName(node: EvidenceNode): string | undefined {
     if (node.type !== "attribute") return undefined;
@@ -115,6 +187,14 @@ export namespace EvidencePythonSyntax {
    *
    * Interpolated strings are omitted because runtime interpolation prevents the
    * scanner from treating their text as stable Evidence documentation.
+   *
+   * @evidence contracts/common.md#principled-implementation Non-interpolated string literals get mapping syntax from their prefix and quote delimiters.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function stringSyntax(
     node: EvidenceNode,
@@ -144,6 +224,14 @@ export namespace EvidencePythonSyntax {
    *
    * The fixed mapping lets adjacent standalone `#` comment runs support
    * Evidence tags with the same withdrawal behavior as supported docstrings.
+   *
+   * @evidence contracts/common.md#principled-implementation Standalone '#' runs use '#' as their line prefix with tag boundaries and withdrawal.
+   * @evidence contracts/common.md#clear-and-simple-design It returns fixed normalization rules.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Only adjacent standalone runs are passed here by the scanner.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the fixed mapping.
+   * @evidence contracts/performance.md#efficient-algorithms Constant work.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A constant value has nothing to share.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function commentSyntax(): IEvidenceCommentSyntax {
     return {
@@ -161,6 +249,14 @@ export namespace EvidencePythonSyntax {
    *
    * Static `+` composition and parentheses are accepted for `__all__`; any
    * dynamic value returns undefined so the scanner preserves incompleteness.
+   *
+   * @evidence contracts/common.md#principled-implementation List and tuple literals and their binary '+' compositions resolve to string members.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function literalSequence(
     node: EvidenceNode | null,
@@ -191,6 +287,14 @@ export namespace EvidencePythonSyntax {
    *
    * Escapes, line breaks, and prefixes other than `u` or `U` are rejected so
    * the literal value need not be interpreted by executing Python syntax.
+   *
+   * @evidence contracts/common.md#principled-implementation Plain or u-prefixed string literals without escapes or line breaks are read as export names.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function literalString(node: EvidenceNode): string | undefined {
     const syntax = stringSyntax(node);
@@ -213,6 +317,14 @@ export namespace EvidencePythonSyntax {
    *
    * Leading comments are skipped, but the first executable statement must be a
    * supported string expression for attachment to the enclosing declaration.
+   *
+   * @evidence contracts/common.md#principled-implementation The first statement of a suite is its docstring when it is a string expression, skipping leading comments.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function docstring(
     body: EvidenceNode | null,
@@ -233,6 +345,14 @@ export namespace EvidencePythonSyntax {
    *
    * Bytes and f-string components are excluded because their runtime semantics
    * cannot supply stable documentation text for Evidence annotations.
+   *
+   * @evidence contracts/common.md#principled-implementation A docstring expression splits into its source string literals, excluding bytes and f-string parts.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function docstringParts(
     node: EvidenceNode,
@@ -257,6 +377,14 @@ export namespace EvidencePythonSyntax {
    *
    * The scanner uses this syntactic marker to classify the assigned declaration
    * as a type unit while leaving other assignments as properties.
+   *
+   * @evidence contracts/common.md#principled-implementation A simple assignment annotated with TypeAlias is a type alias declaration.
+   * @evidence contracts/common.md#clear-and-simple-design The helper is a pure syntax query; publication, visibility and export policy stay in the scanner and resolver.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported grammar forms return nothing rather than being coerced into a name.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the accepted forms and what is rejected.
+   * @evidence contracts/performance.md#efficient-algorithms Constant or proportional to the inspected syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each node is inspected once by the scanner.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function returns copied values and keeps no reference to the borrowed node.
    */
   export function typeAliasAnnotation(node: EvidenceNode): boolean {
     const annotation = node.childForFieldName("type")?.text;

@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Select each Kotlin symbol kind. 2. Evaluate covered and uncovered claims. 3.
  *    Require review-only claims to retain missing IDs.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against Kotlin references for each selector, including undocumented and review-only claims.
+ * @evidence contracts/testing.md#independent-expectations Missing IDs are the fixture's declared units; reviews never count as evidence by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Kotlin selector covered and uncovered, and review-only claims that keep units missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_kotlin_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_kotlin_graph(): Promise<void> {
   const reference = await new EvidenceKotlinAdapter().analyze(

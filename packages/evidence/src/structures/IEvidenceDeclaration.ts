@@ -13,6 +13,14 @@ import type { IEvidenceTargetStatement } from "./IEvidenceTargetStatement";
  * Reviews use a separate shape because they validate acknowledgements rather
  * than substitute for them. Multiple statements may still belong to one
  * semantic host for cardinality purposes.
+ *
+ * @evidence contracts/common.md#principled-implementation Extending the target statement with id, kind and reason records a parsed acknowledgement before reference-specific resolution decides coverage.
+ * @evidence contracts/common.md#clear-and-simple-design Reviews use a separate shape so validation never substitutes for acknowledgement.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Parsing alone creates no coverage edge; every reference judges eligibility independently.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the resolution sequence and the review separation; each field documents its role.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceDeclaration extends IEvidenceTargetStatement {
   /**

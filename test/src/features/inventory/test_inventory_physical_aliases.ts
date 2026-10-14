@@ -19,6 +19,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 3. Resolve both the original and alias public addresses successfully.
  * 4. Change a source identity at the same path while keeping its content and
  *    require incomplete analysis, exposing replacement between snapshots.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Merges a declaration with a physical-path alias in both orders and asserts serialization, origins, resolution and replacement detection.
+ * @evidence contracts/testing.md#independent-expectations Expected equality across input orders is an independent determinism property; origins come from the authored paths.
+ * @evidence contracts/testing.md#distinguishing-cases Covers both merge orders, alias and original resolution, and a changed source identity at the same path.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_physical_aliases is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_physical_aliases(): Promise<void> {
   // Two populations can discover the same inode through different hard-link paths.

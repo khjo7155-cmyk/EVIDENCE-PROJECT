@@ -24,6 +24,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 3. Remove the selected owner's evidence; require a missing-checklist error.
  * 4. Restore evidence, delete the dependency barrel, and require incompleteness;
  *    recreate it and require recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker on a broad claim with an excluded foreign named-export barrel and asserts checklist outcomes through edits.
+ * @evidence contracts/testing.md#independent-expectations Expected outcomes follow the rule that excluded support reads never enlarge the claim population but real missing sources still fail.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a passing checklist, an excluded unacknowledged declaration, removed evidence, a deleted dependency barrel and recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_excluded_barrels is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator. It installs nothing and spawns no CLI.
  */
 export async function test_typescript_excluded_barrels(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

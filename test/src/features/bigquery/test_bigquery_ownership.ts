@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    model.
  * 3. Require a withdrawn nested member to remain excluded from the selected
  *    hierarchy.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes qualified and quoted table paths with nested fields and inline keys and asserts relation endpoints, owners and withdrawals.
+ * @evidence contracts/testing.md#independent-expectations Expected owners and identities are written from the GoogleSQL declarations in the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers quoted paths, anonymous relation endpoints, key units and a withdrawn nested member.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_ownership is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_ownership(): Promise<void> {
   const adapter = new EvidenceBigQueryAdapter();

@@ -15,6 +15,14 @@ import type { IEvidenceWithdrawal } from "./IEvidenceWithdrawal";
  * resolution is ambiguous or hidden. Incoming acknowledgements, reviews, and
  * obligation state are gathered within the same reference boundary rather than
  * pooled across unrelated claims.
+ *
+ * @evidence contracts/common.md#principled-implementation Per-population inspection gathers status, addresses, candidates, withdrawals, obligations, acknowledgements, reviews and diagnostics for one target.
+ * @evidence contracts/common.md#clear-and-simple-design Each concern is a separate collection, so renderers present them independently.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Withdrawals explain hidden candidates instead of silently omitting them.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the per-population scope; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInspection {
   /**

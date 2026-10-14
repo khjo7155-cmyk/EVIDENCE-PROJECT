@@ -8,6 +8,14 @@ import type { IEvidencePostgresqlFileAnalysis } from "./IEvidencePostgresqlFileA
  *
  * PostgreSQL permits extension statements in other files, so publication waits
  * until a unique selected declaration can establish their semantic ownership.
+ *
+ * @evidence contracts/common.md#principled-implementation Deferred ALTER and COMMENT sites are attached only to a unique selected declaration with the same identity, independent of file order.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns cross-file ownership only.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Ambiguity marks analysis incomplete instead of attaching to an arbitrary table.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the ordering problem.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidencePostgresqlOwnership {
   /**
@@ -15,6 +23,14 @@ export namespace EvidencePostgresqlOwnership {
    *
    * Ambiguity makes analysis incomplete rather than allowing an ALTER or
    * COMMENT to silently attach to an arbitrary same-named table.
+   *
+   * @evidence contracts/common.md#principled-implementation Declarations are indexed by identity across files and each deferred reference is merged into exactly one owner.
+   * @evidence contracts/common.md#clear-and-simple-design Resolution mutates the copied analyses in place.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Missing or multiple owners produce diagnostics and incompleteness.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the ambiguity rule.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in declarations and deferred references with map lookups.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It mutates caller-owned analyses and keeps no state.
    */
   export function resolve(input: IEvidenceSqlFileAnalysis[]): void {
     const analyses = typia.assert<IEvidencePostgresqlFileAnalysis[]>(input);

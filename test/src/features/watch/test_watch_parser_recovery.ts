@@ -27,6 +27,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    sources.
  * 4. Require the next cycle to succeed and verify exactly one failed transfer and
  *    one successful retry occurred before the watcher closes.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher with a grammar fetch that first fails and then succeeds, asserting cycle statuses and transfer counts.
+ * @evidence contracts/testing.md#independent-expectations Expected exit codes follow the contract (operational failure 2, then success); transfer counts come from the controlled fetch.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the offline failure and recovery without any source edit.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_parser_recovery is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_parser_recovery(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("python");

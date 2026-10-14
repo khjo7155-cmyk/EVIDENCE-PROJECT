@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze ordinary, package-test, and external-test files.
  * 2. Compare their unit IDs.
  * 3. Require only intended package sharing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes ordinary, same-package test and external test files and asserts unit IDs.
+ * @evidence contracts/testing.md#independent-expectations Expected sharing follows Go's package rules for _test files.
+ * @evidence contracts/testing.md#distinguishing-cases Covers same-package tests sharing identity and an external test package staying separate.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_packages is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_packages(): Promise<void> {
   const inventory = await new EvidenceGoAdapter().analyze(

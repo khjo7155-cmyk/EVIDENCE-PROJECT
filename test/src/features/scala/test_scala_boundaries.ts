@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    fixture selects none.
  * 3. Analyze malformed Scala source and verify parser incompleteness replaces a
  *    healthy inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes unresolved Scala givens, exports, unsupported forms, excluded forms and malformed source and asserts incompleteness or no obligations.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Scala boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each unsupported public construct, private or excluded forms that must create no obligations, and a parse failure.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_boundaries(): Promise<void> {
   for (const source of [

@@ -25,6 +25,11 @@ import { EvidenceTestQueryAnalysis } from "../../internal/EvidenceTestQueryAnaly
  *    result remains unresolved.
  * 4. Mutate the returned inspection and require a later inspection to reproduce
  *    the unmodified baseline.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds an EvidenceQuery, mutates caller-owned inputs and outputs, and runs concurrent inspections, asserting list, graph and inspection results.
+ * @evidence contracts/testing.md#independent-expectations Isolation is checked relationally against baselines captured before mutation; the resolved target's reference indexes 4 and 5 come from the shared fixture's configuration.
+ * @evidence contracts/testing.md#distinguishing-cases Covers mutation of every input and output collection, a concurrent known and absent target, and mutation of a returned inspection.
+ * @evidence contracts/testing.md#execution-ownership The exported test_query_context is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_query_context(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

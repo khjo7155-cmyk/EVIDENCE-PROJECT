@@ -25,6 +25,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    is the exact missing obligation.
  * 3. Compare function fingerprints after metadata-only and implementation-body
  *    edits, preserving the former and changing the latter.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Markdown requirement document and Python implementation, evaluates the graph, removes each acknowledgement in turn, and compares function fingerprints across edits.
+ * @evidence contracts/testing.md#independent-expectations Each missing requirement is the exact unit whose acknowledgement was removed; fingerprint expectations are relational (stable for metadata, changed for the body).
+ * @evidence contracts/testing.md#distinguishing-cases Covers type, function docstring and property comment acknowledgements, removal of each one in turn, and metadata-only versus implementation-body edits.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_graph(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

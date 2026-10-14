@@ -16,6 +16,14 @@ import type { EvidenceDatabaseSymbol } from "../../typings/EvidenceDatabaseSymbo
  *
  * The scanner publishes only explicit, complete DDL so unsupported syntax
  * cannot reduce the inventory used to evaluate coverage.
+ *
+ * @evidence contracts/common.md#principled-implementation CREATE TABLE statements yield tables, scalar and STRUCT fields, and NOT ENFORCED foreign keys, with leading comments and OPTIONS descriptions as carriers.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns GoogleSQL extraction; identifiers, types, strings and withdrawals are separate helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only explicit complete DDL is published; other syntax is reported.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceBigQueryFileScanner {
   /**
@@ -60,6 +68,14 @@ export class EvidenceBigQueryFileScanner {
    *
    * Unsupported statements mark the analysis incomplete before the result is
    * returned.
+   *
+   * @evidence contracts/common.md#principled-implementation Supported DDL is extracted with nested STRUCT fields owned by their table model, then withdrawals propagate to nested fields.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is private; withdrawal propagation is delegated.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported syntax becomes diagnostics.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the supported surface.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scan copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceSqlFileAnalysis {
     for (const node of this.session.root.namedChildren) {

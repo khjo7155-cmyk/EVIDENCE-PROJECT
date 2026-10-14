@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze composite schemas across independent files.
  * 2. Verify model identities, ordered relation endpoints, and target resolution.
  * 3. Require duplicate, ambiguous, and failed sources to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes composite schemas across files and asserts model identities, ordered relation endpoints, resolution and incompleteness for duplicates and ambiguity.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared schema written in the test; file order must not change them.
+ * @evidence contracts/testing.md#distinguishing-cases Covers composite foreign keys, independent files, duplicate and ambiguous qualified names, and failed sources.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sql_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sql_units(): Promise<void> {
   const adapter = new EvidenceSqlAdapter();

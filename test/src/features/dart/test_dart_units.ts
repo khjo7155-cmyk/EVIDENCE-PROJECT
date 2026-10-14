@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Compare the complete unit symbols and identities.
  * 3. Verify private declarations are excluded while complementary public accessors
  *    share a unit.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes public Dart types, functions, properties, members, constructors and accessors and asserts the unit surface.
+ * @evidence contracts/testing.md#independent-expectations Expected units are written from Dart's lexical privacy rule (leading underscore) and the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every declaration kind, accessor families sharing a unit and excluded private names.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_units(): Promise<void> {
   const inventory = await new EvidenceDartAdapter().analyze(

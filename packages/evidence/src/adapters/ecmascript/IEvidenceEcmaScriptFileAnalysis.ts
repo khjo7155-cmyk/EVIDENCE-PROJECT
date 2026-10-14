@@ -13,6 +13,14 @@ import type { IEvidenceEcmaScriptOwnedUnit } from "./IEvidenceEcmaScriptOwnedUni
  * The adapter combines these records after parsing ends to resolve exports,
  * materialize documentation hosts, and preserve incomplete analysis as
  * failure.
+ *
+ * @evidence contracts/common.md#principled-implementation One file's node-free units, comments, positions, imports, exports, diagnostics and completeness are retained after parsing ends.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter combines these records across files; the scanner produces them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are filled from parsed syntax; no project, package or fixture value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceEcmaScriptFileAnalysis {
   /**

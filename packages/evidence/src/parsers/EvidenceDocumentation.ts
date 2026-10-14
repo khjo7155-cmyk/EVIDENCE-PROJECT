@@ -10,6 +10,14 @@ import type { IEvidenceSourceRange } from "../structures/IEvidenceSourceRange";
  * removes the supplied delimiters and line prefixes, retaining mappings that
  * let the tag parser report exact spans and exclude accepted annotations from
  * fingerprints.
+ *
+ * @evidence contracts/common.md#principled-implementation Normalization removes adapter-supplied delimiters and line prefixes while recording per-character original offsets, so tag diagnostics and fingerprint exclusions keep exact spans.
+ * @evidence contracts/common.md#clear-and-simple-design Comment classification and attachment stay in adapters; the namespace only normalizes.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Mismatched delimiters or ranges throw instead of mapping unrelated text.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the division of responsibility.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceDocumentation {
   /**
@@ -19,6 +27,14 @@ export namespace EvidenceDocumentation {
    * opening and closing delimiters. Invalid spans throw instead of mapping
    * unrelated text. Adapters must establish comment identity and declaration
    * ownership beforehand.
+   *
+   * @evidence contracts/common.md#principled-implementation After validating the range and delimiters, each line drops its prefix, CR before LF is removed from text but mapped, and a terminal boundary offset is appended.
+   * @evidence contracts/common.md#clear-and-simple-design Read produces IEvidenceDocumentation; tag parsing is a later step.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts A line-run opening's first prefix is not stripped twice, preventing '# ##' from becoming a heading.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the preconditions; inline comments explain prefix and CRLF handling.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in comment length; range validation uses the source's shared line index from EvidenceSourceText.of instead of rebuilding it per comment.
+   * @evidence contracts/performance.md#reuse-equivalent-work Each comment is read once, and the range check reuses the source's line index through EvidenceSourceText.of.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Offset arrays are owned by the returned documentation; nothing else is retained.
    */
   export function read(
     content: string,
@@ -26,7 +42,7 @@ export namespace EvidenceDocumentation {
     range: IEvidenceSourceRange,
     syntax: IEvidenceCommentSyntax,
   ): IEvidenceDocumentation {
-    if (!new EvidenceSourceText(content).contains(range))
+    if (!EvidenceSourceText.of(content).contains(range))
       throw new Error("The documentation range does not match the source.");
     const raw = content.slice(range.start.offset, range.end.offset);
     if (

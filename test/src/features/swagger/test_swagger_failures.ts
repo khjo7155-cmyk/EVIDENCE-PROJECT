@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze each malformed, invalid, and unreadable document.
  * 2. Verify incomplete status and diagnostics.
  * 3. Repair the document and require graph recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes malformed, invalid, unreadable and identity-conflicting Swagger documents, evaluates them in a graph, then repairs them, asserting incompleteness and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics follow the adapter's source, parse, validation and identity checks; the graph must fail while a failed document stays active.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each failure class, graph failure from a reduced population, and recovery after repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swagger_failures(): Promise<void> {
   const adapter = new EvidenceSwaggerAdapter();

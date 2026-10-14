@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Verify nested helpers and conventionally private names remain absent.
  * 3. Verify withdrawal hides its target without suppressing unrelated public
  *    declarations or completion.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Python package with public, underscored, re-exported, nested and withdrawn names and asserts the selected surface and completion.
+ * @evidence contracts/testing.md#independent-expectations Expected visibility follows the leading-underscore convention and local re-export rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers public declarations, allowed local re-exports, nested helpers and private names that stay absent, and a withdrawal that hides only its target.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_visibility is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_visibility(): Promise<void> {
   const inventory = await new EvidencePythonAdapter().analyze(

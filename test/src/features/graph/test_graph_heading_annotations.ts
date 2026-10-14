@@ -31,6 +31,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 4. Change the referenced requirement and require stale-review findings.
  * 5. Change only a JSDoc reason, then the function body, and verify stable then
  *    changed implementation fingerprints.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Markdown and TypeScript with heading-form evidence and reviews, evaluates the graph across edits, and asserts coverage, policy failures and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Review fingerprints are computed independently with EvidenceFingerprint before evaluation; other expectations follow the heading and policy contracts. Fingerprint expectations are relational (stable versus changed across controlled edits) and follow the documented fingerprint contract, not recorded hash values.
+ * @evidence contracts/testing.md#distinguishing-cases Covers Markdown and JSDoc headings, removed evidence, prohibited exclusions, changed requirements, and reason-only versus body edits.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_heading_annotations is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_heading_annotations(): Promise<void> {
   const markdown: EvidenceMarkdownAdapter = new EvidenceMarkdownAdapter();

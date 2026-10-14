@@ -12,6 +12,14 @@ import type { EvidenceCppVisibility } from "./EvidenceCppVisibility";
  * declaration family, and publishes the resulting unit's addresses and sites.
  * The record therefore keeps physical source facts separate from the semantic
  * identity shared by declarations, definitions, and overloads.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration keeps form, qualified identity, visibility, address candidates and site separate from the shared semantic identity.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner records occurrences; the adapter groups them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCppDeclaration {
   /**

@@ -27,6 +27,14 @@ const MEMBER_BLOCKS = new Set(["model", "view", "type"]);
  * The whole-schema parser remains responsible for deciding which declarations
  * exist. This scanner supplies its source spans and comment-coordinate maps so
  * those semantic declarations can own accurate sites and documentation.
+ *
+ * @evidence contracts/common.md#principled-implementation A line scanner splits code from comments, tracks brace depth, recognizes block heads and member names, and groups comment runs with coordinate maps.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner locates positions only; the parser decides which declarations exist.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts It never decides semantic validity, so a scan miss cannot remove a unit.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the division with the parser; helpers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms One pass over lines, linear in file size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The scanner holds only its source reference and returns plain records.
  */
 export class EvidencePrismaFileScanner {
   /**
@@ -92,6 +100,14 @@ export class EvidencePrismaFileScanner {
    *
    * It flushes pending comments whenever syntax breaks adjacency, preserving
    * detached carriers instead of attaching them to a later declaration.
+   *
+   * @evidence contracts/common.md#principled-implementation Lines are processed once to record block and member locations and comment runs with mapped text.
+   * @evidence contracts/common.md#clear-and-simple-design Line splitting and trimming are helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Comments cannot change depth because braces are counted in code only.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned analysis.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in file size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The method keeps no state after returning; its result is owned by the caller.
    */
   public scan(): IEvidencePrismaFileAnalysis {
     const locations = new Map<string, IEvidencePrismaLocation>();

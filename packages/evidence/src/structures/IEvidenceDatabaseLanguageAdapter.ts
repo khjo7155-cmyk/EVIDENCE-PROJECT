@@ -6,6 +6,14 @@ import type { EvidenceDatabaseSymbol } from "../typings/EvidenceDatabaseSymbol";
  * This contract describes the units an adapter can extract and how citations
  * name them. Capability reports keep these semantic guarantees separate from
  * the grammar's ability to recognize a broader range of database syntax.
+ *
+ * @evidence contracts/common.md#principled-implementation Certified symbols, surface, addressing, comments and limitations describe semantic guarantees separately from grammar coverage.
+ * @evidence contracts/common.md#clear-and-simple-design The record is descriptive metadata for capability reports; extraction lives in the adapter class it names.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Known unsupported capabilities are listed rather than hidden.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the separation from grammar support; each field documents what readers use it for.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceDatabaseLanguageAdapter {
   /**

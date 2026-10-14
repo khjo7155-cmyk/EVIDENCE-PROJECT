@@ -7,6 +7,14 @@ import { EvidenceMysqlIdentifier } from "./EvidenceMysqlIdentifier";
  *
  * Shared SQL extraction asks this policy to fail closed when syntax depends on
  * server state.
+ *
+ * @evidence contracts/common.md#principled-implementation The MySQL policy accepts only CREATE TABLE syntax and table options whose meaning is static, ignores column REFERENCES as MySQL does, and qualifies unqualified relation targets with the owner's schema.
+ * @evidence contracts/common.md#clear-and-simple-design Policy decisions are separate from the shared scanner; forbidden and accepted syntax are explicit sets.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Syntax depending on server state is rejected rather than interpreted.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains fail-closed validation; every member and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceMysqlPolicy {
   /**
@@ -40,6 +48,14 @@ export namespace EvidenceMysqlPolicy {
    *
    * This supplies a deterministic semantic path without consulting the current
    * database.
+   *
+   * @evidence contracts/common.md#principled-implementation An unqualified target table inherits the owning table's explicit schema.
+   * @evidence contracts/common.md#clear-and-simple-design Reference resolution is the only scoping rule.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Qualified targets are kept as written.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the qualification rule.
+   * @evidence contracts/performance.md#efficient-algorithms Constant work.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A constant mapping has nothing to share.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function reference(target: string[], owner: string[]): string[] {
     return target.length === 1 && owner.length === 2
@@ -53,6 +69,14 @@ export namespace EvidenceMysqlPolicy {
    *
    * Returning a reason makes the source analysis incomplete rather than
    * partially inferred.
+   *
+   * @evidence contracts/common.md#principled-implementation Named syntax is checked against forbidden constructs and accepted table children and options.
+   * @evidence contracts/common.md#clear-and-simple-design Validation uses module-level syntax sets.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Anything outside the accepted set fails closed.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains rejection of environment state.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in the inspected statement's syntax subtree.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each statement is validated once during its file scan.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function reads borrowed nodes during the parse callback and keeps no reference to them.
    */
   export function validate(node: EvidenceNode): string | undefined {
     if (node.type === "comment" || node.type === "marginalia") {

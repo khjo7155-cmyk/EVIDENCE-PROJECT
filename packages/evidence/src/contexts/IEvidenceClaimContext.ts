@@ -9,6 +9,14 @@ import type { IEvidenceInventory } from "../structures/IEvidenceInventory";
  * references where they apply, and keeps review applicability separate. Graph
  * construction consumes this context before it creates per-reference resolution
  * state, preserving independent obligations under one claim.
+ *
+ * @evidence contracts/common.md#principled-implementation Host and statement-index maps built once per claim let reference materialization look up hosts and statements by ID.
+ * @evidence contracts/common.md#clear-and-simple-design Claim-local indexes are separate from the materialized claim they index.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Indexes are derived from the inventory, not a separate source of truth.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains claim-local indexing; each field is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Maps keyed by host ID give constant-time lookups instead of rescanning inventory arrays per reference.
+ * @evidence contracts/performance.md#reuse-equivalent-work The indexes are built once per claim and reused by every reference obligation of that claim.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The maps are plain values that live only while one claim is materialized and hold no external resource.
  */
 export interface IEvidenceClaimContext {
   /**

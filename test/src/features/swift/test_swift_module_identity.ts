@@ -10,6 +10,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze equal names in separate roots.
  * 2. Verify distinct identities and resolution.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes equal Swift names under separate configured module roots and asserts distinct identities and resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow the rule that a configured root is one module boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers equal declarations in two roots that must not share an address.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_module_identity is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_module_identity(): Promise<void> {
   const adapter = new EvidenceSwiftAdapter();

@@ -26,6 +26,14 @@ import { EvidenceSourceText } from "../../internal/EvidenceSourceText";
  * The scanner retains only source-established scopes, aliases, and attachment
  * facts; `EvidenceCppAdapter` later resolves publication among those bounded
  * records.
+ *
+ * @evidence contracts/common.md#principled-implementation Namespaces, classes, structs, unions, enums, aliases, concepts, functions, constructors, destructors, operators, variables and members are recorded with access through the owner chain (class members private by default, struct members public), template arity, and adjacent leading or trailing Doxygen.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Anonymous-namespace, static and plain const namespace-scope objects are excluded by language rules, and includes are never followed.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceCppFileScanner {
   private readonly declarations: IEvidenceCppDeclaration[] = [];
@@ -60,6 +68,14 @@ export class EvidenceCppFileScanner {
    *
    * Unsupported relevant syntax makes this result incomplete so materialization
    * cannot report success over a reduced public population.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceCppFileAnalysis {
     const items = this.session.root.namedChildren;

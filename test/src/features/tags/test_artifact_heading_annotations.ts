@@ -26,6 +26,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    evidence, exclusion, and review records.
  * 3. Edit its evidence reason and require a stable operation fingerprint, then
  *    edit ordinary operation prose and require a changed fingerprint.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Prisma, DBML and Swagger sources through their adapters and asserts the heading annotations, targets, reviews and fingerprint behavior they produce.
+ * @evidence contracts/testing.md#independent-expectations Expected targets and reasons are the authored fixture text; fingerprint checks are relational (equal after an evidence-only edit, different after an operation prose edit) rather than pinned hashes.
+ * @evidence contracts/testing.md#distinguishing-cases Covers multiline Prisma documentation, escaped DBML notes, inert example headings, evidence, exclusion and review headings, and both the stable and changing fingerprint directions. Markdown and code heading parsing is owned by the tag heading tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_artifact_heading_annotations is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_artifact_heading_annotations(): Promise<void> {
   const prisma: IEvidenceInventory = await new EvidencePrismaAdapter().analyze(

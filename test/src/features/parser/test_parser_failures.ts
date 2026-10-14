@@ -21,6 +21,11 @@ import { EvidenceTestParserError } from "../../internal/EvidenceTestParserError"
  *    repeated captures and grouped matches must agree within the same session.
  * 4. Parse empty valid source and require zero named children, distinguishing a
  *    healthy empty result from the preceding syntax and query failures.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses malformed sources and runs unsupported queries, asserting rejection codes, released capacity and correct predicate results.
+ * @evidence contracts/testing.md#independent-expectations Expected codes follow the parser contract; the predicate result is the authored identifier.
+ * @evidence contracts/testing.md#distinguishing-cases Covers malformed declarations, a missing brace, unknown nodes, external and property predicates, a supported predicate, and empty valid source.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_failures(): Promise<void> {
   const parser = new EvidenceParser({ concurrency: 1 });

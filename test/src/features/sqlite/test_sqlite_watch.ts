@@ -15,6 +15,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Add an undocumented selected file and require failed coverage.
  * 3. Make it malformed, repair it, and require incomplete status followed by
  *    recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a SQLite project through the authored file changes and asserts each published cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run on the same files; per-cycle status expectations follow the authored edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an added undocumented file (failing coverage), a malformed source (incomplete) and repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sqlite_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sqlite_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

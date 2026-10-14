@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    produces declarations and their expected hosts.
  * 3. Verify assigned strings, f-strings, and detached comments do not acknowledge
  *    declarations; only the detached comment produces a host diagnostic.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes ordinary and concatenated docstrings, decorator-adjacent comments, assigned strings, f-strings and detached comments and asserts hosts and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts follow Python's docstring rule (first statement string literal) and the leading-comment rule.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each documentation carrier and each lookalike, with only the detached comment producing a diagnostic.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_hosts(): Promise<void> {
   const inventory = await new EvidencePythonAdapter().analyze(

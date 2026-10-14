@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Resolve each canonical target and verify every resolution succeeds.
  * 3. Verify the resolved units have the expected type, property, method, and
  *    function identities.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Python reference and TypeScript claim inventories and resolves canonical file-qualified targets for a type, class property, method and function.
+ * @evidence contracts/testing.md#independent-expectations Expected identities are the authored declarations; every canonical target must resolve.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Python symbol kind through the public address model.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_targets(): Promise<void> {
   const adapter = new EvidencePythonAdapter();

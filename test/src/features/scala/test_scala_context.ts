@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    edit leaves the first method fingerprint stable.
  * 3. Change the receiver to invalidate that fingerprint, then verify withdrawal
  *    removes the exported path while the source member remains selectable.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Scala extensions and exports with evidence and asserts group Scaladoc attachment, receiver-sensitive fingerprints and export withdrawal.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational: a sibling-body edit keeps the method stable, a receiver edit changes it.
+ * @evidence contracts/testing.md#distinguishing-cases Covers grouped extension methods, both edit kinds, and a withdrawn export whose source member stays selectable.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_context is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_context(): Promise<void> {
   const adapter = new EvidenceScalaAdapter();

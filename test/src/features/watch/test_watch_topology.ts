@@ -28,6 +28,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    succeed, then delete the cited requirement.
  * 4. Require cycle 4 to fail after deletion and verify the four collected JSON
  *    emissions are NDJSON records with cycle identifiers 1 through 4.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher while glob-selected files are created and deleted and asserts reports and NDJSON framing.
+ * @evidence contracts/testing.md#independent-expectations Each published check report (every cycle that is not an operational failure) is compared with a fresh one-shot EvidenceChecker run on the same files, an independent oracle for what the watcher must publish.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a new requirement file, its citation, deletion of the cited file and the four framed records.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_topology is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_topology(): Promise<void> {
   const location = join(__dirname, `topology ${randomUUID()}`);

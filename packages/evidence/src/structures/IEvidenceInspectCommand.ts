@@ -7,6 +7,14 @@ import type { EvidenceReportFormat } from "../typings/EvidenceReportFormat";
  * related obligations, acknowledgements, and reviews. Target spelling follows
  * the applicable artifact grammar, with file-qualified paths based on the
  * command cwd.
+ *
+ * @evidence contracts/common.md#principled-implementation Inspection takes one authored target plus the shared cwd, config, format and output options.
+ * @evidence contracts/common.md#clear-and-simple-design The record holds options only; resolution and rendering live elsewhere.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts The target is kept as authored text and resolved per population.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the request; each field documents resolution and default.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInspectCommand {
   /**

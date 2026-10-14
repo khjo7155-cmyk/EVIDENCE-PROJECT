@@ -26,6 +26,11 @@ import { EvidenceTestParserError } from "../../internal/EvidenceTestParserError"
  *    - Integrity failures are not retried.
  * 3. Switch the same provider to pinned bytes and require successful acquisition
  *    with exactly one additional request.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Acquires grammars through failing and corrupting transports and asserts error codes, request counts, no files and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the retry and integrity contract: transient HTTP retries, permanent HTTP and integrity failures do not.
+ * @evidence contracts/testing.md#distinguishing-cases Covers HTTP 503 and 404, truncated, oversized and modified bytes, and recovery with pinned bytes.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_acquisition_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_acquisition_failures(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("python");

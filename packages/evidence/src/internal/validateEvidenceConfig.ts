@@ -15,6 +15,14 @@ import { EvidenceSwaggerRemoteReader } from "../adapters/swagger/EvidenceSwagger
  * Validation does not stop at the first error so users can repair related
  * population policy mistakes together, including entries later disabled by
  * severity.
+ *
+ * @evidence contracts/common.md#principled-implementation Every claim and reference is validated (types against certified adapters, roots, globs through the real matcher, symbols against adapter metadata, Swagger sources, checklist compatibility) and all problems are reported together.
+ * @evidence contracts/common.md#clear-and-simple-design Each concern has its own private validator that appends to one problem list.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Disabled and off entries are validated too, so reenabling cannot reveal hidden mistakes; checklist conflicts are refused rather than ignored.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains aggregate reporting; every private validator documents what it checks.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in configured claims, references and patterns; glob validation compiles each list once.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Validation runs once per configuration load.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The problem list is local and discarded after the call throws or returns.
  */
 export function validateEvidenceConfig(
   config: IEvidenceConfig,

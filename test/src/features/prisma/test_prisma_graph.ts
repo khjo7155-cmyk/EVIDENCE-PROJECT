@@ -27,6 +27,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Build Prisma claim and reference inventories.
  * 2. Evaluate matching, missing, and review-only target resolutions.
  * 3. Verify graph status and diagnostics for each case.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates Prisma as a reviewed claim against Markdown and as a reviewed reference for TypeScript, and resolves malformed and missing Prisma targets.
+ * @evidence contracts/testing.md#independent-expectations Review fingerprints are computed independently with EvidenceFingerprint before the annotations are written; the expected resolutions are written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers model evidence with review, an exclusion with an exclusion review in a ledger file, file-independent prisma: targets, a malformed empty segment and a missing member.
+ * @evidence contracts/testing.md#execution-ownership The exported test_prisma_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_prisma_graph(): Promise<void> {
   const specification = await new EvidenceMarkdownAdapter().analyze(

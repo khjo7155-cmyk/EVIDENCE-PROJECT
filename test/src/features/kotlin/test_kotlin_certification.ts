@@ -10,6 +10,11 @@ import { EvidenceAdapterCertificationFixtures } from "../../internal/certificati
  *
  * 1. Analyze its inventory. 2. Validate fixture equality. 3. Run graph, failure,
  *    fingerprint, and ambiguity checks.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs the shared adapter certification for the Kotlin fixture (inventory, graph, failure, fingerprint and ambiguity checks).
+ * @evidence contracts/testing.md#independent-expectations The fixture declares the expected surface independently of the adapter; the shared harness compares adapter output against it.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the shared certification dimensions for this language; per-feature behavior is owned by the language's other tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_kotlin_certification is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_kotlin_certification(): Promise<void> {
   const fixture = EvidenceAdapterCertificationFixtures.all().find(

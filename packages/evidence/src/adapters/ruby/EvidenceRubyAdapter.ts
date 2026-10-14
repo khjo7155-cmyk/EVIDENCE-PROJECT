@@ -28,6 +28,14 @@ import { EvidenceRubyFileScanner } from "./EvidenceRubyFileScanner";
  * documentation, so reopened sites share semantic identity while keeping their
  * physical origins and withdrawal causes. Unsupported analysis remains visible
  * as incompleteness.
+ *
+ * @evidence contracts/common.md#principled-implementation File scans keep visibility, owner paths and method sides; materialization merges compatible class and module reopenings into one identity with every site before documentation attaches.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and Ruby comment normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Class and module mismatches, conflicting superclasses and runtime replacements mark units incomplete; define_method, mixins and similar runtime surface changes are reported, not evaluated.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceRubyAdapter implements IEvidenceAdapter<"ruby"> {
   /**
@@ -45,6 +53,14 @@ export class EvidenceRubyAdapter implements IEvidenceAdapter<"ruby"> {
    * Public identity groups are established before comment hosts are
    * materialized. Source and scan diagnostics are retained, and parser cleanup
    * runs on every exit.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, groups reopened declarations and runtime-name families into units, and attaches comment runs and RDoc.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

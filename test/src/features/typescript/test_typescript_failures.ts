@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze malformed sources and missing export edges.
  * 2. Verify incomplete status and diagnostics.
  * 3. Require strings containing tags to remain inert.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes malformed TypeScript and missing export edges and asserts incompleteness, diagnostics and inert tag-shaped strings.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's syntax and export-resolution boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers malformed sources, missing export dependencies and strings that must not mask a failure.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_failures(): Promise<void> {
   const adapter = new EvidenceTypeScriptAdapter();

@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze class and namespace declarations with matching qualified definitions.
  * 2. Compare the resulting callable identities and their declaration-site counts.
  * 3. Require overload families to remain separate from unrelated names.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C++ declarations with matching qualified definitions and overloads and asserts callable identities and site counts.
+ * @evidence contracts/testing.md#independent-expectations Expected identities and site counts are derived from the authored declarations and definitions.
+ * @evidence contracts/testing.md#distinguishing-cases Covers in-class and out-of-class definitions, namespace definitions, and overload families kept apart from unrelated names.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cpp_definitions is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cpp_definitions(): Promise<void> {
   const inventory = await new EvidenceCppAdapter().analyze(

@@ -23,6 +23,14 @@ import type { IEvidenceSourceRange } from "../structures/IEvidenceSourceRange";
  *   // Inside EvidenceParser.parse's callback:
  *   const range: IEvidenceSourceRange = session.range(session.root);
  *   // Return range, not session.root: the range is data, while the node is borrowed.
+ *
+ * @evidence contracts/common.md#principled-implementation A callback-scoped session lends the tree, compiles queries once per source text, and rejects foreign nodes, closed access, unsupported predicates and match-limit truncation.
+ * @evidence contracts/common.md#clear-and-simple-design The session owns only compiled queries; the parser owns the tree and parser objects.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Queries with predicates the binding cannot evaluate are refused instead of being treated as ignored filters.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains borrowing and failure rules with an example; every member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Queries are compiled once per distinct source within a session.
+ * @evidence contracts/performance.md#reuse-equivalent-work The query cache reuses compiled queries across repeated captures and matches in one callback.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources Compiled queries are deleted when the parser disposes the session, before it deletes the tree.
  */
 export class EvidenceParseSession {
   /**
@@ -86,6 +94,14 @@ export class EvidenceParseSession {
    * The range can safely escape the callback. Foreign-tree nodes and calls
    * after disposal reject before coordinate conversion, preserving source
    * ownership.
+   *
+   * @evidence contracts/common.md#principled-implementation Range ownership is checked before converting the node with EvidenceTreeSitterRange.
+   * @evidence contracts/common.md#clear-and-simple-design Conversion is delegated; the method enforces ownership.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Foreign or closed nodes throw rather than reporting coordinates under the wrong file.
+   * @evidence contracts/common.md#meaningful-documentation The comment states that the range can escape the callback.
+   * @evidence contracts/performance.md#efficient-algorithms Constant work.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each conversion is specific to its node.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The range copies primitives, so no native node escapes.
    */
   public range(node: Node): IEvidenceSourceRange {
     this.assertNode(node);
@@ -99,6 +115,14 @@ export class EvidenceParseSession {
    * tree. Compilation failures, unsupported predicates, and match-limit
    * truncation throw, since incomplete captures cannot establish a public
    * population.
+   *
+   * @evidence contracts/common.md#principled-implementation Captures are run on the root or an owned node with a cached query, then checked for match-limit truncation.
+   * @evidence contracts/common.md#clear-and-simple-design Query compilation and completeness checks are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Truncated results throw so a partial capture list cannot shrink the population.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the default target and failure cases.
+   * @evidence contracts/performance.md#efficient-algorithms Cost is Tree-sitter's query execution over the target subtree.
+   * @evidence contracts/performance.md#reuse-equivalent-work Compiled queries are reused from the session cache.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Returned captures are borrowed and valid only inside the callback.
    */
   public captures(source: string, node?: Node): QueryCapture[] {
     const target = node ?? this.root;
@@ -116,6 +140,14 @@ export class EvidenceParseSession {
    * occurrence. The default target is the root; ownership and completeness
    * checks are the same as for `captures`, and returned nodes remain
    * callback-scoped.
+   *
+   * @evidence contracts/common.md#principled-implementation Matches keep captures grouped by occurrence, with the same ownership and completeness checks as captures.
+   * @evidence contracts/common.md#clear-and-simple-design It shares the private query and completeness helpers with captures.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Truncated results throw.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains when matches are preferable to captures.
+   * @evidence contracts/performance.md#efficient-algorithms Cost is Tree-sitter's query execution over the target subtree.
+   * @evidence contracts/performance.md#reuse-equivalent-work Compiled queries are reused from the session cache.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Returned matches are borrowed and valid only inside the callback.
    */
   public matches(source: string, node?: Node): QueryMatch[] {
     const target = node ?? this.root;

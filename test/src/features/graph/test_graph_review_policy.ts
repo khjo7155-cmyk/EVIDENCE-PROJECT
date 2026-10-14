@@ -36,6 +36,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    review-freshness diagnostics.
  * 5. Mark the review resolution incomplete and require an incomplete obligation
  *    with no derived missing, absent-fingerprint, or stale-review finding.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates four review states under requireReview and with the policy off or resolution incomplete, asserting findings and edge fingerprints.
+ * @evidence contracts/testing.md#independent-expectations The current fingerprint is computed independently with EvidenceFingerprint and must appear in repairs and edges.
+ * @evidence contracts/testing.md#distinguishing-cases Covers missing, unfingerprinted, stale and current reviews, the policy disabled, and incomplete review resolution.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_review_policy is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_review_policy(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

@@ -15,6 +15,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Add and mutate declarations, then require failed coverage and incomplete
  *    parsing.
  * 3. Repair the source and require coverage recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a Objective-C project through the authored file changes and asserts each published cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run on the same files; per-cycle status expectations follow the authored edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers added undocumented declarations (failing coverage), malformed source (incomplete), and repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

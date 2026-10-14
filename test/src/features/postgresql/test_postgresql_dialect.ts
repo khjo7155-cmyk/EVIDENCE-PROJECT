@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze the same schema with PostgreSQL and portable SQL adapters.
  * 2. Verify both inventories are complete.
  * 3. Require PostgreSQL-specific identities and resolution results.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes the same schema with the PostgreSQL and portable SQL adapters and asserts complete inventories with dialect-specific identities and resolutions.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow each dialect's naming rules (PostgreSQL folds unquoted names), written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers one source accepted by both adapters whose public spelling must differ.
+ * @evidence contracts/testing.md#execution-ownership The exported test_postgresql_dialect is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_postgresql_dialect(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.create(

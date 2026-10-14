@@ -51,6 +51,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  *    - An incomplete obligation with no derivative per-host finding.
  *    - Only the empty-reference finding and no host-coverage ledger.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates checklist references through real adapters and asserts per-host ledgers, diagnostics and incompleteness handling.
+ * @evidence contracts/testing.md#independent-expectations Expected ledgers are derived from checklist rules (each host answers each selected item, no file-to-heading cascade, exclusions host-local) written from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers complete, partial and undocumented hosts, file-level citations, unselected aggregates, host-local and conflicting exclusions, exclusion prohibition, unselected carriers, sibling health, isolated aggregate carriers, and failed or empty references.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_checklist is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_checklist(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze rejected and unreadable schemas and inspect their diagnostics.
  * 2. Evaluate their active claim in the graph and require failure.
  * 3. Repair the schema and require complete recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes rejected and unreadable Prisma schemas, evaluates them as active claims in a graph, then repairs them, asserting diagnostics, failure and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics follow the Prisma adapter's schema validation; the graph must fail because the failing claim stays an active participant.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a rejected schema, an unreadable source, graph failure from a reduced population, and complete recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_prisma_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_prisma_failures(): Promise<void> {
   const adapter = new EvidencePrismaAdapter();

@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Verify that unsupported plain tags inside a reason stay findings and do not
  *    become additional declarations.
  * 4. Recover at a valid H4 section while retaining all real heading units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes malformed Markdown heading annotations and asserts parser findings, no fabricated acknowledgements and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expected findings follow the heading-tag rules for targets and explanations.
+ * @evidence contracts/testing.md#distinguishing-cases Covers missing targets, peer and parent boundaries, example-only reasons, plain tags inside reasons and recovery at a valid H4.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_heading_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_heading_failures(): Promise<void> {
   const inventory: IEvidenceInventory =

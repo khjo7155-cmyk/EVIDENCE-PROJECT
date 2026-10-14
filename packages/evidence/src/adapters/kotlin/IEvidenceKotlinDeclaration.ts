@@ -9,6 +9,14 @@ import type { IEvidenceKotlinTypeReference } from "./IEvidenceKotlinTypeReferenc
  * The scanner keeps source-level visibility, receiver, and alias information
  * here because snapshot-wide resolution can change the semantic owner of an
  * extension.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration keeps kind, visibility, receiver and alias facts because snapshot-wide resolution can change an extension's owner.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner records declarations; the adapter groups them into overload families.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceKotlinDeclaration {
   /**

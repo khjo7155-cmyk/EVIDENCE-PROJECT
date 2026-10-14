@@ -25,6 +25,11 @@ import { EvidenceTestSignal } from "../../internal/EvidenceTestSignal";
  * 3. Use a separate empty cache and a transport that waits for abort; configure
  *    two attempts with a short deadline and require asset-download failure
  *    after exactly two timeout aborts.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Acquires a shared grammar from two providers with one cancelled, then a hanging transport, asserting bytes, transfer count and failure codes.
+ * @evidence contracts/testing.md#independent-expectations Expected byte length comes from the pinned record; counts come from the controlled transport.
+ * @evidence contracts/testing.md#distinguishing-cases Covers subscriber-local cancellation and bounded timeouts across retries.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_acquisition_cancellation is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_acquisition_cancellation(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("python");

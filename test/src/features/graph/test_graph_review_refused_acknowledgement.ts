@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    plus a review of that same document-level acknowledgement.
  * 2. Evaluate the price section as a checklist target.
  * 3. Require one refused-aggregate diagnostic and no orphan-review diagnostic.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates a document-level acknowledgement and its review against a checklist section and asserts one refused-aggregate finding and no orphan.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow checklist rules: a file citation does not answer a heading, and its review stays paired.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the refused aggregate with an attached review; other review pairing cases are owned by test_graph_review_pairing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_review_refused_acknowledgement is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_review_refused_acknowledgement(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

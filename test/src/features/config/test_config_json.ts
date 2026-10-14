@@ -27,6 +27,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 3. Reject YAML extensions and malformed JSON during planning.
  * 4. Initialize a new JSON configuration and successfully plan it; reject a second
  *    initialization at the same destination and reject new YAML destinations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads, scans and initializes JSON configurations and asserts plan equality, dependencies and rejections.
+ * @evidence contracts/testing.md#independent-expectations The equivalent TypeScript configuration's plan is the oracle for the JSON plan.
+ * @evidence contracts/testing.md#distinguishing-cases Covers JSON versus TypeScript, a require-like string label, YAML and malformed JSON, and repeated or YAML initialization.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_json is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_config_json(): Promise<void> {
   const config: IEvidenceConfig = {

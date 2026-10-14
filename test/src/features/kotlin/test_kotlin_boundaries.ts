@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze unresolved public forms. 2. Require incompleteness. 3. Verify
  *    explicit public and private cases select only the public surface.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes unresolved Kotlin public forms and explicit visibility cases and asserts incompleteness or the selected surface.
+ * @evidence contracts/testing.md#independent-expectations Expected results follow Kotlin's public-by-default visibility and the adapter's unresolved-form boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers unresolved forms that must be incomplete and explicit public versus private declarations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_kotlin_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_kotlin_boundaries(): Promise<void> {
   const adapter = new EvidenceKotlinAdapter();

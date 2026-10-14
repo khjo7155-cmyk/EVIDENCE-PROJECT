@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze PHP input cold while recording parser requests.
  * 2. Verify the selected variant and complete inventory.
  * 3. Repeat offline and require equivalent output.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes PHP with a cold grammar cache while recording parser requests, then offline, asserting the selected full-grammar variant and equal inventories.
+ * @evidence contracts/testing.md#independent-expectations Only the configured PHP variant may be requested; the offline inventory must equal the cold one.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition of the full grammar and warm offline reuse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_php_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_php_acquisition(): Promise<void> {
   const selected = EvidenceLanguageRegistry.select("php", "contract.php");

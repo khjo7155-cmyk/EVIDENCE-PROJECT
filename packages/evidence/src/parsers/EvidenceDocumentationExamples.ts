@@ -51,6 +51,14 @@ interface IEvidenceHtmlMarkupTag {
  * elements. Their precedence must be decided across the whole comment before an
  * adapter looks for Evidence Graph tags; otherwise a literal `<pre>` in one
  * fence can consume real prose and annotations after that fence.
+ *
+ * @evidence contracts/common.md#principled-implementation Markdown code (fenced, indented, inline) is mapped first across the whole comment, then HTML comments and selected example elements are masked with spaces, so precedence follows CommonMark and literal tags inside code stay inert.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns example masking shared by all documentation readers; tokenizing, marking and hiding are private helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Masking replaces characters with spaces while keeping newlines, so source maps never shift.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why precedence must be decided before tag scanning; every helper and the private markup record are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceDocumentationExamples {
   /**
@@ -59,6 +67,14 @@ export namespace EvidenceDocumentationExamples {
    * Comment-prefix removal can leave one ordinary padding column. Fence and
    * indented-code decisions must measure from that baseline rather than from
    * the physical source column or fully trimmed text.
+   *
+   * @evidence contracts/common.md#principled-implementation The minimum visual indentation of nonempty lines, with tabs to four-column stops, is the baseline for fence and indented-code decisions.
+   * @evidence contracts/common.md#clear-and-simple-design Indentation measurement is a shared private helper.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Blank lines are ignored so they cannot zero the baseline.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why the baseline differs from physical columns.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in input length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each comment computes its baseline once per pass.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function baseline(input: string): number {
     const values: number[] = input
@@ -74,6 +90,14 @@ export namespace EvidenceDocumentationExamples {
    * Four-column indentation denotes an indented code line and cannot open or
    * close a fence. Backtick info text containing another backtick is likewise
    * rejected by Markdown's fence grammar.
+   *
+   * @evidence contracts/common.md#principled-implementation A fence opens within three columns of the baseline with at least three backticks or tildes, and backtick info strings may not contain backticks, following CommonMark.
+   * @evidence contracts/common.md#clear-and-simple-design The function recognizes one line; fence state is kept by callers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Four-column indentation is indented code and cannot open a fence.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the column and info-string rules.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in the line length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each line is classified once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function fence(
     line: string,
@@ -109,6 +133,14 @@ export namespace EvidenceDocumentationExamples {
    * self-closing elements mask only their tag. Matched regions and openings
    * that remain active through the host end become spaces while CR/LF bytes
    * remain intact, preserving the source map already owned by the adapter.
+   *
+   * @evidence contracts/common.md#principled-implementation Quote-aware tag tokens are paired by name outside Markdown code; matched and unclosed regions are masked, and XML mode lets true self-closing elements mask only their tag.
+   * @evidence contracts/common.md#clear-and-simple-design Markdown mapping, comment hiding and tokenizing are reused private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts An ancestor close implicitly closes nested selected openings so none can claim the rest of the comment.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains precedence, HTML versus XML slash handling and coordinate preservation; inline comments explain implicit closing.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in comment length for mapping and tokenizing; pairing searches the open stack, which is shallow in practice.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Masks depend on each comment's text.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The inert map and opening stack are local and released after the call; the caller owns the masked buffer.
    */
   export function maskHtml(
     characters: string[],
@@ -155,6 +187,14 @@ export namespace EvidenceDocumentationExamples {
    * Comment delimiters inside Markdown code remain literal. Closed and unclosed
    * real comments retain their newline bytes and source length so every visible
    * annotation after a close keeps its original mapping.
+   *
+   * @evidence contracts/common.md#principled-implementation Real HTML comments outside Markdown code are masked before tag lines are classified, keeping newline bytes.
+   * @evidence contracts/common.md#clear-and-simple-design It reuses the private comment-hiding helper with a fresh Markdown code map.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unclosed comments mask through the end instead of exposing their contents.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains literal delimiters inside code and mapping preservation.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in comment length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each comment is masked once.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The code map is local; the caller owns the masked buffer.
    */
   export function maskHtmlComments(characters: string[], input: string): void {
     hideHtmlComments(characters, input, mapMarkdownCode(input));
@@ -166,6 +206,14 @@ export namespace EvidenceDocumentationExamples {
    * Adapter-native documentation syntax consults this map before opening its
    * own example state, preventing literal native delimiters from spanning real
    * documentation outside a Markdown example.
+   *
+   * @evidence contracts/common.md#principled-implementation The shared Markdown code map is exposed so adapter-native example syntax can defer to Markdown code first.
+   * @evidence contracts/common.md#clear-and-simple-design It delegates to the private mapper.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Native delimiters inside Markdown code cannot open native example state.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains how adapters use the map.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in comment length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each caller maps its own comment.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function markdownCode(input: string): readonly boolean[] {
     return mapMarkdownCode(input);

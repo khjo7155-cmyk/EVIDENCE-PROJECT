@@ -18,6 +18,14 @@ import { EvidenceAccessor } from "./EvidenceAccessor";
  *     "../api/client.ts#Client.prototype.send",
  *     "/repo/docs/guide.md",
  *   );
+ *
+ * @evidence contracts/common.md#principled-implementation File targets percent-decode the path, resolve it lexically from the absolute citing file with the matching POSIX or Windows flavor, and delegate the accessor to EvidenceAccessor.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns the file/accessor boundary; selection and existence are decided later by the resolver.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Drive-relative paths and relative origins are rejected so resolution never depends on process cwd.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains lexical parsing with an example; private helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceFileTarget {
   /**
@@ -28,6 +36,14 @@ export namespace EvidenceFileTarget {
    * characters, whereas accessor parsing remains delegated to
    * `EvidenceAccessor`. The origin must be absolute so the same citation cannot
    * resolve differently by process working directory.
+   *
+   * @evidence contracts/common.md#principled-implementation The hash splits file from accessor; the file is percent-decoded, checked for NUL and line breaks, and resolved against the origin.
+   * @evidence contracts/common.md#clear-and-simple-design Accessor parsing and path resolution are delegated.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts A trailing '#' and invalid percent escapes throw with the correct spelling.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains file units, encoding and the absolute-origin requirement.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in target length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each target is parsed per origin once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function parse(target: string, origin: string): IEvidenceAddress {
     const hash = target.indexOf("#");
@@ -64,6 +80,14 @@ export namespace EvidenceFileTarget {
    * Windows drive separators stay readable. The accessor is formatted
    * separately so literal segment characters cannot change the file/path
    * boundary.
+   *
+   * @evidence contracts/common.md#principled-implementation The normalized path is percent-encoded with separators and drive colons kept readable, then the canonical accessor is appended.
+   * @evidence contracts/common.md#clear-and-simple-design Path encoding and accessor formatting stay separate so segment characters cannot move the file boundary.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No path is shortened or relativized here.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains which characters stay readable.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in address length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Formatting is per address.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function format(address: IEvidenceAddress): string {
     const encoded = encodeURIComponent(normalize(address.file))
@@ -80,6 +104,14 @@ export namespace EvidenceFileTarget {
    * This is lexical normalization only: symlinks, case rules, and file
    * existence remain the scanner's responsibility. The UNC guard preserves a
    * leading pair of slashes only when the author actually supplied a UNC path.
+   *
+   * @evidence contracts/common.md#principled-implementation Separators and dot segments are normalized with the path flavor the spelling implies, preserving a UNC prefix only when authored.
+   * @evidence contracts/common.md#clear-and-simple-design Normalization is lexical; the scanner owns symlinks, case and existence.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No filesystem access or case folding is performed.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the lexical scope and the UNC guard.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in path length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Normalization is per path.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function normalize(file: string): string {
     const slash = file.replaceAll("\\", "/");

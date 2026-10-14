@@ -18,6 +18,14 @@ import { EvidenceSourcePath } from "../../internal/EvidenceSourcePath";
  * The Python adapter records file-local declarations first, then this resolver
  * follows imports and `__all__` so the inventory exposes the public addresses
  * through which callers can reach each owned unit.
+ *
+ * @evidence contracts/common.md#principled-implementation Static imports and __all__ are followed across the snapshot: explicit __all__ selects exactly its names, otherwise non-underscore names are public, and named, namespace and star imports resolve through local modules with cycle detection.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver owns publication; scanning and documentation are separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Missing, outside-root, ambiguous or cyclic resolutions become incomplete diagnostics instead of shrinking exports; installed packages and sys.path are not modeled.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains its place after scanning; members are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in modules and exported names with memoized lookups.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Publication runs once per analysis.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The resolver writes addresses into the inventory and keeps only per-call indexes.
  */
 export class EvidencePythonExportResolver {
   /**
@@ -105,6 +113,14 @@ export class EvidencePythonExportResolver {
    *
    * Returns semantic unit IDs that received at least one address. Unresolvable
    * public names record diagnostics instead of silently shrinking coverage.
+   *
+   * @evidence contracts/common.md#principled-implementation Every module's public names are resolved and the reached units published with their addresses; the returned set lists reachable unit IDs.
+   * @evidence contracts/common.md#clear-and-simple-design Resolution helpers are private.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolvable names are reported.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned set.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in modules and names.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned set is owned by the caller.
    */
   public publish(): Set<string> {
     const published = new Set<string>();

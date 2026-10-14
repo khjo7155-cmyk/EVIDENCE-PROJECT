@@ -9,6 +9,14 @@ import type { IEvidenceReview } from "./IEvidenceReview";
  * accepted acknowledgements. A resolved review still requires valid pairing and
  * a current fingerprint; its presence here does not itself prove freshness or
  * create coverage.
+ *
+ * @evidence contracts/common.md#principled-implementation A review whose target scope contains the inspected candidate is reported with its host, status and candidates.
+ * @evidence contracts/common.md#clear-and-simple-design Reviews stay separate from acknowledgements in inspection output.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Status is retained so unresolved reviews remain visible.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the relevance rule; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInspectedReview {
   /**

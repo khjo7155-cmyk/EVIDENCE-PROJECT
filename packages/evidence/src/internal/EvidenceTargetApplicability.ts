@@ -16,6 +16,14 @@ import { EvidenceMarkdownTarget } from "../adapters/markdown/EvidenceMarkdownTar
  * The scoring is conservative: when no grammar signal distinguishes references,
  * the declaration remains available to all of them rather than losing a valid
  * acknowledgement.
+ *
+ * @evidence contracts/common.md#principled-implementation Targets are routed to references by conservative affinity scores so an ambiguous token stays available to every viable reference.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns only applicability; parsing and resolution remain with each reference.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Without a decisive signal the declaration is kept for all references rather than dropped.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the conservative rule; private helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidence contracts/performance.md#reuse-equivalent-work The registry-backed type set is a module constant computed once and shared by every selection.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The only retained state is the small immutable set of registry type names, held for the process.
  */
 export namespace EvidenceTargetApplicability {
   /**
@@ -24,6 +32,14 @@ export namespace EvidenceTargetApplicability {
    *
    * A tag is retained for every tied viable population when syntax cannot
    * distinguish the intended reference artifact.
+   *
+   * @evidence contracts/common.md#principled-implementation Prisma and Swagger spellings route directly; otherwise exact inventory files score 3, recognized grammars 2, weak Markdown names or a single reference 1, and the highest decisive score wins.
+   * @evidence contracts/common.md#clear-and-simple-design Scoring helpers are private; select only compares scores and keeps configuration order.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ties keep every viable reference instead of guessing one.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains tie retention.
+   * @evidence contracts/performance.md#efficient-algorithms Cost is O(R x A) per statement for R references and A source addresses; the registry-backed type set is computed once at module load, so scoring clones no catalog.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Selection depends on each statement and host; results are not shared across statements.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Selection keeps no state after returning; its result is owned by the caller.
    */
   export function select(
     statement: IEvidenceTargetStatement,
@@ -156,11 +172,21 @@ function recognizes(
 function isParsedType(
   type: string,
 ): type is EvidenceProgrammingType | EvidenceDatabaseType {
-  return [
+  return PARSED_TYPES.has(type);
+}
+
+/**
+ * Programming and database artifact types backed by registry grammars.
+ *
+ * Computed once at module load so per-statement affinity scoring does not clone
+ * the language catalogs for every reference it compares.
+ */
+const PARSED_TYPES: ReadonlySet<string> = new Set(
+  [
     ...EvidenceLanguageRegistry.list(),
     ...EvidenceLanguageRegistry.databases(),
-  ].some((entry) => entry.type === type);
-}
+  ].map((entry): string => entry.type),
+);
 
 /**
  * Extracts a decodable file portion while retaining a harmless basename for

@@ -7,6 +7,14 @@ import type { IEvidenceSourceLocation } from "./IEvidenceSourceLocation";
  * while retaining the original location. A citation can then explain why a
  * declaration is hidden instead of presenting an excluded API as an unknown
  * name.
+ *
+ * @evidence contracts/common.md#principled-implementation The withdrawal tag and its location record why a declaration left the public population.
+ * @evidence contracts/common.md#clear-and-simple-design Withdrawals are retained on units and resolutions for explanations.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only the three documented tags are recognized.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains withdrawal; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceWithdrawal {
   /**

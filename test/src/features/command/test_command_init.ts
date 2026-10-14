@@ -22,6 +22,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *
  *    - Exit code 2 and an overwrite-refusal diagnostic.
  *    - Exact preservation of the original file content.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs the init command with a relative custom path, loads the result, and runs init again, asserting exit codes, diagnostics and preserved bytes.
+ * @evidence contracts/testing.md#independent-expectations Expectations come from the init contract: create only the named file, then refuse to overwrite with exit 2.
+ * @evidence contracts/testing.md#distinguishing-cases Covers first creation and the overwrite refusal; default config naming is owned by test_command_parse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_init is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_init(): Promise<void> {
   const location = join(__dirname, `init ${randomUUID()}`);

@@ -10,6 +10,14 @@ import type { IEvidenceUnit } from "../structures/IEvidenceUnit";
  * records, distinguishes explicit selection from ancestor closure and
  * visibility, and caches descendant traversal without rebuilding indexes for
  * each operation.
+ *
+ * @evidence contracts/common.md#principled-implementation Units are indexed by ID, selection is closed over explicit parent links with cycle guards, visibility excludes withdrawn subtrees, and addresses are grouped per unit.
+ * @evidence contracts/common.md#clear-and-simple-design The context borrows the facade's isolated snapshot and adds indexes; query programmers use it instead of building their own.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Parent ownership follows explicit parentId links, never dotted name prefixes.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains borrowing and caching; every field and method is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Construction is linear in units, selection depth and addresses; later membership checks are constant time.
+ * @evidence contracts/performance.md#reuse-equivalent-work Indexes are built once per population and selected-descendant lists are cached per ancestor for repeated queries.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The context borrows records owned by its analysis facade and holds only index maps that die with it.
  */
 export class EvidenceQueryPopulationContext {
   /**
@@ -163,6 +171,14 @@ export class EvidenceQueryPopulationContext {
    * The cached result follows explicit parent relationships. Callers receive a
    * readonly view because mutating it would corrupt subsequent coverage
    * summaries.
+   *
+   * @evidence contracts/common.md#principled-implementation Filtering the configured selection by descends preserves configured order and includes the ancestor itself when selected.
+   * @evidence contracts/common.md#clear-and-simple-design The method uses descends and caches its result.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Callers receive a readonly view so cached results cannot be corrupted.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains ordering, caching and the readonly result.
+   * @evidence contracts/performance.md#efficient-algorithms First call per ancestor is O(n x d) for n selected units and parent depth d; repeats are constant time.
+   * @evidence contracts/performance.md#reuse-equivalent-work Results are memoized per ancestor because the snapshot is immutable.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The cache grows by at most one list per queried ancestor and lives as long as the context.
    */
   public selectedDescendants(ancestorId: string): readonly string[] {
     const remembered = this.descendants.get(ancestorId);
@@ -180,6 +196,14 @@ export class EvidenceQueryPopulationContext {
    *
    * A unit descends from itself. Missing parents and cycles terminate the walk,
    * and literal dots in names never invent another ownership edge.
+   *
+   * @evidence contracts/common.md#principled-implementation Walking explicit parent links from the unit with a visited set answers subtree membership and terminates on cycles or missing parents.
+   * @evidence contracts/common.md#clear-and-simple-design The method only walks parents.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Literal dots in names never create ownership edges.
+   * @evidence contracts/common.md#meaningful-documentation The comment states self-descent and termination rules.
+   * @evidence contracts/performance.md#efficient-algorithms O(d) for parent depth d.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each walk answers one pair; selectedDescendants caches aggregate results.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The method keeps no state after returning; its result is owned by the caller.
    */
   public descends(unitId: string, ancestorId: string): boolean {
     const visited = new Set<string>();

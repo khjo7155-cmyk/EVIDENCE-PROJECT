@@ -38,6 +38,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 6. Reach a physical ESM config through a CommonJS-scoped directory link; require
  *    evaluation and scanning to derive static import conditions from the
  *    physical package while retaining both sides of the link for watch.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Scans and evaluates ESM and CommonJS configuration graphs and asserts which conditional package entries enter the watch set.
+ * @evidence contracts/testing.md#independent-expectations Expected entries follow Node's documented import and require condition rules; the evaluator's actual runtime values confirm the same selection.
+ * @evidence contracts/testing.md#distinguishing-cases Covers static, transitive, dynamic import and require requests, MTS and CTS helpers, import-only packages, ESM-scoped .js under CommonJS, and a CommonJS-scoped directory link, plus exclusion of every unused opposite-condition entry.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_config_conditions is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_watch_config_conditions(): Promise<void> {
   const location: string = join(__dirname, `config conditions ${randomUUID()}`);

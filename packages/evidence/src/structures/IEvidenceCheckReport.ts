@@ -13,6 +13,14 @@ import type { IEvidenceDiagnostic } from "./IEvidenceDiagnostic";
  * therefore fail coverage, while warning-only findings can still pass. Claims
  * retain configuration indices so consumers can attribute each independent
  * obligation without relying on an optional display name.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned report separates completeness from success and carries the exit code, so consumers can distinguish incomplete analysis from failed coverage.
+ * @evidence contracts/common.md#clear-and-simple-design The report holds command-facing results; rendering stays in EvidenceReporter and evaluation in the graph.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Report windows record omitted diagnostics while counts keep the whole analysis, so narrowing cannot hide failures.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains status, success and index retention; every field documents its meaning and omission.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCheckReport {
   /**

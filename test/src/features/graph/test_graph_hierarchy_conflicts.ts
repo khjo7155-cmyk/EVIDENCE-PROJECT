@@ -24,6 +24,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    - Require one opposite-intent finding for each later exclusion scope.
  *    - Require one duplicate-exclusion finding for the overlap.
  *    - Retain coverage of both selected children despite the conflict diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates aggregate citations and conflicting acknowledgements and asserts covered units and one finding per conflict scope.
+ * @evidence contracts/testing.md#independent-expectations Expected findings are derived from the conflict rules: duplicates per semantic host, opposite intent per later scope, overlap once.
+ * @evidence contracts/testing.md#distinguishing-cases Covers parent citations covering selected children, repeated fragments and a second host, and positive evidence followed by child and parent exclusions.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_hierarchy_conflicts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_hierarchy_conflicts(): Promise<void> {
   const reference = EvidenceTestInventory.create();

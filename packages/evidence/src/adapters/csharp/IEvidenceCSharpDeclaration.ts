@@ -13,6 +13,14 @@ import type { IEvidenceCSharpDeclarationAddress } from "./IEvidenceCSharpDeclara
  * site. `EvidenceCSharpAdapter` groups compatible records into semantic units,
  * so partial declarations and overloads can retain their distinct source
  * attachments while sharing one unit.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration keeps form, canonical semantic path, address candidates, accessibility inputs and site before family reconciliation.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner records declarations; the adapter groups them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCSharpDeclaration {
   /**

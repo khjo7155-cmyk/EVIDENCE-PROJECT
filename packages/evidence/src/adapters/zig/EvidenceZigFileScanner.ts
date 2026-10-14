@@ -14,6 +14,14 @@ import type { IEvidenceZigFileAnalysis } from "./IEvidenceZigFileAnalysis";
  *
  * It preserves physical declarations and alias projections separately, allowing
  * later materialization to publish several paths for one semantic unit.
+ *
+ * @evidence contracts/common.md#principled-implementation Namespace members are visited without local bodies; pub declarations and container fields are recorded, aliases are separated into copied values versus identity-preserving namespace aliases, and quoted identifiers stay one segment.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported namespace semantics are recorded as incomplete findings rather than guessed.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceZigFileScanner {
   /**
@@ -61,6 +69,14 @@ export class EvidenceZigFileScanner {
    *
    * Carrier collection precedes alias resolution so documentation retains its
    * original site while reconciliation decides which unit receives it.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceZigFileAnalysis {
     this.collectDocumentation();

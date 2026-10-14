@@ -21,6 +21,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    alias to its canonical column unit.
  * 3. Verify UTF-16 positions for escaped Unicode notes and quoted names, then
  *    retain a review separately without changing the table fingerprint.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes aliased tables, every relation form and a composite reference, asserting identities, alias resolution, UTF-16 positions and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected identities and positions are written from the authored schema; the fingerprint expectation is relational across a review addition.
+ * @evidence contracts/testing.md#distinguishing-cases Covers aliases, inline and named relations with cardinality, composite references, escaped Unicode notes and quoted names.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_schema_surface is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_schema_surface(): Promise<void> {
   const source = dedent`

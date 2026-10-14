@@ -10,6 +10,14 @@ import type { IEvidenceDbmlFileAnalysis } from "./IEvidenceDbmlFileAnalysis";
  *
  * It records unsupported syntax as incomplete so selection cannot silently omit
  * declarations the adapter does not understand.
+ *
+ * @evidence contracts/common.md#principled-implementation Audited structural nodes yield tables, columns, enums, pending relations and documentation carriers, with comment runs attached only to an adjacent declaration at the same level.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file facts; cross-file resolution is the adapter's.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported syntax marks the file incomplete instead of being skipped.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps are described.
+ * @evidence contracts/performance.md#efficient-algorithms One traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges before the parse session closes.
  */
 export class EvidenceDbmlFileScanner {
   /**
@@ -62,6 +70,14 @@ export class EvidenceDbmlFileScanner {
    *
    * A complete result contains every recognized declaration and explicit
    * unsupported-syntax diagnostic.
+   *
+   * @evidence contracts/common.md#principled-implementation Top-level elements are classified, declarations recorded, relation endpoints deferred and documentation runs attached.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is private.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unknown elements are reported.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned analysis.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in file size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned analysis is node-free.
    */
   public scan(): IEvidenceDbmlFileAnalysis {
     for (const node of this.session.root.namedChildren) {

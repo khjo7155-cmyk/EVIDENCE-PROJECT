@@ -20,6 +20,11 @@ import type { IEvidenceParserFixture } from "../../internal/IEvidenceParserFixtu
  * 3. After every callback, require zero active sessions so successful extraction
  *    cannot accumulate native parser ownership across the fixture sequence.
  * 4. Close the parser in cleanup, including when an earlier assertion fails.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses a representative declaration in every registered grammar and asserts the captured name and released sessions.
+ * @evidence contracts/testing.md#independent-expectations Each fixture declares its expected name independently of the parser.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every pinned grammar, including TSX and external scanners; adapter semantics are owned by each language's tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_grammars is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_grammars(): Promise<void> {
   const fixtures: IEvidenceParserFixture[] = [

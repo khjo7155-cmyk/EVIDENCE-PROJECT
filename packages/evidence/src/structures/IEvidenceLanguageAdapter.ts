@@ -7,6 +7,14 @@ import type { EvidenceProgrammingSymbol } from "../typings/EvidenceProgrammingSy
  * authors can see which public surfaces and citation spellings extraction
  * supports. Unsupported cases remain explicit instead of being implied by
  * grammar coverage.
+ *
+ * @evidence contracts/common.md#principled-implementation Certified symbols, surface, addressing, comments and limitations describe a programming adapter's semantic guarantees.
+ * @evidence contracts/common.md#clear-and-simple-design The record is descriptive metadata for capability reports.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported capabilities are listed rather than hidden.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains its role; each field documents what readers use it for.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLanguageAdapter {
   /**

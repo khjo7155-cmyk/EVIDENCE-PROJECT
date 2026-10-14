@@ -9,6 +9,14 @@
  * Own content and subtree content remain separate so callers can distinguish a
  * declaration edit from changes below it. Neither digest is a whole-file cache
  * key: evidence prose can change without expiring its own recorded review.
+ *
+ * @evidence contracts/common.md#principled-implementation Versioned own and subtree digests over normalized content give each cited scope a review token independent of selectors and aliases.
+ * @evidence contracts/common.md#clear-and-simple-design Own content and subtree content are separate fields so callers can tell a declaration edit from a descendant edit.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Annotation spans are excluded so writing a review cannot invalidate itself.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains scope ownership and why neither digest is a cache key; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceFingerprint {
   /**

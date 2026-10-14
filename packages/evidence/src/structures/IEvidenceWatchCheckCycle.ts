@@ -7,6 +7,14 @@ import type { IEvidenceCheckReport } from "./IEvidenceCheckReport";
  * report's completeness, success, and exit status. A stable incomplete analysis
  * is still publishable; operational exceptions use the separate failure
  * envelope.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned cycle wraps a stable check report with its cycle number and mirrored status fields.
+ * @evidence contracts/common.md#clear-and-simple-design The cycle adds sequencing to an unchanged check report.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Status values mirror the report rather than being recomputed.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains publication; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceWatchCheckCycle {
   /**

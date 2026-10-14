@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Analyze first-statement f-strings and bytes, assigned strings and later
  *    expression strings; require inert data and a complete public inventory.
  * 3. Preserve one real function acknowledgement in every scenario.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes module docstrings and expression strings and asserts unsupported-host findings, inert data and a complete inventory.
+ * @evidence contracts/testing.md#independent-expectations Expected findings follow the rule that modules provide no declaration host, so real module docstrings must keep a finding.
+ * @evidence contracts/testing.md#distinguishing-cases Covers ordinary and concatenated module docstrings, f-strings and bytes, assigned and later strings, and one real function acknowledgement in each scenario.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_module_documentation is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_module_documentation(): Promise<void> {
   const documentation: string[] = [

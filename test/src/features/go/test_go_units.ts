@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze exported declarations and members.
  * 2. Compare symbols and identities.
  * 3. Verify embedded and receiver members retain owners.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes exported Go declarations, embedded fields, interfaces and receivers and asserts symbols, identities and owners.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared Go surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every exported form, embedded fields and receiver members.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_units(): Promise<void> {
   const language = EvidenceLanguageRegistry.list().find(

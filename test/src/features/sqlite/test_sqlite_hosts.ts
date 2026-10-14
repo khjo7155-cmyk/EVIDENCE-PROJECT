@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented schema units, Unicode comments, examples, and withdrawals.
  * 2. Verify coordinates, target resolution, and withdrawal handling.
  * 3. Compare review fingerprints after annotation and semantic edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes documented SQLite schema units with Unicode comments, examples and withdrawals and asserts coordinates, resolution, withdrawal and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers table and column documentation, inert examples, a withdrawn table and both edit kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sqlite_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sqlite_hosts(): Promise<void> {
   const source = dedent`

@@ -14,6 +14,14 @@ import type { IEvidenceConfigPackageScope } from "./IEvidenceConfigPackageScope"
  * A fresh process captures compiler output in memory and returns the default
  * export over V8-backed IPC. Configuration logs remain diagnostic output, and
  * each evaluation starts with a fresh module cache for watch recovery.
+ *
+ * @evidence contracts/common.md#principled-implementation A fresh read-only Node process (--permission with fs read only) typechecks and evaluates the config in memory and returns the default export over advanced-serialization IPC.
+ * @evidence contracts/common.md#clear-and-simple-design The function spawns and collects; module loading logic lives in runEvidenceConfigEvaluator, shared through its source text.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Inherited NODE_OPTIONS and the compile cache are disabled so preload hooks cannot write files; no global module loader is patched.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the isolation and fresh module cache; private helpers document diagnostic routing and the typia predicate.
+ * @evidence contracts/performance.md#efficient-algorithms One child process per evaluation; cost is dominated by TypeScript type checking in the child.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each evaluation must start with a fresh module cache so watch sees configuration edits; results are deliberately not reused.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The child is owned by this call and settles the promise on close; stdout and stderr listeners end with it, and no handle outlives the evaluation.
  */
 export async function evaluateTypeScriptConfig(
   configFile: string,

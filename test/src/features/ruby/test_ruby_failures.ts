@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require each analysis to be incomplete with its corresponding diagnostic.
  * 3. Simulate an unreadable selected source and require its source failure to
  *    remain in the Ruby inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes dynamic directives, generated constants, unknown singleton owners, conditional declarations, malformed source and an unreadable source, asserting incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Ruby boundary (detectable metaprogramming is not statically knowable).
+ * @evidence contracts/testing.md#distinguishing-cases Covers each dynamic surface with its own diagnostic and a source failure retained in the inventory.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_failures(): Promise<void> {
   const dynamic = await new EvidenceRubyAdapter().analyze(

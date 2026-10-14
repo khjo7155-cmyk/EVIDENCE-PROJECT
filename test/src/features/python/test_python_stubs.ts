@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    Unicode target spelling.
  * 3. Verify explicitly exported private declarations remain selectable while
  *    unselected private declarations stay hidden.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes .pyi stubs and Unicode sources and asserts unit identities, symbols, overload sites and private-export selection.
+ * @evidence contracts/testing.md#independent-expectations Expected units follow stub semantics and __all__ selection, written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers aliases, overloads, Unicode identifiers, properties, nested declarations, and selected versus unselected private names.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_stubs is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_stubs(): Promise<void> {
   const inventory = await new EvidencePythonAdapter().analyze(

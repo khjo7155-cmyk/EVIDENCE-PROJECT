@@ -24,8 +24,31 @@ const cache = new Map<string, IEvidencePrismaCacheEntry>();
  * The loader resolves the parser from the consumer first, caches complete
  * schema-set outcomes by parser identity and content digest, and returns
  * detached records that can outlive the WASM call.
+ *
+ * @evidence contracts/common.md#principled-implementation The consumer-resolvable parser (or the pinned fallback) parses the whole schema set, and outcomes are cached by parser origin, version and schema digest.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns parser resolution, caching and payload validation.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Payloads are validated with typia, and parse failures are remembered and rethrown rather than retried silently.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains resolution and caching; the function now has its own comment.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace's work is in load.
+ * @evidence contracts/performance.md#reuse-equivalent-work A module-level cache keyed by parser identity and digest reuses completed outcomes.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The cache is bounded to sixteen entries.
  */
 export namespace EvidencePrismaModelLoader {
+  /**
+   * Parses the selected schema set into detached Prisma models.
+   *
+   * The result is cached by parser identity and schema digest; a remembered
+   * failure is rethrown. Returned models are clones that outlive the WASM
+   * call.
+   *
+   * @evidence contracts/common.md#principled-implementation The schema set is digested, a cached outcome is reused when present, otherwise getDatamodel parses all files and models are detached with canonical digests.
+   * @evidence contracts/common.md#clear-and-simple-design Parser resolution, digesting and caching are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Incompatible payloads and parser errors throw with the parser version for diagnosis.
+   * @evidence contracts/common.md#meaningful-documentation The new comment explains caching, detachment and failures.
+   * @evidence contracts/performance.md#efficient-algorithms One parse per distinct schema set; digesting is linear in schema size.
+   * @evidence contracts/performance.md#reuse-equivalent-work Cached models and remembered failures are reused for the same parser and digest.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Results are cloned from the cache and the cache holds at most sixteen entries.
+   */
   export async function load(
     root: string,
     files: IEvidencePrismaSchemaFile[],

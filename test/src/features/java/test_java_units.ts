@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze the declared Java forms.
  * 2. Compare symbols and identities.
  * 3. Verify overloads and owned members retain sites.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes public Java types, overloads, fields, records, enums and annotations and asserts symbols, identities and sites.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared Java surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every public form, overload sites, owned members, and excluded non-public declarations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_java_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_java_units(): Promise<void> {
   // Certified metadata publishes the exact upstream grammar version and source boundary.

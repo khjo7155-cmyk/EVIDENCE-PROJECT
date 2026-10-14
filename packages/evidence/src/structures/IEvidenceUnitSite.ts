@@ -12,6 +12,14 @@ import type { IEvidenceSourceRange } from "./IEvidenceSourceRange";
  * ranges identify the portions belonging to this unit's own fingerprint and may
  * exclude sibling declarators. Inventory validation requires those portions to
  * remain inside the declaration and checks hosts against the owned site IDs.
+ *
+ * @evidence contracts/common.md#principled-implementation A site records one declaration occurrence's range and its own content ranges, so merged declarations keep every site.
+ * @evidence contracts/common.md#clear-and-simple-design Content ranges are separate from the declaration range so siblings sharing a statement do not share fingerprints.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No content outside the listed ranges contributes to the unit.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the contribution; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceUnitSite {
   /**

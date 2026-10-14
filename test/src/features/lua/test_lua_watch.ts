@@ -14,6 +14,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *
  * 1. Mutate source and add a selected file. 2. Introduce malformed input. 3.
  *    Repair it and verify recovered configuration output.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a Lua project through a source edit, a new selected file, malformed source, repair and a configuration change, asserting each cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run; per-cycle expectations follow the authored edits (new units, an incomplete cycle, recovered populations).
+ * @evidence contracts/testing.md#distinguishing-cases Covers source, discovery, syntax and configuration transitions, including the incomplete malformed-source cycle.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_lua_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

@@ -8,6 +8,14 @@ import type { EvidenceArtifactType } from "../typings/EvidenceArtifactType";
  * activation and completeness because a zero-sized result is not proof that
  * extraction succeeded, and severity determines whether findings fail the
  * check.
+ *
+ * @evidence contracts/common.md#principled-implementation A compact per-boundary record keeps activation and completeness because a zero count alone does not prove extraction succeeded.
+ * @evidence contracts/common.md#clear-and-simple-design It projects a graph obligation into counts for output; edges and nodes stay in the graph result.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Completeness is reported beside counts rather than inferred from them.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the projection and why completeness and severity are retained; every field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCheckObligation {
   /**

@@ -9,6 +9,14 @@ import type { IEvidenceHost } from "./IEvidenceHost";
  * the inspected candidate. The record retains both authored source context and
  * evaluated scope, making aggregate citations explainable without flattening
  * independent reference obligations.
+ *
+ * @evidence contracts/common.md#principled-implementation An accepted incoming acknowledgement is reported with its declaration, host, target and covered units so inspection can explain coverage.
+ * @evidence contracts/common.md#clear-and-simple-design Records are joined from existing graph data; nothing is re-evaluated.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only accepted acknowledgements appear, so refused statements are not presented as coverage.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains relevance to the inspected scope; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInspectedAcknowledgement {
   /**

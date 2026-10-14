@@ -25,6 +25,14 @@ import type { IEvidenceSqlAdapterOptions } from "./IEvidenceSqlAdapterOptions";
  * This shared layer manages parser lifetime, semantic declaration grouping,
  * public addresses, and documentation materialization. It analyzes source
  * declarations without connecting to a database or executing the supplied SQL.
+ *
+ * @evidence contracts/common.md#principled-implementation One parser per analysis scans every file through the dialect callback, an optional resolver settles cross-file ownership, then declarations are grouped into semantic units with public addresses, hosts and parsed annotations.
+ * @evidence contracts/common.md#clear-and-simple-design The materializer owns shared publication; dialect options own parsing and ownership resolution.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No database is contacted and no SQL is executed; failures from any phase mark the inventory incomplete.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the phase split; every public and private member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in total schema size: one parse per file plus grouping by unit ID.
+ * @evidence contracts/performance.md#reuse-equivalent-work Files share one parser pool and declarations are grouped once.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in finally; working records are released after the inventory is returned.
  */
 export class EvidenceSqlInventoryMaterializer {
   /**
@@ -50,6 +58,14 @@ export class EvidenceSqlInventoryMaterializer {
    * Source and parser failures retain incomplete state. Optional ownership
    * resolution precedes public grouping and annotation attachment, and native
    * parser resources close in cleanup after accepted scans settle.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze asserts and copies the snapshot, scans files concurrently, runs the dialect resolver, then materializes units, documentation and undocumented hosts before reconciling the inventory.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is a private method; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Cross-file ownership is resolved before IDs and hosts are finalized so file order cannot change ownership.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases; inline comments explain resolver ordering.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in total schema size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by all files in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in finally; the inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

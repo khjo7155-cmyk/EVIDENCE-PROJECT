@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    exact missing IDs.
  * 3. Resolve a review-only Dart annotation and require it to leave the referenced
  *    function missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against Dart type, function and property references in covered and uncovered states, plus a review-only annotation.
+ * @evidence contracts/testing.md#independent-expectations Missing IDs are the fixture's declared units; a review must not count as acknowledgement by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Dart selector kind and the review-only case that must leave the function missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_graph(): Promise<void> {
   const reference = await new EvidenceDartAdapter().analyze(

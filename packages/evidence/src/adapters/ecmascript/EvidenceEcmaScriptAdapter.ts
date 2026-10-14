@@ -39,6 +39,14 @@ import type { EvidenceEcmaScriptType } from "./EvidenceEcmaScriptType";
  * Source, package-scope, and syntax failures all contribute to completeness.
  * Package dependencies remain observable for watch, and each analysis owns its
  * parser and copied input rather than retaining prior mutable inventories.
+ *
+ * @evidence contracts/common.md#principled-implementation JavaScript module modes are resolved first, every file is scanned for units and physical comment attachment, support files reachable through forwarding are loaded, export resolution decides public reachability, and only then are hosts and statements materialized.
+ * @evidence contracts/common.md#clear-and-simple-design A shared abstract adapter owns the pipeline while the TypeScript and JavaScript subclasses only select the variant; scanning, export resolution, dependency loading and mode resolution are separate classes.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Source, package-scope and syntax failures all mark the inventory incomplete, and unsupported module forms are reported rather than shrinking the export surface.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline and failure handling; every member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once; export resolution memoizes per source and name, so analysis is roughly linear in files, declarations and export edges.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by all files of an analysis, and package-scope lookups are memoized per directory.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning, and each analysis works on its own copied input without retaining prior inventories.
  */
 export abstract class EvidenceEcmaScriptAdapter<
   Type extends EvidenceEcmaScriptType,
@@ -77,6 +85,14 @@ export abstract class EvidenceEcmaScriptAdapter<
    * reachability filters semantic units only after all local declarations are
    * available, and failures remain in completeness and diagnostics. Native
    * parser resources close whether publication succeeds or throws.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze resolves modes, scans files with a bounded parser, expands support dependencies, publishes exports, and materializes documented and undocumented hosts.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is a private method or collaborator; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Support-only files never enroll their own declarations, and failures propagate as incompleteness.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and the fresh per-analysis state.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected and support files plus their export edges.
+   * @evidence contracts/performance.md#reuse-equivalent-work The parser pool and module-mode memo are shared across files within the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the returned inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,
