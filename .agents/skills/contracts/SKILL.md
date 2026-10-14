@@ -10,7 +10,6 @@ Each checklist H2 is a question that every selected declaration answers in its d
 | Checklist | Asks about |
 | --- | --- |
 | [common.md](common.md) | Method, design, shortcuts, and documentation of production code |
-| [portability.md](portability.md) | Native filesystem, path, and process boundaries |
 | [performance.md](performance.md) | Computation cost, reuse, and resource lifetime |
 | [testing.md](testing.md) | Behavior, expectations, cases, and execution of every test |
 
