@@ -1,36 +1,38 @@
 ---
 name: documentation
-description: Defines Evidence Graph prose, source JSDoc, implementation comments, test scenario documentation, and agent instructions. Use before writing or modifying documentation, source comments, AGENTS.md, or repository skills.
+description: Owns evidence's writing rules and writes its README and doc comments. Use before writing or changing the README, a guide, or a doc comment.
 ---
 
 # Documentation
 
-## Readers And Ownership
-
-Write README as the completed product's user guide: purpose, installation, configuration, and usage. Do not include issue or roadmap links, implementation progress, or milestone commentary. Keep delivery status and validation results in the PR.
-
-Document configuration in README only through `evidence.config.ts`. Do not advertise JSON configuration or alternative config file formats there.
-
-The root `README.md` is the only editable package README. `scripts/copy-readme-and-license.js` copies it and LICENSE to the package during `prepack`. Keep repository links usable from npm as well as GitHub. Review the copy script when changing documentation preparation; do not introduce package-installation tests.
-
-Organize guides by their reader and task. Do not invent a website tree or claim that ttsc's website is this package's documentation host. Link to upstream for the compatibility baseline and explain standalone differences where they affect an author.
-
-## Operational Instructions
-
-Keep global attitude and routing in AGENTS.md, the core procedure in SKILL.md, and conditional details in a linked sibling document. The frontmatter description is the trigger contract; the AGENTS.md index mirrors it briefly.
-
-State requirements with enough context to act. Keep one owner for each rule, and remove repetition rather than necessary reasons, boundaries, or failure handling. A skill does not grant permission to publish, push, merge, or contact others beyond the user's existing request.
-
-Skills contain actionable rules only. Do not add failure stories, work chronology, personal reflections, or incidental commentary.
+Good writing is the same for every reader: deliver the core point concisely and clearly. Only the reader, and so what the reader needs, differs by document.
 
 ## Writing
 
-Write repository documents, issues, and PRs in English. Use plain language, concrete names, and active voice. Avoid emoji, em dashes, filler adjectives, and closing sentences that only repeat the paragraph.
+- Write only what the reader needs and would not otherwise know. Cut padding, repetition, preamble, filler, and closing summaries; completeness means covering what the reader needs, never longer phrasing.
+- One point, one sentence, one place. Give the reason when it is not obvious.
+- Say what to do rather than what to avoid; when a prohibition is needed, name the concrete pattern.
+- Plain English with one term per concept, and no emphasis capitals, em-dashes, emoji in prose, promotional adjectives, stock AI phrasing, or hedging.
 
-Apply these principles to source comments and JSDoc as well. Describe purpose, defaults, and necessary constraints concisely. Preserve classification rules, exclusions, and target semantics when shortening comments; use nested lists where they make those rules easier to scan. Omit essays, repetition, and implementation history.
+## Paragraphs And Lists
 
-Read [source and test documentation](source-comments.md) before writing or reviewing JSDoc, implementation comments, or test scenarios. Apply its requirements to introduced or modified code and to the complete declared scope of a documentation task.
+A paragraph is one topic. Start a new one when the topic changes and keep sentences on the same topic together; merging topics to save paragraphs and splitting every sentence are both failures. Write each paragraph on one source line.
 
-Write each Markdown paragraph on one source line; separate distinct ideas with blank lines. Preserve structural line breaks in lists, tables, and code. The formatter uses `proseWrap: never` and leaves fenced examples unchanged.
+Use a list for parallel items, for steps whose order changes the result, and for their sub-steps, marking a sublist differently from its parent, such as `-` items under a numbered list. Write an argument whose conditions, reasons, and exceptions depend on each other as prose. Use a table for repeated mappings and a code block for exact commands.
 
-Use lists for sequential steps or parallel checks and tables for repeated mappings. Keep README commands aligned with the product contract and report their implementation status in the PR. Read the final diff/rendered output and run executable examples when their behavior is part of the implementation change.
+## README
+
+The root `README.md` is the only README to edit; `scripts/copy-readme-and-license.js` copies it and `LICENSE` into the package at `prepack`, so its links must work from npm as well as GitHub.
+
+- It is the finished product's user guide: purpose, installation, configuration, and usage. Leave issues, roadmaps, progress, and validation results to pull requests.
+- Show configuration only through `evidence.config.ts`, never JSON or another format.
+- Link to upstream `@ttsc/evidence` for the compatibility baseline, and explain a standalone difference where it affects an author. ttsc's website is not this package's documentation host.
+- Take every code example from code that runs.
+
+## Doc Comments
+
+JSDoc follows the Writing and Paragraphs And Lists rules above. What a public declaration's comment must say is the contracts [Meaningful documentation](../contracts/common.md#meaningful-documentation) chapter.
+
+- Start with one summary sentence, then a blank comment line and the contract, so the comment explains rather than restates the identifier or type. Separate consecutive documented members with a blank line.
+- Document a private helper when its contract or state ownership is needed to follow the code.
+- Inside a function, put a comment beside a non-obvious branch, ordering, normalization, or cleanup, stating the invariant or failure it protects rather than narrating the next line.
