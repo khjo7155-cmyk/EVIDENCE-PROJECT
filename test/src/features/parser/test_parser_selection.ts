@@ -21,6 +21,11 @@ import { EvidenceTestParserError } from "../../internal/EvidenceTestParserError"
  *    storage.
  * 4. Construct a parser with no loaded languages, parse one Python declaration,
  *    and require Python to be its only completed language load before cleanup.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Selects grammars and parses with EvidenceParser, asserting variants, rejections, catalog isolation and lazy loading.
+ * @evidence contracts/testing.md#independent-expectations Expected variants follow the registry contract of language plus exact filename.
+ * @evidence contracts/testing.md#distinguishing-cases Covers C versus C++ headers, Windows TSX, Gemfile, MATLAB, wrong extensions and casing, catalog mutation and lazy loads.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_selection is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_selection(): Promise<void> {
   // Ambiguous headers follow the configured type; TSX remains a TypeScript variant.

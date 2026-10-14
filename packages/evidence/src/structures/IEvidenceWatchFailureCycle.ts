@@ -5,6 +5,14 @@
  * retains dependencies so a later repair can trigger another cycle. Parser
  * acquisition failures also retry on a timer because recovery may require no
  * source edit.
+ *
+ * @evidence contracts/common.md#principled-implementation A failed cycle with message and repair keeps operational errors distinct from completed checks.
+ * @evidence contracts/common.md#clear-and-simple-design It parallels the command failure envelope with a cycle number.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts success is false and exitCode 2, so a failure cannot read as passing.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the failure case; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceWatchFailureCycle {
   /**

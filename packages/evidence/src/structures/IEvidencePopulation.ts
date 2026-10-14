@@ -18,6 +18,14 @@ import type { IEvidenceUnit } from "./IEvidenceUnit";
  *
  * Completeness and diagnostics belong to the underlying analysis. Narrowing a
  * selector cannot turn an incomplete inventory into a trustworthy population.
+ *
+ * @evidence contracts/common.md#principled-implementation Selected units, structural scopes, hidden units, hosts, completeness and diagnostics form one projected population.
+ * @evidence contracts/common.md#clear-and-simple-design Projection output is separate from the inventory it came from.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Hidden units are kept for explanations rather than discarded, and completeness is explicit.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains denominator versus scope; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePopulation {
   /**

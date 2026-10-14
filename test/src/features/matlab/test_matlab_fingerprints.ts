@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze a class with independently documented members and access metadata.
  * 2. Compare fingerprints after unrelated and annotation-only edits.
  * 3. Require semantic member and access changes to invalidate the relevant review.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a MATLAB class and compares member fingerprints across unrelated, annotation-only, semantic and access edits.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational: stable for unrelated and annotation edits, changed for member and access edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers independent members, shared access metadata, and each edit kind.
+ * @evidence contracts/testing.md#execution-ownership The exported test_matlab_fingerprints is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_matlab_fingerprints(): Promise<void> {
   const content = dedent`

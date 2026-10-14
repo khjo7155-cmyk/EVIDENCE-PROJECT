@@ -8,6 +8,14 @@ import type { EvidenceProgrammingType } from "../typings/EvidenceProgrammingType
  * content comes from the source snapshot rather than another filesystem read.
  * Keeping that boundary prevents parsing newer bytes than the inventory
  * fingerprints.
+ *
+ * @evidence contracts/common.md#principled-implementation Type, filename and content are the immutable values a parse needs, taken from the snapshot instead of another filesystem read.
+ * @evidence contracts/common.md#clear-and-simple-design Grammar selection is the registry's job; the input only supplies its keys.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Content comes from the snapshot, never from rereading the file.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the input's origin; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceParserInput {
   /**

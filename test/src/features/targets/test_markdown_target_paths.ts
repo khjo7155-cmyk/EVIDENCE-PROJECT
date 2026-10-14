@@ -27,6 +27,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Require percent-decoded and wrong-case paths to be missing files.
  * 4. Mark the reference incomplete and require that state to suppress the
  *    derivative missing-file result.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves Markdown targets through EvidenceTargetResolver against an analyzed Markdown inventory and asserts resolved, missing-file and incomplete statuses.
+ * @evidence contracts/testing.md#independent-expectations Statuses follow the Markdown target grammar: root-relative literal paths, backslashes normalized, percent signs and case literal.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a literal percent sign in a file name, backslash spelling, a dotted anchor, percent-decoded and wrong-case negatives, and incompleteness suppressing a derivative missing-file result.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_target_paths is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_target_paths(): Promise<void> {
   const reference = await new EvidenceMarkdownAdapter().analyze(

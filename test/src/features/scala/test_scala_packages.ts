@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    implicit, extension, alias, and literal declarations.
  * 3. Verify implicit conversion syntax creates no extra hosts beyond discovered
  *    units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes chained and braced packages, companions, implicits, aliases and backticked names and asserts identities and host counts.
+ * @evidence contracts/testing.md#independent-expectations Expected identities are written from Scala's package and companion namespaces.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each declaration form and implicit conversions that must add no hosts.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_packages is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_packages(): Promise<void> {
   const inventory = await new EvidenceScalaAdapter().analyze(

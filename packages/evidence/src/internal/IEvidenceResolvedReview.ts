@@ -6,6 +6,14 @@ import type { IEvidenceReview } from "../structures/IEvidenceReview";
  *
  * Reviews retain the authored record so reporting can distinguish a missing
  * review from an invalid target without re-parsing source text.
+ *
+ * @evidence contracts/common.md#principled-implementation A review with host units and target unit is ready for pairing with acknowledgements.
+ * @evidence contracts/common.md#clear-and-simple-design It mirrors the resolved acknowledgement for reviews, keeping the two types separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only resolved targets reach this shape.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the pairing input; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceResolvedReview {
   /**

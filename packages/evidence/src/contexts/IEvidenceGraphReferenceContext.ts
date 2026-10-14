@@ -12,6 +12,14 @@ import type { IEvidenceGraphClaimContext } from "./IEvidenceGraphClaimContext";
  * each reference owns its policy, selected population, coverage ledger, and
  * review resolution. Evaluators use this context to preserve that independence
  * while sharing only the claim-side host and declaration information.
+ *
+ * @evidence contracts/common.md#principled-implementation The parent claim context, reference, its inventory, population, index and prepared resolutions form one obligation's evaluation state.
+ * @evidence contracts/common.md#clear-and-simple-design Reference state nests under claim state instead of copying it.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Resolutions are prepared before evaluation, not computed here.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the nesting; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphReferenceContext {
   /**

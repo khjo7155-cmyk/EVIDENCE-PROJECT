@@ -8,6 +8,14 @@ import type { EvidencePopulationRole } from "../typings/EvidencePopulationRole";
  * selections and policies. Role and authored indices distinguish those
  * appearances while the optional name remains a display label rather than graph
  * identity.
+ *
+ * @evidence contracts/common.md#principled-implementation Role, claim and optional reference indices with type identify a configured population in query output.
+ * @evidence contracts/common.md#clear-and-simple-design The scope is an identifier only; population data lives elsewhere.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Authored indices are used, never filtered positions.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the scope; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceQueryScope {
   /**

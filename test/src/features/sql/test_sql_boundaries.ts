@@ -11,6 +11,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze unsupported and malformed portable SQL inputs.
  * 2. Require incomplete analysis with boundary diagnostics.
  * 3. Verify an understood empty schema remains complete without fabricated units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes unsupported and malformed portable SQL and an empty schema and asserts incompleteness or a complete empty inventory.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented portable-SQL boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers dialect-specific and schema-changing inputs, malformed syntax, and an understood empty schema that must stay complete.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sql_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sql_boundaries(): Promise<void> {
   const adapter = new EvidenceSqlAdapter();

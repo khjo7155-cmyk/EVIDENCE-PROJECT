@@ -20,6 +20,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 3. Resolve the child's public address and require hidden status with the
  *    inherited internal directive, preserving the cause instead of reporting
  *    missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Merges class and interface sites where one carries @internal and asserts selection, host eligibility and hidden resolution.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow withdrawal semantics: any merged site's withdrawal hides the identity and descendants.
+ * @evidence contracts/testing.md#distinguishing-cases Covers parent and child selection, retained sites, ineligible hosts, and the hidden status with its cause.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_withdrawal is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_withdrawal(): Promise<void> {
   const first = EvidenceTestInventory.create();

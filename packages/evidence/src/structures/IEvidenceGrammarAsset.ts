@@ -7,6 +7,14 @@ import type { tags } from "typia";
  * Acquisition can bound a download before hashing it, and cache identity
  * depends on verified bytes rather than trusting a mutable filename or the
  * server response alone.
+ *
+ * @evidence contracts/common.md#principled-implementation Size and SHA-256 identify immutable bytes, so acquisition can bound a download before hashing and cache by verified content.
+ * @evidence contracts/common.md#clear-and-simple-design One shape serves WASM and license assets.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Typia tags enforce digest format and positive size rather than hand-written checks.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains verification by content; each field documents its role.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGrammarAsset {
   /**

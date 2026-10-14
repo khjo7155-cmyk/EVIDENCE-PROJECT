@@ -19,6 +19,14 @@ import { EvidenceSourceText } from "../../internal/EvidenceSourceText";
  *
  * The scanner maps HTML-comment and visible heading annotations while keeping
  * example regions inert. Annotation headings retain their semantic units.
+ *
+ * @evidence contracts/common.md#principled-implementation Lines are indexed once, examples and HTML comments are classified, ATX H1-H4 headings become units with deterministic anchors, content is assigned to owning units, and comments and H2-H4 annotation sections become hosts.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns one file's structure; lexical rules come from EvidenceMarkdownSyntax and tag parsing from EvidenceTagParser.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fenced, indented and rendered code stay inert, and annotation markers rendered as prose are reported instead of ignored.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains mapping and inert regions; every field and method is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each phase is a single pass over the file's lines with per-line arrays, so scanning is linear in file size.
+ * @evidence contracts/performance.md#reuse-equivalent-work Line classification is computed once and reused by every later phase.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Per-line arrays and maps live only for one file's scan.
  */
 export class EvidenceMarkdownScanner {
   /**
@@ -160,6 +168,14 @@ export class EvidenceMarkdownScanner {
    *
    * The phases run in source order because unit and host ownership depend on
    * line classification.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan runs line splitting, example marking, comment refinement, unit materialization, content assignment, comment and heading-annotation hosting, and rendered-annotation reporting in order.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is a private method; scan only sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Later phases depend on earlier classification, so no phase can treat example text as structure.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the order of work.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in file size.
+   * @evidence contracts/performance.md#reuse-equivalent-work Classification arrays computed in early phases are reused by later ones.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Results are appended to the bound inventory; scanner arrays are discarded with the scanner.
    */
   public scan(): void {
     this.splitLines();

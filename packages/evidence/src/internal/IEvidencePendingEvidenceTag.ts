@@ -3,6 +3,14 @@
  *
  * Parser offsets remain relative to normalized documentation so the mapper can
  * recover the original source range after multiline bodies are assembled.
+ *
+ * @evidence contracts/common.md#principled-implementation Kind, optional heading level, body and source offsets hold a recognized annotation until its body is complete.
+ * @evidence contracts/common.md#clear-and-simple-design Recognition and attachment are separate; this is the intermediate record.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Offsets refer to normalized documentation and are mapped back later rather than approximated.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the pending stage; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePendingEvidenceTag {
   /**

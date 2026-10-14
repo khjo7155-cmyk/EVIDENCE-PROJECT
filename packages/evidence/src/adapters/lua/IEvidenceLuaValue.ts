@@ -8,6 +8,14 @@ import type { IEvidenceLuaDeclaration } from "./IEvidenceLuaDeclaration";
  * aliases, and final module returns so it can construct public declarations
  * without evaluating Lua; they are internal scanner state rather than
  * serialized output.
+ *
+ * @evidence contracts/common.md#principled-implementation A statically understood value tracks bindings, table fields, aliases and the module return during scanning.
+ * @evidence contracts/common.md#clear-and-simple-design It is scanner-internal state and never serialized.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLuaValue {
   /**

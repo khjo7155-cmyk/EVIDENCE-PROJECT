@@ -16,6 +16,14 @@ import { EvidenceEcmaScriptAdapter } from "../ecmascript/EvidenceEcmaScriptAdapt
  * @example
  *   // A declared instance method is addressed as client.js#Client.prototype.send.
  *   // Adding another supported export name does not create a second method unit.
+ *
+ * @evidence contracts/common.md#principled-implementation The JavaScript variant runs the shared ECMAScript pipeline with the JavaScript grammar, file and package module modes, and bounded CommonJS initialization.
+ * @evidence contracts/common.md#clear-and-simple-design The subclass only selects the variant and diagnostic name; the pipeline lives in EvidenceEcmaScriptAdapter.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Dynamic CommonJS mutation, computed keys and unsafe aliases remain analysis failures rather than omitted exports.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains addressing and failure boundaries with an example; both members are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The subclass adds no algorithm; cost is the shared pipeline's.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Reuse is handled by the shared pipeline.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The subclass holds no state beyond its configured variant.
  */
 export class EvidenceJavaScriptAdapter extends EvidenceEcmaScriptAdapter<"javascript"> {
   /**

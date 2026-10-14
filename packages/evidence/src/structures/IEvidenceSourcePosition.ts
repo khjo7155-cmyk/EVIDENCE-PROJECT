@@ -10,6 +10,14 @@
  * @example
  *   // In "A😀\r\nB", B begins at offset 5, line 2, column 1.
  *   // The emoji contributes two code units and the CRLF contributes two more.
+ *
+ * @evidence contracts/common.md#principled-implementation UTF-16 offset with one-based line and column matches JavaScript string indexing and editor coordinates.
+ * @evidence contracts/common.md#clear-and-simple-design Positions carry no file; locations add it.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Coordinates refer to the original captured string, not normalized text.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the coordinate system; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSourcePosition {
   /**

@@ -20,6 +20,11 @@ import { dedent } from "@typia/utils";
  *    - Start and end offsets follow UTF-16 indexing after the astral character.
  *    - The line remains 2 and columns are relative to the original preceding LF.
  *    - The exclusive end includes exactly the identifier's two code units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses LF and BOM-plus-CRLF sources with Unicode identifiers and asserts sliced text and exact ranges.
+ * @evidence contracts/testing.md#independent-expectations Expected offsets and columns are computed by hand from UTF-16 indexing of the authored source.
+ * @evidence contracts/testing.md#distinguishing-cases Covers astral characters before an identifier, BOM and CRLF variants, and exclusive end offsets.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_coordinates is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_coordinates(): Promise<void> {
   const parser = new EvidenceParser();

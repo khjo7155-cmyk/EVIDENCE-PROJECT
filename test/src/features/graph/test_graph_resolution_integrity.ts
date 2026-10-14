@@ -21,6 +21,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 3. Resolve the acknowledgement to an unrelated unselected reference identity;
  *    require one graph-resolution-scope finding and keep the selected target
  *    missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Supplies invalid prepared resolutions to EvidenceGraph and asserts the integrity findings and missing coverage.
+ * @evidence contracts/testing.md#independent-expectations Expected finding codes come from the resolution-integrity contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers conflicting answers for one acknowledgement, a resolution naming no declaration, and a target outside the selected scope.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_resolution_integrity is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_resolution_integrity(): Promise<void> {
   const reference = EvidenceTestInventory.create();

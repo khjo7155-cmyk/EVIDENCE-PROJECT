@@ -12,6 +12,14 @@ import type { IEvidenceConfigReport } from "./IEvidenceConfigReport";
  * A plan may contain no enabled claims even though the original configuration
  * required a nonempty claim array. Disabled or off declarations are validated
  * before that filtering takes place.
+ *
+ * @evidence contracts/common.md#principled-implementation A validated plan with resolved severities and selectors separates configuration semantics from source materialization.
+ * @evidence contracts/common.md#clear-and-simple-design Planning output holds only enabled claims and report bounds; extraction and evaluation happen later.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Authored indices survive filtering so diagnostics never point at renumbered entries.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains what planning resolves and that an empty plan is possible; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceConfigPlan {
   /**

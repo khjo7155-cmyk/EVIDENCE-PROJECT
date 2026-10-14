@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze quoted schemas, generated columns, and composite relations.
  * 2. Verify physical sites, owners, identities, and target resolution.
  * 3. Require relation endpoints and addresses to remain exact.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes quoted SQLite schemas, generated columns and composite relations and asserts sites, owners, identities, endpoints and resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared schema written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers quoted names, generated columns, composite foreign keys and exact relation addresses.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sqlite_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sqlite_units(): Promise<void> {
   const source = dedent`
@@ -60,7 +65,7 @@ export async function test_sqlite_units(): Promise<void> {
       'relation:main["order.items"]["foreign key:seller.link"]',
       "model:temp.scratch",
       "column:temp.scratch.untyped",
-      'column:temp.scratch["quote\\\"name"]',
+      'column:temp.scratch["quote\\"name"]',
       'column:temp.scratch["back`tick"]',
     ].sort((left, right) => left.localeCompare(right, "en")),
   );

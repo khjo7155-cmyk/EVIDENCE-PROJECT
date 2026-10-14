@@ -4,6 +4,14 @@
  * Statement ownership compares these records between claims that read the same
  * annotation. A record describes one claim only; it never merges the outcomes
  * of different references into a shared obligation.
+ *
+ * @evidence contracts/common.md#principled-implementation Resolution level, severity rank and a resolved flag compare how far each claim resolved a shared annotation.
+ * @evidence contracts/common.md#clear-and-simple-design The record is a comparison key for statement ownership.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Ownership comparison uses these explicit ranks rather than claim order.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the comparison; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceStatementStanding {
   /**

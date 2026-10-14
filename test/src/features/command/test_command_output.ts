@@ -22,6 +22,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    API.
  * 4. Use a directory as the JSON output destination and require an exit-2 write
  *    diagnostic on stderr with no partially emitted stdout report.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs help, version, implicit and explicit checks against missing configuration, buffered watch and an unwritable output, asserting exit codes and stream contents.
+ * @evidence contracts/testing.md#independent-expectations Expectations come from the command contract: configuration-free help and version, structured JSON failures with exit 2, and write failures on stderr.
+ * @evidence contracts/testing.md#distinguishing-cases Covers success without configuration, equivalent implicit and explicit failures, the watch refusal and an output-write failure with no partial stdout.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_output is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_output(): Promise<void> {
   const location = join(__dirname, `output ${randomUUID()}`);

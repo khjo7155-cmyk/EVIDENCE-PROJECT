@@ -44,6 +44,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *     units.
  * 15. Verify only real HTML comments declare their Evidence targets.
  * 16. Require no diagnostics from the ignored examples.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Markdown whose fences, inline code, rendered and MDX regions, indentation and comments contain heading and tag syntax, and asserts the materialized units, targets and absence of diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected units and targets follow CommonMark block rules and the documented comment-host rules, written by hand from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every excluded region, same-line close and open transitions, unmatched and escaped delimiters, raw HTML blocks, quoted attributes, cross-grammar regions, inline comments in headings, and comments adjacent to ATX markers.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_boundaries(): Promise<void> {
   const content = dedent`

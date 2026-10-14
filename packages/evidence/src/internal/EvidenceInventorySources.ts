@@ -8,6 +8,14 @@ import type { IEvidenceSourceLocation } from "../structures/IEvidenceSourceLocat
  * Merge consumers need one physical key for source content and annotations, but
  * adapters retain logical origins because they remain valid user-facing
  * targets.
+ *
+ * @evidence contracts/common.md#principled-implementation Source IDs identify filesystem identity, so reconciling physical paths by ID gives merged inventories one key per source.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns only physical-path reconciliation; public addresses are left to resolution.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Conflicts are reported as incomplete inventories instead of picking one silently.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why logical origins stay untouched.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceInventorySources {
   /**
@@ -16,6 +24,14 @@ export namespace EvidenceInventorySources {
    *
    * Merge callers obtain one canonical physical path per source ID while public
    * logical addresses remain untouched for target resolution and reporting.
+   *
+   * @evidence contracts/common.md#principled-implementation The lexicographically smallest physical path per source ID becomes canonical, and every location-bearing record is rewritten through one path map.
+   * @evidence contracts/common.md#clear-and-simple-design A local locate helper rewrites locations; addresses and host origins keep their logical spellings.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts A physical path claimed by two source IDs marks that inventory incomplete with an inventory-source diagnostic.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains in-place normalization and conflict reporting; the helper documents why addresses are unchanged.
+   * @evidence contracts/performance.md#efficient-algorithms Three passes over sources and one pass over each record list, with constant-time map lookups: linear in inventory size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Reconciliation runs once per merge over its specific inputs.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The temporary maps are local to the call; the inputs are mutated in place and no state is kept.
    */
   export function reconcile(inputs: IEvidenceInventory[]): void {
     const canonical = new Map<string, string>();

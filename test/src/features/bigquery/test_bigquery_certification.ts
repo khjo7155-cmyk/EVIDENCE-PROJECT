@@ -15,6 +15,11 @@ import { EvidenceBigQueryCertificationFixture } from "./EvidenceBigQueryCertific
  * 2. Remove a unit or host, change a column symbol, and replace an address
  *    segment.
  * 3. Require inventory validation to reject each mutated report.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs the shared database certification for the BigQuery fixture (inventory, graph, failure, fingerprint and ambiguity checks) and asserts that unit, kind, host and address mutations of the inventory are rejected.
+ * @evidence contracts/testing.md#independent-expectations The fixture declares the expected surface independently of the adapter, and each mutation must make validation fail.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the healthy certification plus four structural mutations; per-feature behavior is owned by the language's other tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_certification is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_certification(): Promise<void> {
   const fixture = EvidenceBigQueryCertificationFixture.create();

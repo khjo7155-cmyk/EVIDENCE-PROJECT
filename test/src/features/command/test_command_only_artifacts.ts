@@ -24,6 +24,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    semantic denominators and passing outcomes.
  * 3. Focus covered and uncovered operations, then combine a model column and
  *    operation; require independent selected boundaries and coverage totals.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs focused checks on Prisma and Swagger targets and asserts denominators, coverage and outcomes per selection.
+ * @evidence contracts/testing.md#independent-expectations Expected selections follow the Prisma prisma:Model and Swagger METHOD:/path grammars and the fixture's covered and uncovered units.
+ * @evidence contracts/testing.md#distinguishing-cases Covers models, columns, shallow models, covered and uncovered operations, and a mixed column-plus-operation selection. File-qualified selection is owned by test_command_only_selection.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_artifacts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_only_artifacts(): Promise<void> {
   const config: IEvidenceConfig = {

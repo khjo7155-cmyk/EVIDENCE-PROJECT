@@ -15,6 +15,14 @@ import { EvidenceSqlPolicy } from "./EvidenceSqlPolicy";
  * The scanner records serializable declarations and comment carriers under a
  * dialect policy. Unsupported syntax makes the analysis incomplete so omitted
  * declarations cannot shrink the coverage population.
+ *
+ * @evidence contracts/common.md#principled-implementation CREATE TABLE statements of the shared grammar become table, column and relation declarations under a dialect policy, with leading comments attached to adjacent declarations.
+ * @evidence contracts/common.md#clear-and-simple-design Dialect decisions come from IEvidenceSqlPolicy; the scanner owns common extraction and comment carriers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Any statement the policy rejects marks the analysis incomplete instead of shrinking the declaration set.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the policy split; public members are documented and private methods are named by role.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceSqlFileScanner {
   /**
@@ -50,6 +58,14 @@ export class EvidenceSqlFileScanner {
    *
    * Validation precedes extraction so unsupported constructs record a failure
    * instead of yielding a deceptively complete smaller inventory.
+   *
+   * @evidence contracts/common.md#principled-implementation Each top-level statement is validated by the policy, then tables, columns, relations and documentation carriers are recorded.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct extraction is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Rejected statements become diagnostics and incompleteness.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned analysis.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scan copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceSqlFileAnalysis {
     for (const root of this.session.root.namedChildren) {

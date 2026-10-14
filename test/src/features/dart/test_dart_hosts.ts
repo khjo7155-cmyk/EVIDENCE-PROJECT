@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    for annotation edits, and change them for semantic edits.
  * 3. Reject every unsupported comment carrier and ignore every Dart string
  *    delimiter as an annotation host.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF DartDoc after astral text and inert carriers, asserting UTF-16 mapping, hidden resolution, fingerprints and unsupported diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand from the source; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers type and property evidence, a hidden type's descendant, annotation versus semantic edits, fenced, indented, HTML and ordinary comments, and every string delimiter.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_hosts(): Promise<void> {
   const content = dedent`

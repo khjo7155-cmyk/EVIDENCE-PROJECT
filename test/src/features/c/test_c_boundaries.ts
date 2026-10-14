@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    forms.
  * 2. Compare the identities and sites within each physical source boundary.
  * 3. Require declarations from different files to remain distinct.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C sources with declaration and definition families across files and asserts identities and sites per physical file.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow the rule that C merging is file-local because linkage is not modeled.
+ * @evidence contracts/testing.md#distinguishing-cases Covers compatible repeats inside one file and same-spelled declarations in different files that must stay distinct.
+ * @evidence contracts/testing.md#execution-ownership The exported test_c_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_c_boundaries(): Promise<void> {
   const inventory = await new EvidenceCAdapter().analyze(

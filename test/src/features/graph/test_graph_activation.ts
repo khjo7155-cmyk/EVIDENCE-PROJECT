@@ -22,6 +22,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 4. Remove all references from the incomplete claim and require failure anyway,
  *    proving claim completeness does not depend on an obligation carrying the
  *    error.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates EvidenceGraph inputs with off, empty and incomplete claims and asserts activation, completeness, diagnostics and success.
+ * @evidence contracts/testing.md#independent-expectations Expected activation follows the contract: off and complete-empty claims are inactive, an incomplete claim stays active and fails.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an off claim with a failed reference, a complete empty claim, an incomplete empty claim, and an incomplete claim without references.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_activation is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_activation(): Promise<void> {
   const claim = EvidenceTestInventory.create();

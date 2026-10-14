@@ -30,6 +30,14 @@ import { EvidenceJavaFileScanner } from "./EvidenceJavaFileScanner";
  * Source failures and incomplete scans remain visible in the returned
  * inventory. Each invocation owns its parser lifetime and mutable extraction
  * state.
+ *
+ * @evidence contracts/common.md#principled-implementation Source-public declarations are grouped into families (same-owner same-name methods form one overload unit) with every site retained before Javadoc becomes hosts, independent of JPMS exports.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and Javadoc normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Compiler-generated and inherited members are not invented, annotation processors are not run, and conflicting identities mark the inventory incomplete.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceJavaAdapter implements IEvidenceAdapter<"java"> {
   /**
@@ -49,6 +57,14 @@ export class EvidenceJavaAdapter implements IEvidenceAdapter<"java"> {
    * Input is validated and copied before asynchronous scanning. Units precede
    * Javadoc materialization so declaration families own their actual comment
    * positions, and parser cleanup runs after either success or failure.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, materializes overload families and other units, and attaches Javadoc to the declaring sites.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

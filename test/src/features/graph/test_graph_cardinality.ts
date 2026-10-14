@@ -24,6 +24,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    semantic hosts rather than three physical citation positions.
  * 5. Require each cardinality finding to name the unit it is about, which is what
  *    lets a report window group findings by unit.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates singleEvidencePerSymbol and uniqueEvidence policies on constructed graph inputs and asserts counts, findings and named units.
+ * @evidence contracts/testing.md#independent-expectations Expected counts are derived by hand from the fixture: shared hosts count once, aggregates count each selected child, exclusions add no positive count.
+ * @evidence contracts/testing.md#distinguishing-cases Covers uncited subjects, repeated fragments, aggregate citations, exclusion-only coverage, two hosts versus three positions under uniqueness, and unit-labelled findings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_cardinality is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_cardinality(): Promise<void> {
   const reference = EvidenceTestInventory.create();

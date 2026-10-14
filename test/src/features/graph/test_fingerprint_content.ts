@@ -27,6 +27,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    leaf to change.
  * 5. Edit the unrelated type and second variable declarator, then require the
  *    original type scope and first declarator fingerprint to remain stable.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes TypeScript, computes EvidenceFingerprint values across edits and an incomplete inventory, and asserts version, length, stability and change.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational (stable versus changed across controlled edits) and follow the documented fingerprint contract, not recorded hash values. The version (2) and seven-character presentation come from the fingerprint specification.
+ * @evidence contracts/testing.md#distinguishing-cases Covers review metadata, line-ending and trailing-whitespace edits that must not change, member type and inline-comment edits that must change, unrelated sibling edits, and rejection of incomplete inventories.
+ * @evidence contracts/testing.md#execution-ownership The exported test_fingerprint_content is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_fingerprint_content(): Promise<void> {
   const baseline = dedent`

@@ -47,6 +47,14 @@ import type { EvidenceSymbol } from "../typings/EvidenceSymbol";
  *     "json",
  *   ]);
  *   // command.operation is "list" and its default cwd is ".".
+ *
+ * @evidence contracts/common.md#principled-implementation The CLI contract is parsed into validated command objects before any filesystem access, then dispatched to analysis, query, init, languages or watch handlers.
+ * @evidence contracts/common.md#clear-and-simple-design Parsing, buffered execution, streaming main and init are separate exported functions; per-operation runners are private helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Malformed input never triggers a project scan, and buffered run rejects watch instead of blocking.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the boundary with an example; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceCommand {
   /**
@@ -62,6 +70,14 @@ export namespace EvidenceCommand {
    * @example
    *   EvidenceCommand.parse(["graph", "--format", "dot"]);
    *   // { operation: "graph", cwd: ".", format: "dot" }
+   *
+   * @evidence contracts/common.md#principled-implementation A single pass over the argument vector assigns operation defaults and rejects unknown, duplicate and incompatible options, with check implicit when no operation is named.
+   * @evidence contracts/common.md#clear-and-simple-design Parse only builds command objects; execution is run's job.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Syntax mistakes throw EvidenceCommandError before configuration or source access.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains defaults, positional handling and errors with an example.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in argument count.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each argument vector is parsed once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The command object is owned by the caller.
    */
   export function parse(args: readonly string[]): IEvidenceCommand {
     if (args.length === 1 && (args[0] === "-v" || args[0] === "--version"))
@@ -270,6 +286,14 @@ export namespace EvidenceCommand {
    *     "--help",
    *   ]);
    *   // result.exitCode === 0 and result.stdout contains the command reference.
+   *
+   * @evidence contracts/common.md#principled-implementation The parsed command dispatches to help, version, init, languages or analysis, returning buffered output and an exit code without touching process streams.
+   * @evidence contracts/common.md#clear-and-simple-design Run only dispatches; private runners own each operation.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Parse and operational failures return exit code 2 with JSON failures on stdout so output stays parseable, and watch is refused.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains stream routing and the watch exclusion with an example.
+   * @evidence contracts/performance.md#efficient-algorithms Cost is that of the dispatched operation.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each invocation runs its own operation.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Results are returned as strings; nothing is retained.
    */
   export async function run(
     args: readonly string[],
@@ -312,6 +336,14 @@ export namespace EvidenceCommand {
    * progress to stderr unless a report file was requested. Repeated progress is
    * deduplicated because retries can report the same acquisition state more
    * than once.
+   *
+   * @evidence contracts/common.md#principled-implementation The executable entry runs run or the streamed watch path inside an asset scope that routes deduplicated progress to stderr unless a report file was requested.
+   * @evidence contracts/common.md#clear-and-simple-design Main adds stream writing and progress routing on top of run.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Malformed input is rendered by run for consistency rather than by a second error path.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains progress routing; inline comments explain parse reuse.
+   * @evidence contracts/performance.md#efficient-algorithms Cost is that of the dispatched operation.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Progress messages are deduplicated within one invocation only.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The progress set and asset scope end with the invocation; watch cleanup is joined by its runner.
    */
   export async function main(
     args: readonly string[],
@@ -360,6 +392,14 @@ export namespace EvidenceCommand {
    *
    * @example
    *   await EvidenceCommand.initialize("evidence.config.ts");
+   *
+   * @evidence contracts/common.md#principled-implementation The configuration format comes from the filename, and the starter is written with the exclusive wx flag so an existing file is never overwritten.
+   * @evidence contracts/common.md#clear-and-simple-design Initialize only writes the template; the command runner resolves the path.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts An existing file yields a focused refusal instead of being replaced.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains both templates and exclusive creation with an example.
+   * @evidence contracts/performance.md#efficient-algorithms One small file write.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Initialization runs once per request.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources writeFile opens and closes the file within the call.
    */
   export async function initialize(file: string): Promise<void> {
     const format = EvidenceConfigFormat.get(file);

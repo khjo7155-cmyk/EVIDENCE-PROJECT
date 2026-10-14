@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require paired accessors to produce one property with two sites and the named
  *    function to remain a function.
  * 3. Verify a withdrawn accessor family is hidden and has no eligible host.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Dart getter and setter pairs, an explicit-void setter, a function named set and an external setter, asserting property and function units.
+ * @evidence contracts/testing.md#independent-expectations Expected units follow Dart's accessor semantics: getter and setter form one property.
+ * @evidence contracts/testing.md#distinguishing-cases Covers paired accessors, a function named set, an external setter and a withdrawn accessor family.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_accessors is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_accessors(): Promise<void> {
   const inventory = await new EvidenceDartAdapter().analyze(

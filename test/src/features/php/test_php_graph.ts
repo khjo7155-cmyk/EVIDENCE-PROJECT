@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Extract PHP units and matching TypeScript claims for every selector.
  * 2. Evaluate present and absent acknowledgements.
  * 3. Verify review-only references remain missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against PHP references for every selector with present and absent acknowledgements and a review-only reference.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared PHP units; a retained review never covers by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every PHP selector covered and missing, and the review-only case that must stay missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_php_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_php_graph(): Promise<void> {
   const reference = await new EvidencePhpAdapter().analyze(

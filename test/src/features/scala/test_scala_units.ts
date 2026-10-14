@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    do not enter the public surface.
  * 3. Resolve a file alias and a synthetic case-class apply target, then verify
  *    serialization preserves the inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Scala 2 and Scala 3 sources and asserts public identities, overload sites, file alias and synthetic apply resolution, and serialization.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared public surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers case classes, constructors, companions, visibility, overloads, aliases, givens, extensions, enums, destructuring and excluded private and local forms.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_units(): Promise<void> {
   const inventory = await new EvidenceScalaAdapter().analyze(

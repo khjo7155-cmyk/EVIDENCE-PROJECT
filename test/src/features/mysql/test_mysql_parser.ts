@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze a MySQL source with a cold parser cache while recording downloads.
  * 2. Require only MySQL parser assets and a complete cold result.
  * 3. Analyze again offline and require an equivalent warm inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes MySQL with a cold grammar cache while recording downloads, then offline, asserting requested assets and equal inventories.
+ * @evidence contracts/testing.md#independent-expectations Only the MySQL grammar may be requested; the offline inventory must equal the cold one.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition and warm offline reuse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_mysql_parser is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_mysql_parser(): Promise<void> {
   const parser = new EvidenceParser();

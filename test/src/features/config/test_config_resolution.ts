@@ -26,6 +26,11 @@ import { createEvidenceConfigPlan } from "@wrtnlabs/evidence";
  * 4. Verify root-to-claim-to-reference severity inheritance and the explicit error
  *    override without filling omitted selectors back into the caller's config.
  * 5. With root severity off, retain only the claim that explicitly overrides it.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Plans a mixed configuration with createEvidenceConfigPlan and asserts kept indices, selectors, severities and unmodified input.
+ * @evidence contracts/testing.md#independent-expectations Expected selectors and severities are written from the planning contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers disabled, off and obligation-free claims, each artifact family's defaults, inheritance and overrides, and a root severity of off.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_resolution is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_config_resolution(): void {
   const config: IEvidenceConfig = {

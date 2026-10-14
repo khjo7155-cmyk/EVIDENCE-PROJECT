@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze declarations with eligible and ineligible tag-shaped text.
  * 2. Verify exact host attachment and original coordinates.
  * 3. Require only eligible documentation to create acknowledgements.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes PHP declarations with PHPDoc and tag-shaped strings, ordinary comments and examples, asserting host attachment, coordinates and acknowledgements.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts and coordinates are written by hand from the source and the PHPDoc attachment rule.
+ * @evidence contracts/testing.md#distinguishing-cases Covers attached PHPDoc against strings, ordinary comments and examples that must stay inert.
+ * @evidence contracts/testing.md#execution-ownership The exported test_php_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_php_hosts(): Promise<void> {
   const content = dedent`

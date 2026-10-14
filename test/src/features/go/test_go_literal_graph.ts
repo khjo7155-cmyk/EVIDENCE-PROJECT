@@ -21,6 +21,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 5. Place a real detached comment after the declaration and require an
  *    unsupported-host diagnostic without losing the public denominator.
  * 6. Restore the original acknowledgement and require recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker and the CLI on a Go constant whose raw string holds every tag, asserting checklist, exclusion and review outcomes through edits.
+ * @evidence contracts/testing.md#independent-expectations Expected outcomes follow the rule that literal data never acknowledges, reviews or withdraws; real comments decide every result.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a passing acknowledged constant, removal, a real exclusion, required reviews, a detached real comment and recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_literal_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_literal_graph(): Promise<void> {
   const config: IEvidenceConfig = {

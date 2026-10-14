@@ -20,6 +20,11 @@ interface IEvidenceRubyTargetStatus {
  *    singleton methods, attributes, setters, and operators.
  * 2. Resolve claim tags against every supported spelling and require resolved
  *    statuses and their intended public units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves Ruby targets for containers, instance and singleton methods, attributes, setters and operators and asserts resolved units.
+ * @evidence contracts/testing.md#independent-expectations Expected units follow Ruby target spelling (owner-preserving, callable form explicit), written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every supported spelling for each member form.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_targets(): Promise<void> {
   const adapter = new EvidenceRubyAdapter();

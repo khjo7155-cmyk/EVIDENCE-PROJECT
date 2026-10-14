@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze dynamic, malformed, duplicate, and unsupported MATLAB sources.
  * 2. Require each inventory to be incomplete with an actionable diagnostic.
  * 3. Verify failed snapshots preserve incompleteness through adapter analysis.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes dynamic, malformed, duplicate and unsupported MATLAB sources and failed snapshots and asserts incompleteness with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented MATLAB boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers eval and dynamicprops, malformed declarations, duplicates, unsupported file forms and failed snapshots.
+ * @evidence contracts/testing.md#execution-ownership The exported test_matlab_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_matlab_boundaries(): Promise<void> {
   const adapter = new EvidenceMatlabAdapter();

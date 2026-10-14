@@ -40,6 +40,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    require the same supported target and unsupported-host findings.
  * 4. Parse heading documentation through all SQL dialect adapters and verify model
  *    and column ownership with multiline reasons.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Rewrites certified tags into H2-H4 heading forms for every language and SQL dialect and asserts inventories, ownership, coverage and gaps.
+ * @evidence contracts/testing.md#independent-expectations Expected owners and coverage are the fixtures' certified values.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each heading depth, removal of each acknowledgement, attachment counterexamples, and SQL multiline reasons.
+ * @evidence contracts/testing.md#execution-ownership The exported test_adapter_heading_annotations is discovered by DynamicExecutor; its cases are registered through EvidenceAdapterCertificationFixtures.all(), which owns the per-language fixtures, and it calls the adapters in-process without installing or spawning anything.
  */
 export async function test_adapter_heading_annotations(): Promise<void> {
   for (const certification of EvidenceAdapterCertificationFixtures.all()) {

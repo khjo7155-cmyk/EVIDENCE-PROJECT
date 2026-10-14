@@ -10,6 +10,14 @@ import type { IEvidenceScalaFileAnalysis } from "./IEvidenceScalaFileAnalysis";
  * Export syntax has its own physical declaration and documentation site, while
  * the forwarded member retains identity and withdrawal ownership at its
  * source.
+ *
+ * @evidence contracts/common.md#principled-implementation An export clause adds an address for an existing public member reached through singleton and package owners, keeping the member's identity and withdrawals at its source.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns snapshot-wide resolution only; scanning and materialization are separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Owner paths outside singletons and packages, and unresolved members, are reported rather than aliased.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why resolution waits for every file; its function and helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceScalaExports {
   /**
@@ -18,6 +26,14 @@ export namespace EvidenceScalaExports {
    *
    * Only one selected singleton owner can satisfy an export; ambiguity remains
    * incomplete instead of choosing a same-named member from another object.
+   *
+   * @evidence contracts/common.md#principled-implementation Each export is resolved through its owner path to a selected public member, and the export's own site and documentation are attached to that identity.
+   * @evidence contracts/common.md#clear-and-simple-design It mutates the copied file analyses in place before units are materialized.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Owner paths outside singletons and packages, and unresolved members, are reported rather than aliased.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the resolution and its failure cases.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in declarations and references with map lookups; alias chains are followed with cycle detection.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis over all files.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It mutates caller-owned analyses and keeps no state.
    */
   export function resolve(analyses: IEvidenceScalaFileAnalysis[]): void {
     const declarations = analyses.flatMap((analysis) => analysis.declarations);

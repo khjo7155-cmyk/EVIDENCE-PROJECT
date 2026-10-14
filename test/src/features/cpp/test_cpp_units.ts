@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Compare the complete unit symbols and accessor identities.
  * 3. Verify callable overloads and owned properties retain their expected sites
  *    and owners.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C++ namespaces, classes, templates and members and asserts symbols, identities, sites and owners.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared C++ surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers namespaces, classes, templates, overload families and owned properties.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cpp_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cpp_units(): Promise<void> {
   // Certified metadata names the exact grammar and explicit declared surface.

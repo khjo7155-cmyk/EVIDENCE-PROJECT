@@ -12,6 +12,14 @@ import type { IEvidenceGraphHostCoverage } from "./IEvidenceGraphHostCoverage";
  * Activation and completeness are separate: an inactive obligation is skipped,
  * while an incomplete active obligation cannot establish a coverage pass. A
  * complete obligation can still fail because selected units remain missing.
+ *
+ * @evidence contracts/common.md#principled-implementation One ledger per claim/reference pair holds the denominator, covered and missing identities, accepted edges and checklist ledgers.
+ * @evidence contracts/common.md#clear-and-simple-design Only identities and edges are stored; unit records stay in inventories.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Inactive and incomplete obligations keep their flags so empty lists are never read as passing.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the independent ledger; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphObligation {
   /**

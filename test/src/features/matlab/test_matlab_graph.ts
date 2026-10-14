@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Evaluate each selector with and without its matching acknowledgement.
  * 3. Require exact missing populations when evidence is absent.
  * 4. Verify a review-only claim leaves its referenced function uncovered.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against MATLAB type, function and property references with and without acknowledgement, and a review-only claim.
+ * @evidence contracts/testing.md#independent-expectations Missing populations are the fixture's declared units; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each selector covered and missing, and the review-only case.
+ * @evidence contracts/testing.md#execution-ownership The exported test_matlab_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_matlab_graph(): Promise<void> {
   const reference = await new EvidenceMatlabAdapter().analyze(

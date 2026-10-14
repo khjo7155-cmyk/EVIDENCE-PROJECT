@@ -38,6 +38,11 @@ import { EvidenceTestGraph } from "../../internal/EvidenceTestGraph";
  * 7. Exercise `requireReview` with the old hash after a root server change and
  *    require a stale-review diagnostic rather than a passing obsolete review.
  * 8. Verify the expected description stability or invalidation.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Swagger operations and compares normalized operation fingerprints across component, reference, description, server and security edits, including Swagger 2.0 conversion and a stale review.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational and derived from the effective-contract rule: only edits that change an operation's effective contract expire its review.
+ * @evidence contracts/testing.md#distinguishing-cases Covers component and unresolved-reference edits, omitted versus empty defaults, root, path and operation servers, used versus unused security schemes, reordering versus membership changes, Swagger 2.0 inputs, and requireReview with a stale hash.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_fingerprints is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swagger_fingerprints(): Promise<void> {
   const baseline = await analyze(document("Creates a member.", "string"));

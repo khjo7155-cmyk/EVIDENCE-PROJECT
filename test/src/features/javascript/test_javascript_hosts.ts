@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented declarations.
  * 2. Compare evidence hosts.
  * 3. Reject JSX and literal annotation carriers.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes JSDoc-documented JavaScript declarations with JSX and literal lookalikes and asserts hosts and rejections.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts follow the rule that only declaration-owned JSDoc is eligible.
+ * @evidence contracts/testing.md#distinguishing-cases Covers documented declarations, JSX text and literal annotation carriers.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_hosts(): Promise<void> {
   const content = dedent`

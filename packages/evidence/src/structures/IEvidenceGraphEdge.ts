@@ -8,6 +8,14 @@ import type { EvidenceAcknowledgementKind } from "../typings/EvidenceAcknowledge
  * target and the selected identities it covers. Its fingerprint belongs to that
  * exact cited scope, allowing review validation without turning reviews into
  * evidence.
+ *
+ * @evidence contracts/common.md#principled-implementation An edge records the exact target, the selected units it covers and the scope fingerprint, since a cited ancestor can cover selected descendants.
+ * @evidence contracts/common.md#clear-and-simple-design The edge links declaration, host and target identities without embedding their records.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts The fingerprint covers the exact cited scope, not only the selected subset.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains aggregate targets and review validation; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphEdge {
   /**

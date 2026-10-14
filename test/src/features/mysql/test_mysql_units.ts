@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze qualified schemas with composite relations and aliases.
  * 2. Verify exact units, owners, relation endpoints, and supported addresses.
  * 3. Require unsupported relation-like constructs to stay absent.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes qualified MySQL schemas with composite relations and aliases and asserts units, owners, endpoints and addresses.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared schema written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers qualified tables, composite foreign keys, aliases, and relation-like constructs that must stay absent.
+ * @evidence contracts/testing.md#execution-ownership The exported test_mysql_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_mysql_units(): Promise<void> {
   const inventory = await new EvidenceMysqlAdapter().analyze(

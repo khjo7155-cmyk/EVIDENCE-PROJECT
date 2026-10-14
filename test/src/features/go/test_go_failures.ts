@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze each uncertain source form.
  * 2. Require an incomplete inventory and diagnostic.
  * 3. Retain no falsely complete population.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Go sources with missing receivers, package conflicts, conditional duplicates and parse errors, asserting incompleteness and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Go boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each uncertain package form; healthy packages are owned by test_go_units.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_failures(): Promise<void> {
   const adapter = new EvidenceGoAdapter();

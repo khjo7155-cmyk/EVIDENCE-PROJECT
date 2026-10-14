@@ -28,6 +28,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    JSON and missing defaults, naming both conventional candidates.
  * 5. Run omitted-path loader and checker instance/static APIs from the fixture
  *    cwd, requiring the same JSON roots and explicit-path failure behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs commands and loader and checker APIs across JSON-only, TS-plus-JSON, invalid TS and explicit-path layouts, asserting results.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the discovery contract: TS priority, absence-only fallback, explicit paths never fall back.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every finite command, TS priority, explicit JSON, invalid TS, missing explicit paths, malformed JSON and missing defaults, and instance and static APIs.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_discovery is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_config_discovery(): Promise<void> {
   const json: string = JSON.stringify({

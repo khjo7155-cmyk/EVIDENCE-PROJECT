@@ -41,6 +41,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 6. Attach evidence to the final definition and require recovery to a passing
  *    check. Existing stub overload and property-family tests remain separate
  *    positive controls in the focused Python validation set.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes repeated Python definitions across kinds and runs EvidenceChecker on the original false-success fixture, asserting survivors, removed descendants and coverage.
+ * @evidence contracts/testing.md#independent-expectations Expected survivors follow Python's executable binding order, written from the language semantics rather than the adapter.
+ * @evidence contracts/testing.md#distinguishing-cases Covers repeated functions, methods, constructors and properties, a replaced withdrawn class, a re-exported repeated function, cross-kind replacement and accessor families, a dead-evidence false success and its recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_redefinitions is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_redefinitions(): Promise<void> {
   const repeated: IEvidenceInventory =

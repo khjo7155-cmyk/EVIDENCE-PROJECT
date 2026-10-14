@@ -16,6 +16,11 @@ import { EvidenceTestDocumentation } from "../../internal/EvidenceTestDocumentat
  *    an `@internal` line withdraws the declaration.
  * 3. Verify the extracted annotation span excludes the CR and comment prefix and
  *    retains its original line and column.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses HTML-comment and CRLF Prisma-style documentation with EvidenceTagParser and asserts statements, withdrawals and exact annotation ranges.
+ * @evidence contracts/testing.md#independent-expectations Expected boundaries and coordinates are derived by hand from the fixture text and the documented tag-boundary rules for each carrier style.
+ * @evidence contracts/testing.md#distinguishing-cases Distinguishes the HTML style, where foreign tags stay prose and withdrawals are not allowed, from the line style, where foreign tags end reasons and @internal withdraws, and checks that CR and prefixes are excluded from spans. Attachment decisions belong to adapter tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_comment_styles is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_comment_styles(): Promise<void> {
   const html = EvidenceTestDocumentation.create(

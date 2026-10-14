@@ -29,6 +29,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    added claim does not change the original obligation.
  * 4. Add an incomplete sibling claim before the narrow claim; require exit code
  *    two while preserving the narrow claim's unhosted diagnostic and index.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker on configurations that reorder and add sibling claims and asserts exit codes, unhosted diagnostics and authored claim indexes.
+ * @evidence contracts/testing.md#independent-expectations Expected indexes are the authored positions; the unhosted finding must appear once regardless of sibling claims.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a disabled claim, a broad warning claim before and after, its removal, and an incomplete sibling (exit 2).
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_checklist_claim_isolation is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_checklist_claim_isolation(): Promise<void> {
   const location: string = join(

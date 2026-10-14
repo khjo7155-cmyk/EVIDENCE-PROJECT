@@ -18,6 +18,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    rather than reusing its prior identity.
  * 3. Add an uncovered property, remove it, and verify the watcher returns to
  *    complete coverage after recovery.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a Scala export project through the authored file changes and asserts each published cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run on the same files; per-cycle status expectations follow the authored edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an initially exported property, a visibility restriction (incomplete), an uncovered addition and recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_export_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_export_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

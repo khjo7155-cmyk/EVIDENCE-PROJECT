@@ -25,6 +25,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    legacy cache path and require acquisition without modifying it.
  * 4. Exercise default and environment namespaces from an empty working directory;
  *    require successful acquisition and no created directories.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Acquires grammars from concurrent callers and offline providers and asserts transfer counts, byte isolation and absence of files.
+ * @evidence contracts/testing.md#independent-expectations Expected lengths and digests come from the pinned record.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold shared acquisition, offline reuse, returned-copy mutation, a regular file as the legacy cache path, and default and environment namespaces.
+ * @evidence contracts/testing.md#execution-ownership The exported test_parser_assets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_parser_assets(): Promise<void> {
   const original = new EvidenceTreeSitterAssets();

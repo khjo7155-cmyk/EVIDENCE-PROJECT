@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    parse-error boundaries.
  * 2. Require each uncertain source to be incomplete.
  * 3. Require diagnostics to describe the rejected condition.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C++ at preprocessing, specialization, qualified-lookup and parse-error boundaries and asserts incompleteness and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented C++ boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers preprocessing, macros, specializations, inheritance and friends, unresolved qualified owners, and syntax errors.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cpp_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cpp_failures(): Promise<void> {
   const adapter = new EvidenceCppAdapter();

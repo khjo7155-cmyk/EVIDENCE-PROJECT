@@ -13,6 +13,11 @@ import { EvidenceTestDocumentation } from "../../internal/EvidenceTestDocumentat
  * 1. Parse a host and retain its baseline annotation result.
  * 2. Mutate the original host and prior result, then parse again.
  * 3. Verify fresh controller state and an unaffected second controller.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses a host, mutates the original host and prior result, parses again, and asserts the second result and a second controller are unaffected.
+ * @evidence contracts/testing.md#independent-expectations The expected annotation is the fixture's single authored tag; isolation is checked by comparing against the baseline result rather than recorded output.
+ * @evidence contracts/testing.md#distinguishing-cases Covers reuse of one controller after caller mutation and a fresh controller; tag grammar details are owned by the other tag tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_context is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_context(): Promise<void> {
   const fixture = EvidenceTestDocumentation.create(dedent`

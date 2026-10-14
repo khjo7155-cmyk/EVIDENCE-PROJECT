@@ -23,6 +23,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Compare ancestor fingerprints after metadata and semantic subtree edits.
  * 4. Verify every Evidence tag on an ordinary comment is rejected without creating
  *    evidence or review records.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF Scaladoc with astral text, decorators, withdrawals, literal names, examples and ordinary comments and asserts declarations, coordinates, resolutions and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; fingerprint expectations are relational across metadata and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers supported hosts, hidden, resolved and missing dotted paths, both edit kinds and every tag rejected on ordinary comments.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_hosts(): Promise<void> {
   const source = dedent`

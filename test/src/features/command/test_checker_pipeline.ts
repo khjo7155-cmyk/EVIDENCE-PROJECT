@@ -29,6 +29,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    two warnings.
  * 5. Point a reference at a missing root and require an incomplete exit rather
  *    than treating the lost target population as an empty passing denominator.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs the full check pipeline and renders text and JSON, asserting coverage, authored indexes, diagnostics, exit codes and deterministic serialization.
+ * @evidence contracts/testing.md#independent-expectations Expected counts and indexes (claim 2, references 3 and 5) are taken from the authored configuration; text expectations are fragments required by the report contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers fully covered, fully missing, warning-severity and missing-root cases, distinguishing violations from operational incompleteness and errors from warnings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_checker_pipeline is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_checker_pipeline(): Promise<void> {
   const location = join(__dirname, `checker ${randomUUID()}`);

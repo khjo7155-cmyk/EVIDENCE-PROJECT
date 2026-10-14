@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Extract each Zig selector with matching claims.
  * 2. Evaluate acknowledged and undocumented populations.
  * 3. Verify review-only references remain missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against Zig references for each selector with acknowledged and undocumented units, and a review-only reference.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared Zig units; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Zig selector covered and missing, and the review-only case that must stay missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_zig_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_zig_graph(): Promise<void> {
   const reference = await new EvidenceZigAdapter().analyze(

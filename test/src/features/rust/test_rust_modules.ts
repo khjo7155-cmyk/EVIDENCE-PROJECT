@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require reachable units and every expected canonical or alias address.
  * 3. Repeat the module graph with linked physical files and require logical source
  *    addresses to preserve the same module identities.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes inline, file, private, restricted, re-exported, aliased and orphan modules and asserts reachable units and addresses, including linked physical files.
+ * @evidence contracts/testing.md#independent-expectations Expected addresses follow Rust module visibility and re-export rules, written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each module form and a linked-file layout that must keep the same logical identities.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_modules is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_modules(): Promise<void> {
   // Inline, conventional, private, and orphan modules share one selected snapshot.

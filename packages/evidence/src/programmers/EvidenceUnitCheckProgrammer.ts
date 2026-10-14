@@ -27,6 +27,14 @@ import { EvidenceCheckProgrammer } from "./EvidenceCheckProgrammer";
  * Full evaluation precedes projection so narrowing cannot conceal duplicate
  * evidence, change fingerprints, or make a multi-target host satisfy
  * singleEvidencePerSymbol. Extraction retains complete configured inputs.
+ *
+ * @evidence contracts/common.md#principled-implementation Focused checks project an already complete evaluation onto selected subtrees, so narrowing cannot hide duplicates, change fingerprints or let a multi-target host satisfy cardinality.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns focusing; inspection and summarizing are reused from the query and check programmers, and indexing is a private helper.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Extraction always covers the full configured inputs; focusing only filters outcomes.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why full evaluation comes first; helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceUnitCheckProgrammer {
   /**
@@ -36,6 +44,14 @@ export namespace EvidenceUnitCheckProgrammer {
    * unresolved, ambiguous, and incomplete requests cannot silently pass.
    * Reference units select incoming coverage and claim units select outgoing
    * annotations and host policies. The supplied analysis remains unchanged.
+   *
+   * @evidence contracts/common.md#principled-implementation Every target is inspected first; resolved targets select population subtrees (or single units when shallow), and claim units keep outgoing annotations while reference units keep incoming coverage.
+   * @evidence contracts/common.md#clear-and-simple-design Check composes inspection, selection indexing and report summarizing.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolved, ambiguous and incomplete requests fail the report instead of passing silently beside a good target.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains shallow selection and claim versus reference projection; inline comments explain why all requests resolve before deriving the outcome.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in targets times inspected populations plus the selected scopes' statements and diagnostics.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the query context's population indexes and the existing evaluation.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Selections are local to the call; the report is owned by the caller.
    */
   export async function check(
     context: IEvidenceQueryContext,

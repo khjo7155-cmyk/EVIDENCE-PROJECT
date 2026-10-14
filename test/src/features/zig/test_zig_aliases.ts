@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze aliases, copied values, and withdrawn declarations.
  * 2. Verify sites, target resolution, and withdrawal behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Zig function aliases, copied values and withdrawn declarations and asserts sites, resolution, fingerprints and withdrawal.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow Zig semantics: function aliases share a declaration, copied values do not.
+ * @evidence contracts/testing.md#distinguishing-cases Covers aliases, copied values and withdrawals with distinct identity effects.
+ * @evidence contracts/testing.md#execution-ownership The exported test_zig_aliases is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_zig_aliases(): Promise<void> {
   const content = dedent`

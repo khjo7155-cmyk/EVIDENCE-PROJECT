@@ -15,6 +15,14 @@ import { EvidencePostgresqlIdentity } from "./EvidencePostgresqlIdentity";
  *
  * It records unsupported schema changes as incomplete instead of producing a
  * smaller declaration inventory that could make coverage pass.
+ *
+ * @evidence contracts/common.md#principled-implementation Schema-qualified CREATE TABLE, ADD COLUMN, named ADD CONSTRAINT and COMMENT ON are read from grammar nodes, deferring cross-file owners for later resolution.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner extracts; ownership resolution and fingerprinting are separate namespaces.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported schema changes mark the analysis incomplete rather than reducing the inventory.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; the public members and documented private steps are described.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidencePostgresqlFileScanner {
   /**
@@ -58,6 +66,14 @@ export class EvidencePostgresqlFileScanner {
    *
    * Traversal stays at statement syntax so executable bodies and string
    * examples cannot create units.
+   *
+   * @evidence contracts/common.md#principled-implementation Statements are processed in order, publishing tables only with explicit schema owners and columns, keeping foreign keys as relations, and recording deferred references.
+   * @evidence contracts/common.md#clear-and-simple-design Each statement kind has a private handler.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unqualified owners and unsupported statements are reported.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned analysis.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scan copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidencePostgresqlFileAnalysis {
     for (const node of this.session.root.namedChildren) this.statement(node);

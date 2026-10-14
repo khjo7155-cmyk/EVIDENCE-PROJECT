@@ -12,6 +12,14 @@ import type { IEvidenceTagParseResult } from "../structures/IEvidenceTagParseRes
  * adapter establishes host attachment and documentation mapping before
  * construction; this controller preserves those inputs while delegating the
  * grammar to the tag programmer.
+ *
+ * @evidence contracts/common.md#principled-implementation A per-host controller snapshots content, host and documentation, then delegates the tag grammar to EvidenceTagProgrammer with fresh state per parse.
+ * @evidence contracts/common.md#clear-and-simple-design The class owns input capture and state allocation; the grammar lives in the programmer.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Host and documentation are cloned so callers cannot redirect parsed annotations afterward.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the split with the programmer; every field and method is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Cost is the programmer's linear scan of the documentation; the source line index is shared through EvidenceSourceText.of, so hosts of one file reuse a single index.
+ * @evidence contracts/performance.md#reuse-equivalent-work Parse state is fresh per host by design, while the immutable source line index is shared across hosts through EvidenceSourceText.of.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The controller holds cloned inputs only for its own lifetime.
  */
 export class EvidenceTagParser {
   /**
@@ -66,10 +74,18 @@ export class EvidenceTagParser {
    * Mutable continuation and code-fence state is allocated per call. Repeated
    * calls therefore produce independent results and cannot carry an unfinished
    * tag from one extraction cycle into another.
+   *
+   * @evidence contracts/common.md#principled-implementation Each call allocates a fresh context with an empty result and fence state, then runs the tag programmer.
+   * @evidence contracts/common.md#clear-and-simple-design State allocation is here; parsing rules are in EvidenceTagProgrammer.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Fresh state prevents an unfinished tag from leaking between calls.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains independence of repeated calls.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in documentation length; the source line index is reused across hosts through EvidenceSourceText.of.
+   * @evidence contracts/performance.md#reuse-equivalent-work Tag state starts fresh per call; the source line index is the shared work and comes from EvidenceSourceText.of.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The context is local; the result is owned by the caller.
    */
   public parse(): IEvidenceTagParseResult {
     const context: IEvidenceTagContext = {
-      source: new EvidenceSourceText(this.content),
+      source: EvidenceSourceText.of(this.content),
       host: this.host,
       documentation: this.documentation,
       result: {
@@ -92,6 +108,14 @@ export class EvidenceTagParser {
    * This convenience entry point has the same snapshot and isolation guarantees
    * as constructing a parser and calling `parse`, and is suitable for one-off
    * adapter work.
+   *
+   * @evidence contracts/common.md#principled-implementation The static form constructs a controller and parses once, with the same snapshot guarantees.
+   * @evidence contracts/common.md#clear-and-simple-design It is a convenience wrapper over the constructor and instance parse.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No separate parsing path exists.
+   * @evidence contracts/common.md#meaningful-documentation The comment states its equivalence to the instance form.
+   * @evidence contracts/performance.md#efficient-algorithms Same cost as the instance parse.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work One-off parsing has nothing to share.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   public static parse(
     content: string,

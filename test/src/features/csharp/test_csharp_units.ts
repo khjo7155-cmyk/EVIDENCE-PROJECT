@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    events, operators, and nested members across partial files.
  * 3. Compare the full unit surface, retain two sites for the partial record and
  *    overload family, and exclude inaccessible declarations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks the registered C# metadata and analyzes public types and members across partial files, asserting the unit surface and site counts.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared C# surface written in the test, including visibility defaults.
+ * @evidence contracts/testing.md#distinguishing-cases Covers records, interfaces, structs, enums, delegates, fields, events, operators, nested members, partial sites and excluded inaccessible declarations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_csharp_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_csharp_units(): Promise<void> {
   // Certified metadata names the exact pinned grammar and adapter boundary.

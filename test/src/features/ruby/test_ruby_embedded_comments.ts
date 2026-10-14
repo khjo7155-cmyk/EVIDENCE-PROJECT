@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    fingerprint.
  * 3. Require blank lines, lexical boundaries, and mismatched indentation to leave
  *    tagged carriers unsupported instead of acknowledging a declaration.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes nested embedded RDoc under LF, CRLF and tab indentation and asserts attachment, reviews, withdrawals, fingerprints and unsupported carriers.
+ * @evidence contracts/testing.md#independent-expectations Expected owners follow the column-zero, blank-line and lexical-scope rules; fingerprint expectations are relational across a metadata-only edit.
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested owners, withdrawn descendants, and blank lines, lexical boundaries and mismatched indentation that must leave carriers unsupported.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_embedded_comments is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_embedded_comments(): Promise<void> {
   const source = dedent`

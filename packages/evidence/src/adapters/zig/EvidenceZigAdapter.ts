@@ -28,6 +28,14 @@ import { EvidenceZigFileScanner } from "./EvidenceZigFileScanner";
  * withdrawals through their real owners. It preserves unsupported source forms
  * as incomplete findings rather than evaluating comptime code to guess a public
  * surface.
+ *
+ * @evidence contracts/common.md#principled-implementation File scans establish pub visibility, exposed container fields and direct aliases, and the adapter reconciles aliases into units with every physical site before applying documentation and withdrawals through the real owners.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and Zig doc comment normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Local usingnamespace, comptime namespaces and build options are reported as incomplete; comptime code is never evaluated.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceZigAdapter implements IEvidenceAdapter<"zig"> {
   /**
@@ -47,6 +55,14 @@ export class EvidenceZigAdapter implements IEvidenceAdapter<"zig"> {
    * Semantic publication precedes documentation so aliases keep the original
    * owner and withdrawals. Completeness includes every scan's outcome, and the
    * invocation releases parser resources on all completion paths.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, reconciles alias projections into units and addresses, and creates hosts for attached or unsupported documentation.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

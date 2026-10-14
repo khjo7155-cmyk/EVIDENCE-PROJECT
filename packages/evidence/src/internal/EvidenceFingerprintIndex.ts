@@ -26,6 +26,14 @@ type EvidencePortableReplacement = readonly [token: string, value: string];
  * Fingerprints exclude annotation text and presentation-only whitespace so an
  * acknowledgement edit does not look like a specification change. The index
  * owns only references to the immutable analysis inventory.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned SHA-256 over each subtree unit's portable identity, symbol and normalized own content (annotations removed, CRLF and trailing whitespace normalized, withdrawals appended) gives checkout-stable review tokens.
+ * @evidence contracts/common.md#clear-and-simple-design The class indexes one inventory once and memoizes digests; portable token replacement, range ordering and normalization are private helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Process-local source IDs and absolute roots are replaced with checkout-stable markers, and ambiguous tokens throw rather than letting collection order choose a value.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains what fingerprints exclude; every field, method and helper is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Construction is linear in sources, annotations and units. The portable token table is built and ordered once per index, and each unit's content digest and portable identity are computed once, so sorting a scope of n units costs O(n log n) comparisons of memoized strings.
+ * @evidence contracts/performance.md#reuse-equivalent-work Content digests, portable identities, the token table and finished fingerprints are memoized for the lifetime of the inventory snapshot.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The index references the immutable analysis inventory; its memo maps grow by at most one entry per unit plus one token table, and it is released with the owning graph evaluation.
  */
 export class EvidenceFingerprintIndex {
   /**
@@ -57,6 +65,21 @@ export class EvidenceFingerprintIndex {
    * Repeated review checks reuse both the presented prefix and full scope hash.
    */
   private readonly fingerprints = new Map<string, IEvidenceFingerprint>();
+
+  /**
+   * Memoized portable identity string for each unit ID.
+   *
+   * Scope sorting compares identities repeatedly, so each one is rendered once.
+   */
+  private readonly identities = new Map<string, string>();
+
+  /**
+   * Validated, longest-first token replacements shared by every unit.
+   *
+   * Built lazily on first use because it depends only on the inventory's
+   * sources; an ambiguous token still throws at that point.
+   */
+  private replacements: EvidencePortableReplacement[] | undefined;
 
   /**
    * Source snapshots indexed by physical path for site content lookup.
@@ -107,6 +130,14 @@ export class EvidenceFingerprintIndex {
    *
    * Unknown identities fail rather than producing an empty fingerprint, because
    * absence would make a stale graph appear unchanged.
+   *
+   * @evidence contracts/common.md#principled-implementation The cited unit's cycle-safe subtree is collected, sorted by portable identity, symbol and digest, and hashed with the fingerprint version; the first seven hex characters form the review token.
+   * @evidence contracts/common.md#clear-and-simple-design Inspect composes collection, identity and content helpers and memoizes the result.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unknown identities throw instead of returning an empty fingerprint that would make a stale graph look unchanged.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the root and scope digests and the failure for unknown IDs.
+   * @evidence contracts/performance.md#efficient-algorithms First inspection of a scope is O(n log n) in its units plus content hashing; repeats are constant time.
+   * @evidence contracts/performance.md#reuse-equivalent-work Results are memoized per unit ID, so every review of the same scope reuses one computation.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Memoized results live with the index for one analysis and are released with it.
    */
   public inspect(unitId: string): IEvidenceFingerprint {
     const remembered = this.fingerprints.get(unitId);
@@ -166,7 +197,9 @@ export class EvidenceFingerprintIndex {
    * declarations designed to survive file moves do not acquire a new one.
    */
   private identity(unit: IEvidenceUnit): string {
-    return JSON.stringify([
+    const remembered: string | undefined = this.identities.get(unit.id);
+    if (remembered !== undefined) return remembered;
+    const rendered: string = JSON.stringify([
       unit.type,
       unit.type === "markdown"
         ? this.declaringPaths(unit)
@@ -174,6 +207,8 @@ export class EvidenceFingerprintIndex {
       unit.symbol,
       unit.identity,
     ]);
+    this.identities.set(unit.id, rendered);
+    return rendered;
   }
 
   /**
@@ -209,6 +244,17 @@ export class EvidenceFingerprintIndex {
    * markers from participating in later replacements.
    */
   private portableUnitId(unit: IEvidenceUnit): string {
+    this.replacements ??= orderReplacements(this.collectReplacements());
+    return replacePortableTokens(unit.id, this.replacements);
+  }
+
+  /**
+   * Lists every process-local token and its checkout-stable replacement.
+   *
+   * Source IDs, physical paths and physical roots are all rewritten, so the
+   * table depends only on the indexed sources and is built once.
+   */
+  private collectReplacements(): EvidencePortableReplacement[] {
     const sources: IEvidenceSourceFile[] = Array.from(this.sources.values());
     const replacements: EvidencePortableReplacement[] = [];
     for (const source of sources) {
@@ -236,7 +282,7 @@ export class EvidenceFingerprintIndex {
     );
     for (const root of roots)
       if (root !== "") replacements.push([root, "@root"]);
-    return replacePortableTokens(unit.id, replacements);
+    return replacements;
   }
 
   /**
@@ -349,16 +395,15 @@ export class EvidenceFingerprintIndex {
 }
 
 /**
- * Replaces process-local identity tokens without revisiting generated text.
+ * Validates and orders process-local tokens for longest-first replacement.
  *
- * At each original input position, the longest matching token wins. Equal
- * tokens must agree on their stable value so source collection order cannot
- * choose a fingerprint silently.
+ * Equal tokens must agree on their stable value so source collection order
+ * cannot choose a fingerprint silently. Longer tokens sort first, then tokens
+ * compare bytewise for a deterministic order.
  */
-function replacePortableTokens(
-  input: string,
+function orderReplacements(
   replacements: EvidencePortableReplacement[],
-): string {
+): EvidencePortableReplacement[] {
   const unique = new Map<string, string>();
   for (const [token, value] of replacements) {
     if (token === "") continue;
@@ -382,6 +427,19 @@ function replacePortableTokens(
         : EvidenceInventoryMerge.compare(left[0], right[0]);
     },
   );
+  return ordered;
+}
+
+/**
+ * Replaces process-local identity tokens without revisiting generated text.
+ *
+ * At each original input position, the longest matching token wins. The
+ * replacements must already be validated and ordered by orderReplacements.
+ */
+function replacePortableTokens(
+  input: string,
+  ordered: EvidencePortableReplacement[],
+): string {
   if (ordered.length === 0) return input;
 
   let output: string = "";

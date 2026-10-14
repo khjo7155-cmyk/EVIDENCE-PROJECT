@@ -18,6 +18,14 @@ import type { IEvidenceSourceRange } from "./IEvidenceSourceRange";
  * Unattached and unsupported carriers remain available for diagnostics. Graph
  * cardinality counts the owning semantic identities, not the number of
  * comments.
+ *
+ * @evidence contracts/common.md#principled-implementation A host records a documentation carrier's span, owning units and attachment result, keeping physical carriers apart from semantic identity.
+ * @evidence contracts/common.md#clear-and-simple-design Attachment status and problem are adapter outputs; tag parsing happens elsewhere.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unattached and unsupported carriers are recorded rather than dropped, so tags there are reported.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains ownership; each field documents its meaning and omission.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceHost {
   /**

@@ -18,6 +18,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    exact file before scanning can depend on the process working directory.
  * 3. Check containment for exact descendants and roots, trailing separators,
  *    sibling prefixes, case variants, and Windows and POSIX parent escapes.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads case-misspelled paths, validates root spellings and checks containment, asserting diagnostics and results.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow case-sensitive identity and the root rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers case mismatches, empty, padded, globbed and drive-relative roots and files, and containment edge cases on both path flavors.
+ * @evidence contracts/testing.md#execution-ownership The exported test_source_paths is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_source_paths(): Promise<void> {
   const location = join(__dirname, "paths-" + randomUUID());

@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze PostgreSQL input cold while recording grammar requests.
  * 2. Verify the requested variant and complete inventory.
  * 3. Repeat offline and require equivalent analysis.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes PostgreSQL with a cold grammar cache while recording requests, then offline, asserting the requested variant and equal inventories.
+ * @evidence contracts/testing.md#independent-expectations Only the configured PostgreSQL variant may be requested; the offline inventory must equal the cold one.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition and warm offline reuse.
+ * @evidence contracts/testing.md#execution-ownership The exported test_postgresql_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_postgresql_acquisition(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("sql");

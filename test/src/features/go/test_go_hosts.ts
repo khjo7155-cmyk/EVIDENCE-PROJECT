@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze supported Go doc positions.
  * 2. Compare attached hosts.
  * 3. Reject misplaced comment annotations and ignore literal data.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Go group, specification, field and method documentation and misplaced comments, asserting hosts and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the documented Go comment rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers grouped declarations, specifications, fields, methods, misplaced comments and ignored literals.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_hosts(): Promise<void> {
   const inventory = await new EvidenceGoAdapter().analyze(

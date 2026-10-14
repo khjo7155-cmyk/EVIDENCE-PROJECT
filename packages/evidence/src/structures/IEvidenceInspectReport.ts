@@ -10,6 +10,14 @@ import type { IEvidenceInspection } from "./IEvidenceInspection";
  * occur in independent references. Success requires every inspected boundary to
  * resolve and the underlying analysis to pass; unavailable analysis takes
  * precedence over ordinary target-resolution failures.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned report combines check status with target-resolution outcomes across populations.
+ * @evidence contracts/common.md#clear-and-simple-design Inspections are per population; the report adds status and the authored target.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Incomplete analysis takes priority over unresolved targets in the exit code.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the report; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInspectReport {
   /**

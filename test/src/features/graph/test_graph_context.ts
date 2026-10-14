@@ -23,6 +23,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    saved result without lost coverage or duplicated diagnostics.
  * 3. Construct another facade from the now-empty input and require an empty,
  *    successful graph, proving that each facade captures its own input.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates a shared exclusion under permissive and strict references, mutates input and output, and reevaluates both facades.
+ * @evidence contracts/testing.md#independent-expectations Expected coverage follows the exclusion policies; repeated evaluation must reproduce the first result, and a facade built from emptied input must be empty.
+ * @evidence contracts/testing.md#distinguishing-cases Covers permissive versus strict policies, caller mutation of input and results, and per-facade input capture.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_context is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_context(): Promise<void> {
   const inventory = EvidenceTestInventory.create();

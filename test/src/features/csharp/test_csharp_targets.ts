@@ -23,6 +23,11 @@ interface IEvidenceCSharpTargetStatus {
  * 3. Require a generic-subtree crossing to be missing and an underspecified
  *    generic pair to be ambiguous, while overload and indexer families retain
  *    two sites.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves C# targets for namespaces, generic arity, indexers and operators and asserts resolved, missing and ambiguous statuses and site counts.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow the C# addressing rules (arity segments, quoted special members, source-name aliases).
+ * @evidence contracts/testing.md#distinguishing-cases Covers exact type and member paths, quoted operators and indexers, a generic-subtree crossing, an underspecified generic pair, and overload families.
+ * @evidence contracts/testing.md#execution-ownership The exported test_csharp_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_csharp_targets(): Promise<void> {
   const adapter = new EvidenceCSharpAdapter();

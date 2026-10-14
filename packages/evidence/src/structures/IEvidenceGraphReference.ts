@@ -15,6 +15,14 @@ import type { IEvidenceInventory } from "./IEvidenceInventory";
  * Every record is an independent obligation, even when another reference has
  * the same inventory and selectors. An exclusion can cover a permissive
  * reference while leaving a repeated, exclusion-forbidding reference missing.
+ *
+ * @evidence contracts/common.md#principled-implementation A reference inventory, selected IDs, prepared resolutions and optional policy flags are everything the evaluator needs for one obligation.
+ * @evidence contracts/common.md#clear-and-simple-design Resolution happens before evaluation; the evaluator consumes outcomes rather than resolving targets.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Repeated references keep separate inventories and policies instead of being merged.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains independence and preparation; each field documents omission and effect.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphReference {
   /**

@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Select each Lua symbol kind. 2. Evaluate acknowledged and missing graphs. 3.
  *    Require review-only references to remain missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against Lua references for each selector, including review-only references.
+ * @evidence contracts/testing.md#independent-expectations Missing IDs are the fixture's declared units; reviews never count as evidence.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Lua selector acknowledged and missing, and review-only references.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_lua_graph(): Promise<void> {
   const reference = await new EvidenceLuaAdapter().analyze(

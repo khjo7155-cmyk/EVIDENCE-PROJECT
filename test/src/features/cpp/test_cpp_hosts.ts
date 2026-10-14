@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze supported Doxygen comments before C++ declarations.
  * 2. Compare attached declarations and hosts with the expected public units.
  * 3. Require inert annotated carriers to remain diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C++ with leading and misplaced Doxygen and asserts attached hosts and unsupported-host diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the documented Doxygen placement rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers supported leading comments and inert annotated carriers such as literals and unsupported comments.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cpp_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cpp_hosts(): Promise<void> {
   const inventory = await new EvidenceCppAdapter().analyze(

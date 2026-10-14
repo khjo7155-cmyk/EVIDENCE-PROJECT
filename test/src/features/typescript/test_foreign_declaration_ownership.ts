@@ -36,6 +36,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    units.
  * 2. Add one local declaration to each source; require complete analysis with
  *    exactly that owner and no dependency declarations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes dependency-only sources across every re-export and static import/include adapter, then adds one local declaration to each, asserting units.
+ * @evidence contracts/testing.md#independent-expectations Expected populations follow the rule that dependency declarations are not obligations of their consumers: empty, then exactly the local owner.
+ * @evidence contracts/testing.md#distinguishing-cases Covers sixteen adapters with and without a local declaration.
+ * @evidence contracts/testing.md#execution-ownership The exported test_foreign_declaration_ownership is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_foreign_declaration_ownership(): Promise<void> {
   const fixtures: [IEvidenceAdapter, string, string, string][] = [

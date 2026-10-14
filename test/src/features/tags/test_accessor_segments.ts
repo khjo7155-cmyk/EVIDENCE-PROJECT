@@ -13,6 +13,11 @@ import { TestValidator } from "@nestia/e2e";
  *    boundaries.
  * 3. Reject empty, malformed, unterminated, noncanonical numeric, quoted, and
  *    invalid-identifier accessor spellings.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Round-trips literal segments through EvidenceAccessor.format and parse and parses malformed spellings; a parser that split dots inside brackets, dropped Unicode or escapes, or accepted noncanonical numbers would fail.
+ * @evidence contracts/testing.md#independent-expectations Expected segment arrays and canonical spellings such as A["B.C"] are written from the accessor grammar (dotted identifiers, JSON-string and unsigned-integer brackets), not taken from parser output.
+ * @evidence contracts/testing.md#distinguishing-cases Positive cases cover identifiers, quoted dots and spaces, Unicode, escapes, numeric and empty segments; negatives cover empty, leading or trailing dots, double dots, signed or zero-padded numbers, single quotes, unterminated brackets and digit-initial names. Target resolution is left to the resolver tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_accessor_segments is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_accessor_segments(): Promise<void> {
   const cases: string[][] = [

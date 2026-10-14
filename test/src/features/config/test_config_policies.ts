@@ -19,6 +19,11 @@ import { validateEvidenceConfig } from "@wrtnlabs/evidence";
  * 4. Add shared exclusion-carrier globs to a checklist and require rejection.
  * 5. Forbid exclusions on that same reference and require the configuration to
  *    become valid, exercising the permitted counterpart of the carrier rule.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Validates checklist configurations and asserts acceptance or the specific policy diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics are written from the checklist compatibility rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a valid reviewed checklist, both cardinality flags, a checklist on a TypeScript reference, shared carriers, and the permitted noEvidenceExclude counterpart.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_policies is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_config_policies(): Promise<void> {
   const checklist = createConfig({

@@ -29,6 +29,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 3. For every unit bound from one to the number of distinct keys, require the
  *    result to equal the findings of the first keys in report order, computed
  *    independently from the full report, with exactly that many distinct keys.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks a project with uncovered units and a broken citation and narrows by every unit bound, asserting the disjoint keys and kept findings.
+ * @evidence contracts/testing.md#independent-expectations For each bound the expected findings are computed independently from the full report by first-seen key order and compared with the narrowed result.
+ * @evidence contracts/testing.md#distinguishing-cases Covers reference-unit keys and statement-host keys together and every bound from one to the number of distinct keys.
+ * @evidence contracts/testing.md#execution-ownership The exported test_report_window_keys is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_report_window_keys(): Promise<void> {
   const config: IEvidenceConfig = {

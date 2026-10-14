@@ -27,6 +27,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    failure while suppressing derived missing-unit results.
  * 6. Supply a complete empty reference and require exactly one empty-reference
  *    finding, no missing units, and no per-host cardinality findings.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates host eligibility, empty carrier selections, review-only input and incomplete or empty references, asserting findings and suppression.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the contract: positive evidence needs a selected host, reviews never cover, and incomplete inputs suppress derivative findings.
+ * @evidence contracts/testing.md#distinguishing-cases Covers unselected carriers, an empty exclusion-host selection, review-only input, failed discovery with cardinality, an incomplete resolution, and a complete empty reference.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_hosts_and_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_hosts_and_failures(): Promise<void> {
   const reference = EvidenceTestInventory.create();

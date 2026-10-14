@@ -24,6 +24,11 @@ import type { IEvidenceTestDocumentation } from "../../internal/IEvidenceTestDoc
  * 3. Recover at a valid H4 annotation after the malformed annotations.
  * 4. Reparse an otherwise valid heading on an unattached host and require a
  *    finding.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses malformed heading annotations and inert heading-like text and asserts the diagnostics, the absence of false annotations and recovery at a valid H4 annotation.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the documented heading rules: H2-H4 only, target on the heading, nonempty explanation, examples inert.
+ * @evidence contracts/testing.md#distinguishing-cases Covers missing targets and reasons, H1/H5/H6, malformed markers, indented and fenced examples, comments, recovery afterward, and an unattached host. Valid multi-section parsing is owned by test_tag_heading_sections.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_heading_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_heading_failures(): Promise<void> {
   const fixture: IEvidenceTestDocumentation =

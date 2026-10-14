@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented declarations, withdrawals, and inert comment-shaped text.
  * 2. Verify targets, CRLF positions, and resolution behavior.
  * 3. Compare semantic and documentation fingerprint effects.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Objective-C Doxygen, withdrawals and inert text and asserts targets, CRLF positions, resolution and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected positions are computed by hand; fingerprint expectations are relational.
+ * @evidence contracts/testing.md#distinguishing-cases Covers documented declarations, merged withdrawals, ordinary comments and examples.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_hosts(): Promise<void> {
   const source = dedent`

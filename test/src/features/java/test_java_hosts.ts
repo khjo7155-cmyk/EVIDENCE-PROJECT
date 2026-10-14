@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze annotated Javadoc.
  * 2. Compare hosted declarations.
  * 3. Require inert Java carriers to report diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Javadoc on eligible declarations and inert carriers and asserts hosted declarations and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the Javadoc rules: only an immediately preceding block on a published declaration hosts evidence.
+ * @evidence contracts/testing.md#distinguishing-cases Covers Javadoc on types, overloads and grouped fields, masked code regions, ordinary comments and Javadoc on unpublished declarations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_java_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_java_hosts(): Promise<void> {
   const inventory = await new EvidenceJavaAdapter().analyze(

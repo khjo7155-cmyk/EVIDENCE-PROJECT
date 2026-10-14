@@ -6,6 +6,14 @@
  * precise source spans for diagnostics and fingerprint exclusions. Host policy
  * determines which tags terminate reasons and whether a withdrawal directive
  * has declaration ownership.
+ *
+ * @evidence contracts/common.md#principled-implementation Normalized text with parallel start and end offset maps recovers precise source spans after prefixes or escapes change coordinates.
+ * @evidence contracts/common.md#clear-and-simple-design Adapters produce it; the tag parser consumes it, and host policy is carried as two flags.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Separate ends preserve escaped spellings that a start-plus-one assumption would corrupt.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the mapping purpose; each field documents its coordinate semantics or policy effect.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceDocumentation {
   /**

@@ -22,6 +22,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    exclusion carriers to a different source file.
  * 3. Require the misplaced source host to report graph-out-of-scope-host with exit
  *    1 rather than silently accepting or discarding the exclusion.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates a TypeScript claim with a Prisma-target annotation and with misplaced exclusion carriers, asserting the participation and out-of-scope diagnostics and exit code.
+ * @evidence contracts/testing.md#independent-expectations Diagnostic codes come from the configuration contract: a target outside the claim's references is non-participating, and exclusions outside declared carriers are out of scope.
+ * @evidence contracts/testing.md#distinguishing-cases Contrasts a foreign-artifact citation with a valid Markdown exclusion placed outside its carrier globs. Carrier selection itself is owned by graph tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_checker_participation is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_checker_participation(): Promise<void> {
   const location = join(__dirname, `participation ${randomUUID()}`);

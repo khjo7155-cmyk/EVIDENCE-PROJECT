@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze eligible JSDoc and unsupported comment placements.
  * 2. Verify attached declarations and unsupported-host diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes TypeScript JSDoc on supported hosts and tag-bearing comments in unsupported places and asserts declarations and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts follow the declaration-JSDoc rule.
+ * @evidence contracts/testing.md#distinguishing-cases Covers eligible JSDoc and each unsupported comment placement.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_hosts(): Promise<void> {
   const content = dedent`

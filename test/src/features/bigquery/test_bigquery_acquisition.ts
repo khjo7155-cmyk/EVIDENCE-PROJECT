@@ -24,6 +24,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    the identical inventory.
  * 3. Parse the schema directly, then reject a TypeScript extension and an
  *    unsupported GoogleSQL query capture.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Acquires the BigQuery grammar through the asset cache, analyzes source, reanalyzes with a failing fetch, and parses directly, asserting inventories, request counts and rejections.
+ * @evidence contracts/testing.md#independent-expectations The offline inventory must equal the online one; rejections follow the registry and query contracts.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold acquisition, offline reuse, a wrong-language extension and an unsupported query capture for BigQuery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_acquisition(): Promise<void> {
   const grammar = await new EvidenceTreeSitterAssets().grammar("bigquery");

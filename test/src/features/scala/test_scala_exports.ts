@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Verify overload and export physical sites are retained and a source-body edit
  *    changes the exported fingerprint.
  * 3. Withdraw the source method and verify the exported alias resolves as hidden.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a forwarding object exporting an overloaded method, property and alias and asserts alias resolution, sites, fingerprints and hidden resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow export semantics: aliases add no denominator units and resolve to the source unit.
+ * @evidence contracts/testing.md#distinguishing-cases Covers overload and export sites, a source-body edit changing the exported fingerprint, and a withdrawn source method.
+ * @evidence contracts/testing.md#execution-ownership The exported test_scala_exports is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_scala_exports(): Promise<void> {
   const sources = EvidenceTestSourceSnapshot.combine([

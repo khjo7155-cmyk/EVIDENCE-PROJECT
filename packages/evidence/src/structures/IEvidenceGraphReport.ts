@@ -14,6 +14,14 @@ import type { IEvidenceGraphExportReview } from "./IEvidenceGraphExportReview";
  * not merge requirements across references. Accepted acknowledgement edges and
  * review relations remain separate. Report status and diagnostics come from the
  * same check analysis used to construct the graph.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned export keeps boundaries, nodes, edges, reviews and diagnostics with the check status so graph consumers see the same analysis.
+ * @evidence contracts/common.md#clear-and-simple-design Status fields are inherited from the analysis; the report adds structure, not new decisions.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Collections are deterministically ordered rather than in extraction order.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains what the export preserves; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphReport {
   /**

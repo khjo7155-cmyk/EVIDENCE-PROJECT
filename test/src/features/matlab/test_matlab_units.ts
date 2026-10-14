@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Verify exact public identities, shared accessor sites, ownership, and host
  *    coverage.
  * 3. Resolve an aliased public property through the inventory.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes MATLAB class members and function files and asserts identities, accessor sites, ownership, host coverage and alias resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared public surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers properties, methods, events, enumerations, accessors, separate function files, and excluded private, nested and local declarations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_matlab_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_matlab_units(): Promise<void> {
   const inventory = await new EvidenceMatlabAdapter().analyze(

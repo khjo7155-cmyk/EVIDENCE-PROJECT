@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require the exact public units and identities while excluding private and
  *    restricted declarations and preserving distinct associated-item
  *    ownership.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks the registered Rust metadata and analyzes public types, fields, variants, trait members, values and impl items, asserting identities.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared public surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every declaration and member form, private and restricted exclusions, and distinct associated-item ownership.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_units(): Promise<void> {
   // Certified metadata must accompany the pinned Rust grammar.

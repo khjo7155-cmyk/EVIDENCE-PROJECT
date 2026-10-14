@@ -55,6 +55,14 @@ import type { EvidenceUnitSelection } from "../typings/EvidenceUnitSelection";
  *     queryContext,
  *     "src/user.ts#UserService",
  *   );
+ *
+ * @evidence contracts/common.md#principled-implementation Query reports are projections of one completed analysis built from shared population contexts; nothing re-evaluates policy or mutates inventories.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns list, inspect, graph and languages projections; formatting and population indexing are helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Claim and reference coordinates from the check are kept so every query describes the same obligation boundaries.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the projection rule with an example; private helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceQueryProgrammer {
   /**
@@ -66,6 +74,14 @@ export namespace EvidenceQueryProgrammer {
    * by stable query identity, and checker diagnostics are passed through
    * unchanged because a list command is an observation of the existing
    * analysis.
+   *
+   * @evidence contracts/common.md#principled-implementation Each population is projected to rows, filtered by language and kind, and sorted by stable query identity, passing checker diagnostics through unchanged.
+   * @evidence contracts/common.md#clear-and-simple-design Row projection is a private helper per population.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Filters do not change configured selection or coverage.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains filtering, ordering and diagnostic pass-through.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n) in listed rows.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the context's population indexes.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function list(
     context: IEvidenceQueryContext,
@@ -106,6 +122,14 @@ export namespace EvidenceQueryProgrammer {
    * Resolution is isolated per population; the report is resolved only when
    * every selected boundary resolves, and preserves incomplete checker state as
    * exit code 2.
+   *
+   * @evidence contracts/common.md#principled-implementation Populations exposing the exact target spelling are authoritative; otherwise grammar applicability chooses them, and each is inspected independently before statuses combine with incompleteness taking priority.
+   * @evidence contracts/common.md#clear-and-simple-design Per-population inspection and applicability are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts An alias cannot be hidden by a broad extension match, and incomplete analysis yields exit code 2.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains precedence and the combined status; the inline comment explains authority of indexed spellings.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in populations plus each inspection's candidates; inspections run concurrently.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the context's population indexes.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export async function inspect(
     context: IEvidenceQueryContext,
@@ -170,6 +194,14 @@ export namespace EvidenceQueryProgrammer {
    * inventory. Nodes are keyed by boundary and role so coverage cannot visually
    * leak between obligations, while documentation-host nodes represent evidence
    * attached outside any selected claim unit.
+   *
+   * @evidence contracts/common.md#principled-implementation Each claim/reference pair becomes a boundary with boundary-qualified nodes, acknowledgement edges and separate review relations, plus host nodes for carriers outside selected claim units.
+   * @evidence contracts/common.md#clear-and-simple-design Export composes population contexts with the graph result.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Coverage never leaks between obligations because node identity includes the boundary.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains boundaries and host nodes.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in obligations, nodes, edges and reviews with map deduplication.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the context's population indexes.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function graph(context: IEvidenceQueryContext): IEvidenceGraphReport {
     const { analysis } = context;
@@ -345,6 +377,14 @@ export namespace EvidenceQueryProgrammer {
    * Language and database entries are combined then ordered by type, providing
    * a stable capability report without depending on registry declaration
    * order.
+   *
+   * @evidence contracts/common.md#principled-implementation Registry entries with adapters are combined across programming and database catalogs and sorted by type.
+   * @evidence contracts/common.md#clear-and-simple-design It reads the registry only.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Entries without adapters are omitted as parser metadata.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains omission and ordering.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n) in catalog size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Metadata is read per call.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function languages(): IEvidenceLanguagesReport {
     const languages = [
@@ -388,6 +428,14 @@ export namespace EvidenceQueryProgrammer {
    * own wrapper, even when several entries share the same inventory. This
    * preserves obligation-specific selection, policies, and coverage during
    * later queries.
+   *
+   * @evidence contracts/common.md#principled-implementation One context is built per claim and per reference entry in graph-input order, each wrapping its own selection and obligation.
+   * @evidence contracts/common.md#clear-and-simple-design Context construction is delegated to EvidenceQueryPopulationContext.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Shared inventories still get separate wrappers so obligation-specific selection is kept.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why wrappers are not shared.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in populations plus each context's index building.
+   * @evidence contracts/performance.md#reuse-equivalent-work The returned contexts are built once and reused by all later queries on the facade.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Contexts borrow the analysis owned by the facade and are released with it.
    */
   export function populations(
     analysis: IEvidenceCheckAnalysis,

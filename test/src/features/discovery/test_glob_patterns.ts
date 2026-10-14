@@ -19,6 +19,11 @@ import { EvidenceFileGlob } from "@wrtnlabs/evidence";
  *    bracket spellings retain their literal, non-extension behavior.
  * 4. Reject empty, exclusion-only, absolute, drive-qualified, parent-traversing,
  *    and malformed pattern lists before discovery begins.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Matches paths with EvidenceFileGlob and asserts inclusion, exclusion, reinclusion, Unicode and literal handling and rejected patterns.
+ * @evidence contracts/testing.md#independent-expectations Expected matches are written from the documented glob grammar.
+ * @evidence contracts/testing.md#distinguishing-cases Covers *, **, ordered exclusion and reinclusion, case variants, ? on Unicode, directory and bracket spellings, and invalid pattern lists.
+ * @evidence contracts/testing.md#execution-ownership The exported test_glob_patterns is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_glob_patterns(): Promise<void> {
   // A single star stays in one segment; globstar also accepts no intermediate directory.

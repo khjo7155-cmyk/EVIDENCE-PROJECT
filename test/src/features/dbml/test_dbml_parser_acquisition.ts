@@ -24,6 +24,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    cold result, then mutate warm units without affecting cold units.
  * 3. Issue an invalid DBML query and require the parser to retain its
  *    query-invalid provenance.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Acquires the DBML grammar, reanalyzes offline, mutates the warm result, and runs an invalid query, asserting equality, isolation and error provenance.
+ * @evidence contracts/testing.md#independent-expectations The offline inventory must equal the cold one; the error code follows the parser contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers cold and warm acquisition, result isolation and an invalid query.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_parser_acquisition is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_parser_acquisition(): Promise<void> {
   const parser = new EvidenceParser();

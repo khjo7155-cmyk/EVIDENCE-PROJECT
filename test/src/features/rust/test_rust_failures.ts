@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    conditional or expanding attributes, macros, and parse failures.
  * 2. Require every uncertain source to report incompleteness with its matching
  *    diagnostic instead of publishing a reduced population.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes missing and ambiguous modules, unresolved re-exports and impl owners, conditional or expanding attributes, macros and parse failures, asserting incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Rust boundary; each diagnostic code is listed by hand.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each uncertain module, impl, attribute and macro form, and parse failure.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_failures(): Promise<void> {
   const adapter = new EvidenceRustAdapter();

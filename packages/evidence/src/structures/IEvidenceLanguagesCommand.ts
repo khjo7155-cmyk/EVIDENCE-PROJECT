@@ -5,6 +5,14 @@ import type { EvidenceReportFormat } from "../typings/EvidenceReportFormat";
  *
  * This command does not load configuration or analyze project files. Its
  * working directory exists only to resolve an optional report destination.
+ *
+ * @evidence contracts/common.md#principled-implementation The languages command needs only cwd, format and output because it loads no configuration.
+ * @evidence contracts/common.md#clear-and-simple-design The record holds options only.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No configuration is read, so no grammar is acquired by this command.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the request; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLanguagesCommand {
   /**

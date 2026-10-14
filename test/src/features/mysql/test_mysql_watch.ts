@@ -16,6 +16,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Add and mutate an undocumented schema, then require failing coverage and
  *    incomplete parsing.
  * 3. Repair the source and require the next cycle to recover coverage.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a MySQL project through the authored file changes and asserts each published cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run on the same files; per-cycle status expectations follow the authored edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an added undocumented schema (failing coverage), a malformed mutation (incomplete), and repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_mysql_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_mysql_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

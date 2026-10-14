@@ -25,6 +25,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    - The permissive reference is covered.
  *    - The exclusion-forbidding reference remains missing.
  *    - Exactly one forbidden-exclusion finding identifies claim 0, reference 1.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates overlapping claims and repeated references and asserts per-boundary coverage and attributed findings.
+ * @evidence contracts/testing.md#independent-expectations Expected indices and labels are the authored ones; coverage follows independence of obligations.
+ * @evidence contracts/testing.md#distinguishing-cases Covers evidence in one claim but not its copy, and one exclusion under permissive and prohibiting references.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_independent_obligations is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_independent_obligations(): Promise<void> {
   const reference = EvidenceTestInventory.create();

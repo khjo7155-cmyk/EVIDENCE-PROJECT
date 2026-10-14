@@ -25,6 +25,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Verify the exact resolved unit or failure status.
  * 4. Keep an excluded declaration outside the population through a selected
  *    barrel; select its owner and require both original and alias resolution.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves supported target forms against analyzed TypeScript inventories and asserts the exact resolved unit or failure for each.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the fixture declarations chosen by the target spelling, including alias and ancestor rules from the addressing contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers file units, structural ancestors, aliases, literal members, and an excluded declaration reached through a selected barrel. Failure states are owned by test_target_failures.
+ * @evidence contracts/testing.md#execution-ownership The exported test_target_resolution is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_target_resolution(): Promise<void> {
   const inventory = await new EvidenceTypeScriptAdapter().analyze(

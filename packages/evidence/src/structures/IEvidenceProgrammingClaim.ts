@@ -25,6 +25,14 @@ import type { IEvidenceClaimBase } from "./IEvidenceClaimBase";
  *     symbol: "function",
  *     reference: { type: "markdown", files: ["requirements.md"] },
  *   };
+ *
+ * @evidence contracts/common.md#principled-implementation Specializing the claim base with programming types and symbols reuses shared selection for code declarations.
+ * @evidence contracts/common.md#clear-and-simple-design The interface adds no fields; host rules come from each language adapter.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No language is special-cased by this declaration.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains which declarations and comments host tags.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceProgrammingClaim extends IEvidenceClaimBase<
   EvidenceProgrammingType,

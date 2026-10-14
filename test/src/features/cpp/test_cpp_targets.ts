@@ -21,6 +21,11 @@ interface IEvidenceCppTargetStatus {
  * 2. Resolve exact evidence paths for valid public units.
  * 3. Require invalid, missing, or ambiguous aliases to preserve their resolution
  *    status.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves C++ targets across namespaces, templates, callable families and aliases and asserts resolved and failed statuses.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow the C++ addressing rules (template arity segments, bounded aliases).
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested namespaces, template paths, callable families, and invalid, missing or ambiguous aliases.
+ * @evidence contracts/testing.md#execution-ownership The exported test_cpp_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_cpp_targets(): Promise<void> {
   const adapter = new EvidenceCppAdapter();

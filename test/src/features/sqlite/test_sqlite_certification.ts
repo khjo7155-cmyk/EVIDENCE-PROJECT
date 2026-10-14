@@ -14,6 +14,11 @@ import type { IEvidenceDatabaseAdapterCertification } from "../../internal/certi
  * 1. Construct the SQLite certification fixture.
  * 2. Run the common database certification suite.
  * 3. Require every declared gate to pass.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs the shared database certification for the SQLite fixture (inventory, graph, failure, fingerprint and ambiguity checks).
+ * @evidence contracts/testing.md#independent-expectations The fixture declares the expected surface independently of the adapter; the shared harness compares adapter output against it.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the shared certification dimensions for this language; per-feature behavior is owned by the language's other tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sqlite_certification is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sqlite_certification(): Promise<void> {
   const fixture: IEvidenceDatabaseAdapterCertification = {

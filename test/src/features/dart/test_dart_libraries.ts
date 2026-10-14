@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    every part file.
  * 3. Require the hidden alias to be missing only through the API, retain its
  *    defining-source resolution, and record parts as exact dependencies.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a library with parts, a generated part, transitive exports with show and hide, and resolves members from every part.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow Dart library semantics for parts and export combinators.
+ * @evidence contracts/testing.md#distinguishing-cases Covers reciprocal parts, generated parts, transitive exports, hidden aliases, defining-source resolution and part dependencies.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_libraries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_libraries(): Promise<void> {
   const inventory = await new EvidenceDartAdapter().analyze(

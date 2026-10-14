@@ -42,6 +42,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    `require` calls before applying lexical-shadow and first-argument rules.
  * 10. Evaluate a literal `data:` ESM dependency and require scanning to accept the
  *     immutable embedded module without inventing a filesystem dependency.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Scans and evaluates configurations with static, computed, URL, shadowed and data imports and asserts accepted dependencies or rejections.
+ * @evidence contracts/testing.md#independent-expectations Node itself is run on the same fixture files as the oracle for which requests are real and which fail; expectations agree with that behavior.
+ * @evidence contracts/testing.md#distinguishing-cases Covers static local imports, computed specifiers, query and fragment URLs, require of file URLs, shadowed require bindings across scopes, computed first arguments, hashbang strictness, wrapped calls and data: modules.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_config_dependencies is discovered by DynamicExecutor and calls maintained source in-process; besides the product's own read-only configuration evaluator, it spawns plain Node (process.execPath) only to run fixture files as an independent oracle of Node's module resolution, never the evidence CLI, and installs nothing.
  */
 export async function test_watch_config_dependencies(): Promise<void> {
   const location: string = join(

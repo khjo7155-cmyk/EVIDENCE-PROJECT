@@ -13,6 +13,14 @@ import type { IEvidenceGraphResult } from "./IEvidenceGraphResult";
  * Each projection has a distinct purpose: graph input retains inventories and
  * policy, graph result retains independent obligations and findings, and report
  * supplies command-facing counts and exit status.
+ *
+ * @evidence contracts/common.md#principled-implementation Retaining graph input, result and report from one invocation lets queries explain the same snapshots without rereading changed files.
+ * @evidence contracts/common.md#clear-and-simple-design Each projection has one purpose: input for inventories and policy, result for obligations, report for command output.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts The report is a projection of the same evaluation rather than a second evaluation.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains why the analysis is retained and what each member contributes; all members are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceCheckAnalysis {
   /**

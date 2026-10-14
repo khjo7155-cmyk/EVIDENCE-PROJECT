@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze CommonJS replacement and alias assignments.
  * 2. Compare exported units.
  * 3. Require unsupported dynamic exports to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CommonJS export assignments, replacements and aliases and asserts exported units and incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected exports follow the bounded CommonJS rules in assignment order.
+ * @evidence contracts/testing.md#distinguishing-cases Covers exports.x, module.exports.x, object replacement, alias reconnection and unsupported dynamic forms.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_commonjs is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_commonjs(): Promise<void> {
   const inventory = await new EvidenceJavaScriptAdapter().analyze(

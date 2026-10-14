@@ -10,6 +10,14 @@ import type { IEvidenceConfigPlanReference } from "./IEvidenceConfigPlanReferenc
  * settings while recording effective severity and symbol choices separately.
  * Materialization can therefore select hosts without repeating configuration
  * inheritance or losing the original declaration used in diagnostics.
+ *
+ * @evidence contracts/common.md#principled-implementation Keeping the authored population beside effective severity and symbols records inheritance once without rewriting user intent.
+ * @evidence contracts/common.md#clear-and-simple-design Effective settings and the authored declaration are separate fields, and references carry their own plans.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Defaults are not written back into the authored claim.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains why both forms are kept; each field documents its meaning.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceConfigPlanClaim {
   /**

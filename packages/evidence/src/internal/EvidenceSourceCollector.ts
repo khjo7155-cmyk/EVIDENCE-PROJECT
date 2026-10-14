@@ -26,6 +26,14 @@ import { EvidenceSourcePath } from "./EvidenceSourcePath";
  * Logical aliases remain attached to a single physical file identity, while
  * dependency tracking retains intermediate paths so watch mode can recover from
  * missing files, symlink changes, and read failures.
+ *
+ * @evidence contracts/common.md#principled-implementation Logical traversal paths form public addresses while device and inode identity coalesces aliases, and every intermediate path is recorded as a watch dependency so failures can recover.
+ * @evidence contracts/common.md#clear-and-simple-design The class owns discovery for one root; glob matching, path lexing and source failures are separate collaborators, and private helpers own walking, reading, link resolution and reporting.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Failures become retained source diagnostics that mark the snapshot incomplete; case mismatches and symlink cycles are reported instead of being normalized away.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains aliases and dependency tracking; public methods and every private method and helper are documented, while private fields are named by role.
+ * @evidence contracts/performance.md#efficient-algorithms Traversal visits each candidate entry once, pruning directories no pattern can match; exact-case checks read each ancestor directory once per resolved path.
+ * @evidence contracts/performance.md#reuse-equivalent-work One collector reuses its file map so aliases of the same physical file are read once.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources File handles are closed in finally; the collector retains captured content only until its snapshot is handed to the adapter.
  */
 export class EvidenceSourceCollector {
   private readonly directory: string;
@@ -59,6 +67,14 @@ export class EvidenceSourceCollector {
    *
    * The collector retains failed root paths as dependencies so watch mode can
    * observe the repair instead of requiring a configuration edit.
+   *
+   * @evidence contracts/common.md#principled-implementation The root is resolved physically and verified to be a directory before a recursive walk applies the ordered globs.
+   * @evidence contracts/common.md#clear-and-simple-design Scan sets up the root; walking and reading are private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts A root failure is reported as root-unreadable and retained as a watch dependency rather than aborting silently.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains retaining failed roots for repair.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in visited entries with directory pruning.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each scan captures the filesystem once for one analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Every opened file is closed by read; results stay in the collector until snapshot.
    */
   public async scan(globs: EvidenceFileGlob): Promise<void> {
     this.watch(this.root.absolute, true);
@@ -81,6 +97,14 @@ export class EvidenceSourceCollector {
    *
    * Exact selection rejects remote URLs and reports filesystem errors without
    * aborting sibling source collection work.
+   *
+   * @evidence contracts/common.md#principled-implementation One local path is resolved under the root, its root and file type are verified, and it is read like a discovered file.
+   * @evidence contracts/common.md#clear-and-simple-design Exact loading reuses read and resolvePhysical.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Remote URLs are rejected here because adapters own remote documents; errors become path-unreadable diagnostics without aborting siblings.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains URL rejection and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Constant number of filesystem calls plus one file read.
+   * @evidence contracts/performance.md#reuse-equivalent-work Repeated aliases of an already read file reuse its captured content.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The file handle is closed by read in finally.
    */
   public async exact(file: string): Promise<void> {
     if (/^https?:\/\//i.test(file))
@@ -126,6 +150,14 @@ export class EvidenceSourceCollector {
    *
    * Addresses, files, and dependencies are sorted with bytewise comparisons so
    * equivalent source snapshots do not vary with filesystem traversal order.
+   *
+   * @evidence contracts/common.md#principled-implementation Addresses, files and dependencies are sorted bytewise and each file's fingerprint path comes from its first logical address, giving traversal-independent snapshots.
+   * @evidence contracts/common.md#clear-and-simple-design Snapshot only orders and packages collected data.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Completeness is false whenever any discovery diagnostic exists.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains deterministic ordering.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n) sorting of files, addresses and dependencies.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A snapshot is produced once per collection.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned snapshot takes the collected records; the collector is not reused afterward.
    */
   public snapshot(): IEvidenceSourceSnapshot {
     const files: IEvidenceSourceFile[] = [...this.files.values()];

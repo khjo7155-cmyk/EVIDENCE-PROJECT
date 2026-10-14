@@ -27,6 +27,14 @@ import { EvidenceLuaFileScanner } from "./EvidenceLuaFileScanner";
  * semantic units before LuaDoc becomes evidence hosts, so a shared source value
  * is not assigned an arbitrary table owner merely because a comment names it.
  * Source and syntax uncertainty remain part of the final inventory status.
+ *
+ * @evidence contracts/common.md#principled-implementation Supported explicit globals, the single returned module table and its fields, and local aliases are established statically, then units are published before LuaDoc becomes hosts so a comment cannot assign an arbitrary owner.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and LuaDoc normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Metatables, require and dynamic writes are reported as incomplete; the module is never executed.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceLuaAdapter implements IEvidenceAdapter<"lua"> {
   /**
@@ -47,6 +55,14 @@ export class EvidenceLuaAdapter implements IEvidenceAdapter<"lua"> {
    * inventory validation checks the resulting ownership. The parser closes
    * after success or failure; returned records contain no borrowed syntax
    * nodes.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file's static initialization, publishes the resulting units, and attaches LuaDoc carriers to them.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

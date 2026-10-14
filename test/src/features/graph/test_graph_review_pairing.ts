@@ -29,6 +29,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    - Two reviews on one acknowledgement produce one duplicate finding.
  * 4. Require no derivative missing-review finding for the wrong-kind pair, so the
  *    diagnostic identifies the actual repair rather than reporting it twice.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates reviews across merged and unrelated hosts and asserts the absence or presence of pairing findings.
+ * @evidence contracts/testing.md#independent-expectations Review fingerprints are computed with EvidenceFingerprint; pairing expectations follow host, target and kind rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a review on a merged declaration part, a wrong-kind review, an orphan review on an unrelated host, duplicate reviews, and no derivative missing-review finding.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_review_pairing is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_review_pairing(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

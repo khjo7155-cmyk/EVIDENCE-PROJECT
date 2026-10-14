@@ -12,6 +12,14 @@ import type { IEvidenceSourceFingerprintRoot } from "./IEvidenceSourceFingerprin
  * The source digest covers original bytes for change detection. Review
  * fingerprints instead describe semantic units and exclude accepted annotation
  * ranges; substituting a whole-file digest would give them the wrong boundary.
+ *
+ * @evidence contracts/common.md#principled-implementation Captured content, digest, physical and fingerprint paths, and all logical addresses describe one physical file once.
+ * @evidence contracts/common.md#clear-and-simple-design Content capture is separate from parsing; adapters read only this snapshot.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts One physical file keeps every selected address instead of being duplicated.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains capture and addresses; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSourceFile {
   /**

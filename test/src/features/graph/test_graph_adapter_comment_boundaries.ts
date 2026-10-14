@@ -33,6 +33,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    it cannot cover the later selected declaration.
  * 4. Move the Go tag to the selected declaration's leading comment and require
  *    coverage to recover.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Ruby, Rust and Go sources with attached, removed and misplaced tags and evaluates coverage of a Markdown requirement.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow each language's attachment rule, written from the adapters' documented contracts rather than their output.
+ * @evidence contracts/testing.md#distinguishing-cases Covers correct attachment, tags replaced by plain text, a Go tag at the end of an earlier declaration, and recovery when it moves to the leading comment.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_adapter_comment_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_adapter_comment_boundaries(): Promise<void> {
   const reference = await new EvidenceMarkdownAdapter().analyze(

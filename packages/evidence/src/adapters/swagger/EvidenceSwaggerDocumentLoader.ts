@@ -45,6 +45,14 @@ const cache = new Map<string, IEvidenceSwaggerCacheEntry>();
  *
  * This is the single version-conversion boundary: callers receive detached,
  * serializable records rather than parser nodes or mutable converter objects.
+ *
+ * @evidence contracts/common.md#principled-implementation Documents are converted once to a version-neutral form, and each operation's digest covers its effective servers, security, used security schemes and resolved local component references.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace is the single conversion boundary; target spelling, YAML location lookup and reference resolution are documented helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Root-level policy changes expire reviews because inherited context is included, and unresolved references stay literal instead of being dropped.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains detachment; every helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace's work is in load.
+ * @evidence contracts/performance.md#reuse-equivalent-work A module-level cache keyed by document digest reuses results and failures.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The cache is bounded to sixteen entries and documents to sixteen MiB.
  */
 export namespace EvidenceSwaggerDocumentLoader {
   /**
@@ -52,6 +60,14 @@ export namespace EvidenceSwaggerDocumentLoader {
    *
    * Cache entries are cloned on both insertion and return so no caller can
    * mutate the shared semantic result used by another analysis.
+   *
+   * @evidence contracts/common.md#principled-implementation The source is size-checked and digested, a cached outcome is returned as a clone, otherwise YAML or JSON is parsed, converted, and every operation is materialized with location and semantic digest.
+   * @evidence contracts/common.md#clear-and-simple-design Operation building, security normalization and reference resolution are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Failures are cached per digest so a malformed unchanged document behaves deterministically.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains cloning on insertion and return.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in document size; reference resolution tracks active references to stop cycles.
+   * @evidence contracts/performance.md#reuse-equivalent-work Results and failures are reused per document digest.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Cache entries are cloned in and out, and the cache holds at most sixteen entries.
    */
   export async function load(
     source: IEvidenceSourceFile,
@@ -292,7 +308,7 @@ function location(
   const paths = operationPaths(operationPath, method);
   const node = firstNode(yaml, paths);
   const descriptionNode = descriptionSource(yaml, paths);
-  const source = new EvidenceSourceText(content);
+  const source = EvidenceSourceText.of(content);
   const tuple = node?.range ?? descriptionNode?.range;
   if (tuple === undefined || tuple === null) return undefined;
   let mapping: IEvidenceYamlScalarMapping | undefined;

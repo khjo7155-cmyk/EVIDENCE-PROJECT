@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze each schema-changing or invalid relation form.
  * 2. Require incomplete status with actionable diagnostics.
  * 3. Verify supported empty input has no fabricated units.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes execution-dependent SQLite statements, invalid foreign keys and an empty schema and asserts incompleteness or a complete empty inventory.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented SQLite boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each schema-changing or invalid relation form and supported empty input that must stay complete without units.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sqlite_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sqlite_boundaries(): Promise<void> {
   for (const statement of [

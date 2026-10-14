@@ -34,6 +34,14 @@ import type { EvidenceArtifactType } from "../typings/EvidenceArtifactType";
  *
  * A fresh instance isolates parser/session state between analyses; unsupported
  * additions fail here instead of producing a partial inventory downstream.
+ *
+ * @evidence contracts/common.md#principled-implementation A factory keyed by the validated discriminator gives every certified artifact type exactly one adapter class.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace only maps types to constructors; adapters own extraction.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unknown types throw instead of falling back to a generic adapter.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains fresh instances and the failure for unsupported additions.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceAdapterFactory {
   /**
@@ -41,6 +49,14 @@ export namespace EvidenceAdapterFactory {
    *
    * Each call returns a fresh instance so parser and scan state cannot cross an
    * inventory boundary.
+   *
+   * @evidence contracts/common.md#principled-implementation An overload preserves the requested artifact type in the return type, and the implementation returns a fresh adapter per call.
+   * @evidence contracts/common.md#clear-and-simple-design The function only constructs; it neither configures nor caches adapters.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts An unmapped type throws with the reason rather than returning a partial adapter.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why each call returns a fresh instance.
+   * @evidence contracts/performance.md#efficient-algorithms A fixed chain of at most twenty-eight comparisons selects the constructor.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Adapters are deliberately not shared so parser and scan state cannot cross inventories.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The new adapter is owned by the caller for one analysis; the factory keeps no reference.
    */
   export function create<Type extends EvidenceArtifactType>(
     type: Type,

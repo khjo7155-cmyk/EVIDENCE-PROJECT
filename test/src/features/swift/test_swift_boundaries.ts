@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze each unsupported source boundary.
  * 2. Verify incomplete diagnostics and failed-source handling.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Swift surfaces with unavailable ownership or compiler expansion and a failed source and asserts incompleteness with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented Swift boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each unsupported boundary and failed-source handling.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_boundaries(): Promise<void> {
   const adapter = new EvidenceSwiftAdapter();

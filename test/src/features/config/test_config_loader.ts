@@ -34,6 +34,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    inputs.
  * 6. Require runtime exceptions and type errors in an imported helper to reject
  *    loading rather than return partial configuration data.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads ts, cts and mts configurations with helpers in a punctuated path and asserts values, isolation, diagnostics routing and failures.
+ * @evidence contracts/testing.md#independent-expectations Expected values are the authored helper outputs; failure expectations follow the loader contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers module formats, a removed tsconfig, an unrelated type error, stdout and stderr routing, an unsupported artifact, a disabled claim with missing paths, and runtime and type errors in helpers.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_loader is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_config_loader(): Promise<void> {
   // Resolve workspace peers while preserving spaces and literal path characters.

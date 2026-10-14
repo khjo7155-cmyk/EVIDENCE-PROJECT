@@ -42,6 +42,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    reject a scoped name with no package segment.
  * 9. Treat BOM-prefixed manifests and non-string `main` values like Node, then
  *    allow same-directory `main` targets to reach their terminal index files.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads and scans packages whose JavaScript entries have TypeScript twins and asserts executed values, dependencies and snapshot changes.
+ * @evidence contracts/testing.md#independent-expectations Node runs the fixtures as the oracle for which file executes; distinct values in the JavaScript and TypeScript twins prove which one ran.
+ * @evidence contracts/testing.md#distinguishing-cases Covers main and subpath entries, inactive twin edits, extensionless and index fallbacks, invalid index forms, ESM subpaths, empty package directories, BOM manifests and non-string main values.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_package_runtime_entries is discovered by DynamicExecutor and calls maintained source in-process; besides the product's own read-only configuration evaluator, it spawns plain Node (process.execPath) only to run fixture files as an independent oracle of Node's module resolution, never the evidence CLI, and installs nothing.
  */
 export async function test_watch_package_runtime_entries(): Promise<void> {
   const location: string = join(

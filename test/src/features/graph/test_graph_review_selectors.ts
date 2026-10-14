@@ -32,6 +32,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    reviews.
  * 4. Require no diagnostics and require both obligations' first edges to carry the
  *    same expected pricing fingerprint.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates one aliased acknowledgement and review against two selectors and asserts no diagnostics and equal edge fingerprints.
+ * @evidence contracts/testing.md#independent-expectations The expected fingerprint is computed with EvidenceFingerprint from the shared semantic unit before evaluation.
+ * @evidence contracts/testing.md#distinguishing-cases Covers two public aliases and a parent and child selector sharing one review.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_review_selectors is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_review_selectors(): Promise<void> {
   const requirements = await new EvidenceMarkdownAdapter().analyze(

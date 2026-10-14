@@ -34,6 +34,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    without an incomplete inventory.
  * 4. Cite a foreign binding explicitly and require an unresolved target instead of
  *    inventing a dependency declaration.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes foreign re-exports beside local owners, evaluates the checklist and asserts populations, coverage and unresolved foreign targets.
+ * @evidence contracts/testing.md#independent-expectations Expected populations follow the rule that foreign bindings never enroll dependency declarations.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every foreign export form in a barrel and in the owner's file, a removed acknowledgement and an explicit foreign citation.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_foreign_reexports is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_foreign_reexports(): Promise<void> {
   const adapter: EvidenceTypeScriptAdapter = new EvidenceTypeScriptAdapter();

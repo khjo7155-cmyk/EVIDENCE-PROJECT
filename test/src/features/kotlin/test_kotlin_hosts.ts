@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze KDoc with Unicode and withdrawals. 2. Verify coordinates and hidden
  *    descendants. 3. Compare semantic and annotation-only fingerprints.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Unicode KDoc with withdrawals and examples and asserts coordinates, hidden descendants and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers KDoc evidence, withdrawn hierarchy, masked examples, and annotation-only versus semantic edits.
+ * @evidence contracts/testing.md#execution-ownership The exported test_kotlin_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_kotlin_hosts(): Promise<void> {
   const source = dedent`

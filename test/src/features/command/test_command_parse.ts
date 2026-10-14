@@ -20,6 +20,11 @@ import assert from "node:assert/strict";
  * 4. Reject unknown commands and options, missing values, duplicate settings,
  *    unsupported formats, unsupported command-option pairs, malformed inspect
  *    arguments, duplicate watch flags, and invalid language or kind filters.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses supported and invalid argument lists with EvidenceCommand.parse and asserts command objects or EvidenceCommandError.
+ * @evidence contracts/testing.md#independent-expectations Expected defaults and options are written from the CLI contract, not from parser output.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every operation's defaults and options, watch aliases, short-circuiting help and version, and unknown, missing, duplicate, unsupported and malformed arguments.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_parse is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_command_parse(): void {
   // Bare invocation and the explicit command have the same complete defaults.

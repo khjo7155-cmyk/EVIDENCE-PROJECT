@@ -12,6 +12,11 @@ import { TestValidator } from "@nestia/e2e";
  * 2. Parse and format a backslash-authored Windows target using the citing drive,
  *    then parse a file-only target with no accessor.
  * 3. Reject malformed percent encoding and a drive-relative authored path.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses and formats file-qualified targets with EvidenceFileTarget on POSIX and Windows spellings and asserts the addresses and canonical text.
+ * @evidence contracts/testing.md#independent-expectations Expected absolute paths and encodings are derived from percent-encoding and path-flavor rules, not from formatter output.
+ * @evidence contracts/testing.md#distinguishing-cases Covers encoded characters, quoted accessor segments, backslash-authored Windows paths, file-only targets, malformed percent escapes and drive-relative paths.
+ * @evidence contracts/testing.md#execution-ownership The exported test_target_paths is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_target_paths(): Promise<void> {
   const posix = EvidenceFileTarget.parse(

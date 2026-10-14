@@ -11,6 +11,14 @@ import type { EvidenceGraphNode } from "../typings/EvidenceGraphNode";
  * Visual formats escape authored labels before embedding them in their
  * respective grammars. They are projections of an already evaluated graph and
  * never change graph membership, coverage, or review resolution.
+ *
+ * @evidence contracts/common.md#principled-implementation The graph report is rendered as JSON, a Mermaid flowchart or a DOT digraph, with synthetic node names and escaped labels so authored text cannot become format syntax.
+ * @evidence contracts/common.md#clear-and-simple-design Rendering is a projection; private helpers name nodes and escape labels.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Visual formats never change membership, coverage or review resolution.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains escaping; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceGraphReporter {
   /**
@@ -19,6 +27,14 @@ export namespace EvidenceGraphReporter {
    * JSON preserves the report object, while Mermaid and DOT encode its
    * boundaries, nodes, evidence edges, and review edges for visualization
    * tools.
+   *
+   * @evidence contracts/common.md#principled-implementation The format selects JSON, Mermaid or DOT.
+   * @evidence contracts/common.md#clear-and-simple-design Render only dispatches.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No graph data is altered.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains what each format encodes.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function render(
     report: IEvidenceGraphReport,
@@ -33,6 +49,14 @@ export namespace EvidenceGraphReporter {
    *
    * This format keeps stable identifiers and every exported property available
    * to programmatic consumers without visual-format escaping.
+   *
+   * @evidence contracts/common.md#principled-implementation The complete graph report is serialized as indented JSON with stable identifiers.
+   * @evidence contracts/common.md#clear-and-simple-design JSON output is the plain serialization.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts No property is escaped or dropped.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains its programmatic use.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function json(report: IEvidenceGraphReport): string {
     return JSON.stringify(report, null, 2) + "\n";
@@ -43,6 +67,14 @@ export namespace EvidenceGraphReporter {
    *
    * Synthetic node names avoid treating semantic IDs as Mermaid syntax; labels
    * carry the authored values after escaping text-sensitive characters.
+   *
+   * @evidence contracts/common.md#principled-implementation One subgraph per boundary holds synthetic node names whose labels carry escaped authored values.
+   * @evidence contracts/common.md#clear-and-simple-design Naming and escaping are shared private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Semantic IDs never appear as Mermaid syntax.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains synthetic names and escaping.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function mermaid(report: IEvidenceGraphReport): string {
     const names = nodeNames(report.nodes);
@@ -78,6 +110,14 @@ export namespace EvidenceGraphReporter {
    *
    * Evidence Graph exclusion and review relations use distinct line styles so
    * their meaning remains visible when a viewer does not expose edge metadata.
+   *
+   * @evidence contracts/common.md#principled-implementation Clusters per boundary contain escaped labels, and exclusion and review relations use distinct line styles.
+   * @evidence contracts/common.md#clear-and-simple-design Naming and escaping are shared private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Escaping prevents labels from creating different DOT escape sequences.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains clusters and line styles.
+   * @evidence contracts/performance.md#efficient-algorithms Rendering is linear in the report's size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report is rendered once per output.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Rendering returns a string and keeps nothing; the caller owns the output.
    */
   export function dot(report: IEvidenceGraphReport): string {
     const names = nodeNames(report.nodes);

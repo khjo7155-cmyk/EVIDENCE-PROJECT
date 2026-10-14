@@ -41,6 +41,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    missing unit; remove the dead definition and require the same outcome.
  * 8. Attach evidence to the final definition and require recovery to a passing
  *    check.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes repeated JavaScript functions, methods and fields and runs EvidenceChecker, asserting surviving units, detached obsolete evidence and coverage.
+ * @evidence contracts/testing.md#independent-expectations Expected survivors follow JavaScript runtime semantics (hoisting, last assignment, static fields after methods), written from the language rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers repeated functions, instance and static members, var interplay, field and method replacement, accessor replacement in both orders, checker results with dead and final evidence.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_redefinitions is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_redefinitions(): Promise<void> {
   const repeated: IEvidenceInventory =

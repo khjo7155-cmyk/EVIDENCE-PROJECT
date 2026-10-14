@@ -12,6 +12,14 @@ import type { IEvidenceListItem } from "./IEvidenceListItem";
  * filtered by artifact family and symbol kind. Filters affect displayed rows
  * only: completeness, success, and diagnostics still describe the underlying
  * full check.
+ *
+ * @evidence contracts/common.md#principled-implementation A versioned report pairs check status with filtered unit rows and diagnostics.
+ * @evidence contracts/common.md#clear-and-simple-design Rows and filters are separate from the underlying analysis status.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Filters apply after analysis, so status still covers the whole check.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the report; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceListReport {
   /**

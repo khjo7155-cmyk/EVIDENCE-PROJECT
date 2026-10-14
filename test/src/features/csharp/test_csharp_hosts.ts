@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Require non-XML comments and inaccessible or directive-separated carriers to
  *    report unsupported annotations, while a withdrawn partial hierarchy stays
  *    hidden.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C# XML documentation on types, grouped fields and methods plus inert carriers and asserts hosts, inert examples, unsupported diagnostics and hidden partials.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments follow the documented XML-documentation rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers grouped fields sharing a host, XML code and example regions, non-XML comments, inaccessible members, directive-separated carriers and a withdrawn partial hierarchy.
+ * @evidence contracts/testing.md#execution-ownership The exported test_csharp_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_csharp_hosts(): Promise<void> {
   const inventory = await new EvidenceCSharpAdapter().analyze(

@@ -22,6 +22,14 @@ import type { IEvidenceClaimBase } from "./IEvidenceClaimBase";
  *   detached declarations are reported.
  * - An unattached top-level triple-slash run may carry a file-level exclusion,
  *   independently of the symbol selector. It cannot carry ordinary evidence.
+ *
+ * @evidence contracts/common.md#principled-implementation Specializing the claim base with database types and symbols reuses shared selection while the adapter decides schema identity and carriers.
+ * @evidence contracts/common.md#clear-and-simple-design The interface adds no fields; Prisma host rules are documented here because they govern this claim kind.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Parse failures keep an incomplete population instead of removing requirements.
+ * @evidence contracts/common.md#meaningful-documentation The comment documents Prisma schema grouping, comment attachment, detachment and file-level exclusion carriers.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceDatabaseClaim extends IEvidenceClaimBase<
   EvidenceDatabaseType,

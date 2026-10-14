@@ -20,6 +20,14 @@ import type { EvidenceSeverity } from "../typings/EvidenceSeverity";
  * judge the same annotation differently without changing the shared inventory.
  * Artifact-specific interfaces add file selection and, for Markdown, checklist
  * semantics that require every host to answer every item.
+ *
+ * @evidence contracts/common.md#principled-implementation Generic type and symbol parameters plus shared policy flags define one referenced population and its coverage rules.
+ * @evidence contracts/common.md#clear-and-simple-design Shared policy lives here once; families add only their file fields.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Policies refuse or require behavior explicitly; none can be bypassed by naming.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains selection and policy; each field documents its default and effect.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceReferenceBase<
   Type extends string,

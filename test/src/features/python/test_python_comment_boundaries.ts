@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Verify the two adjacent public declarations are the only evidence hosts.
  * 3. Verify unsupported-host diagnostics and retained annotation ranges count
  *    every misplaced tag while discovery remains complete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Python declarations with detached, misindented, private, pass-statement, local, header, inline and nested comments and asserts hosts and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts are the two adjacent public declarations; diagnostics are one per misplaced tag, counted from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every separation form (blank lines, indentation, statement kind, lexical scope) against two attached controls.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_comment_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_comment_boundaries(): Promise<void> {
   const content = dedent`

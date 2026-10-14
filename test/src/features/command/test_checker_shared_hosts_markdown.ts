@@ -46,6 +46,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *         claim keeps its own error, so a warning cannot absorb an error.
  *    - A mistyped anchor in the error claim's reference is reported once, as an
  *         error, by the claim that owns the file.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks file and H2 claims over the same Markdown documents through eight edits and asserts per-claim diagnostics, review fingerprints and exit codes.
+ * @evidence contracts/testing.md#independent-expectations Expected owners and severities come from the ownership rule (strictly further resolution at equal-or-higher severity wins); fingerprints are taken from the reported repair and written back, so success depends on the checker accepting its own published value.
+ * @evidence contracts/testing.md#distinguishing-cases Covers clean, removed, mistyped anchor, mistyped file, unselected file, missing review fingerprints, current fingerprints, and warning-versus-error ownership in both directions.
+ * @evidence contracts/testing.md#execution-ownership The exported test_checker_shared_hosts_markdown is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_checker_shared_hosts_markdown(): Promise<void> {
   const location = join(__dirname, `shared hosts markdown ${randomUUID()}`);

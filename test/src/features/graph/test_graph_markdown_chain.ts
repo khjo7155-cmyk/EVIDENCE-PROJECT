@@ -27,6 +27,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 4. Analyze a failed version of the Markdown claim and require that its graph
  *    result remains active and incomplete while suppressing empty-reference and
  *    missing-acknowledgement findings derived from unavailable claim content.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Markdown-to-Markdown-to-TypeScript chain with reviews and evaluates both hops, then a failed Markdown claim.
+ * @evidence contracts/testing.md#independent-expectations Review fingerprints are computed independently with EvidenceFingerprint; failure handling follows the incompleteness contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a healthy reviewed chain and a failed claim that must stay active and incomplete without derivative findings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_graph_markdown_chain is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_graph_markdown_chain(): Promise<void> {
   const implementation = await new EvidenceTypeScriptAdapter().analyze(

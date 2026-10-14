@@ -26,6 +26,14 @@ import type { IEvidenceWithdrawal } from "./IEvidenceWithdrawal";
  *   // Exporting Client as PublicClient adds an address, not another class unit.
  *   // Client.send keeps the same parentId through either exported name.
  *   // A member named "send.request" occupies one identity segment, not two.
+ *
+ * @evidence contracts/common.md#principled-implementation A unit records identity segments, explicit parent, symbol, sites and withdrawals, separating semantic identity from addresses and hosts.
+ * @evidence contracts/common.md#clear-and-simple-design Content digest is optional so source ranges can supply content when no adapter digest exists.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Parents are explicit, never inferred from dotted names.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains semantic identity; each field documents its role and omission.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceUnit {
   /**

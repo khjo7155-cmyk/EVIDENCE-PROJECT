@@ -32,6 +32,14 @@ import type { IEvidenceUnitSite } from "../../structures/IEvidenceUnitSite";
  * retains its own identity even without a description, while supported
  * description spans map annotations back to source coordinates.
  * EvidenceDocument failures remain incomplete.
+ *
+ * @evidence contracts/common.md#principled-implementation Local and remote documents go through one normalization path; each METHOD:/path operation becomes a unit even without a description, and supported description scalars are mapped back to source for tags.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter materializes operations; version conversion, fingerprints, remote reading and scalar mapping are separate modules.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Document and access failures produce incomplete inventories instead of empty operation lists.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains both input paths; every member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in document size: one conversion plus one host per operation.
+ * @evidence contracts/performance.md#reuse-equivalent-work Normalized documents are cached by content digest in the loader.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The adapter holds no state between analyses.
  */
 export class EvidenceSwaggerAdapter implements IEvidenceAdapter<"swagger"> {
   /**
@@ -51,6 +59,14 @@ export class EvidenceSwaggerAdapter implements IEvidenceAdapter<"swagger"> {
    * Input is cloned, and final inventory validation preserves incompleteness
    * rather than treating failed normalization as a document with no
    * operations.
+   *
+   * @evidence contracts/common.md#principled-implementation Each snapshot file is normalized through the loader and its operations materialized with their description hosts.
+   * @evidence contracts/common.md#clear-and-simple-design Normalization is delegated; analyze materializes.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery and conversion failures remain diagnostics.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains snapshot handling.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in document size.
+   * @evidence contracts/performance.md#reuse-equivalent-work The loader's digest cache avoids reconverting unchanged documents.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,
@@ -91,6 +107,14 @@ export class EvidenceSwaggerAdapter implements IEvidenceAdapter<"swagger"> {
    * source-loader dependency tracking. Remote bytes become a synthetic source
    * snapshot without filesystem dependencies. Access and normalization failures
    * return incomplete inventory diagnostics for the requested document.
+   *
+   * @evidence contracts/common.md#principled-implementation A local path is captured through the source loader with dependency tracking, while an HTTP(S) URL is read with bounds into a synthetic snapshot, and both are analyzed the same way.
+   * @evidence contracts/common.md#clear-and-simple-design Load chooses the input path and then reuses analyze.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Access and normalization failures return incomplete inventories for the requested document.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains both paths and failure handling.
+   * @evidence contracts/performance.md#efficient-algorithms One bounded read or file capture plus analysis.
+   * @evidence contracts/performance.md#reuse-equivalent-work Normalization results are reused from the loader cache by digest.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Remote reads are size- and time-bounded and release their stream; local captures close their files.
    */
   public async load(
     configFile: string,

@@ -7,6 +7,14 @@ import type { IEvidenceFileGlobPattern } from "./IEvidenceFileGlobPattern";
  * The matcher operates on portable path segments, keeping selection independent
  * of host separator conventions and refusing patterns that escape a population
  * root.
+ *
+ * @evidence contracts/common.md#principled-implementation Patterns compile to portable segments, and matching uses memoized globstar recursion with ordered last-match-wins negation.
+ * @evidence contracts/common.md#clear-and-simple-design The class owns compiled patterns; compile, split and match are private helpers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Absolute, drive-qualified, empty-segment and parent-escaping patterns are rejected at compile time.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the supported language; each public method and private helper is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Matching one path costs O(P x S) per pattern for P pattern and S path segments thanks to memoization, avoiding exponential globstar backtracking.
+ * @evidence contracts/performance.md#reuse-equivalent-work Patterns are compiled once in the constructor and reused for every candidate path.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The instance holds only compiled segment arrays, owned by its source collector.
  */
 export class EvidenceFileGlob {
   private readonly patterns: IEvidenceFileGlobPattern[];
@@ -31,6 +39,14 @@ export class EvidenceFileGlob {
    *
    * Later matching positives or exclusions replace the inclusion decision made
    * by earlier patterns.
+   *
+   * @evidence contracts/common.md#principled-implementation Every pattern is applied in order and the last matching pattern decides inclusion, so later positives can restore excluded paths.
+   * @evidence contracts/common.md#clear-and-simple-design The method composes split and match.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ordering follows the documented glob grammar for every population alike.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains replacement of earlier decisions.
+   * @evidence contracts/performance.md#efficient-algorithms O(N x P x S) for N patterns, using memoized segment matching.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the patterns compiled in the constructor.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The memo table is local to each match call and discarded afterward.
    */
   public matches(location: string): boolean {
     const segments = split(location);
@@ -45,6 +61,14 @@ export class EvidenceFileGlob {
    *
    * Discovery uses this conservative result to prune traversal without
    * excluding descendants restored by a later positive pattern.
+   *
+   * @evidence contracts/common.md#principled-implementation A directory may hold a match if any positive pattern can extend its prefix, unless a later recursive exclusion covers it.
+   * @evidence contracts/common.md#clear-and-simple-design The method answers traversal pruning only; final selection is matches.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Pruning is conservative so later positive patterns can still restore descendants.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains conservative pruning.
+   * @evidence contracts/performance.md#efficient-algorithms O(N x P x S) per directory; it lets discovery skip whole subtrees.
+   * @evidence contracts/performance.md#reuse-equivalent-work It reuses the compiled patterns.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The memo table is local to each call.
    */
   public couldMatchDescendant(directory: string): boolean {
     const prefix = split(directory);

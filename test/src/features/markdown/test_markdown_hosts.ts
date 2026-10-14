@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    heading.
  * 4. Verify the review range uses original CRLF coordinates and slices to its
  *    annotation text.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF Markdown comments at file, section, deep-heading and H5 positions and asserts host counts, records, diagnostics and ranges.
+ * @evidence contracts/testing.md#independent-expectations Expected attachments and coordinates follow the comment-host rules and the authored CRLF source.
+ * @evidence contracts/testing.md#distinguishing-cases Covers file, parent, child and deep-heading comments and an unsupported comment under H5.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_hosts(): Promise<void> {
   const content = dedent`

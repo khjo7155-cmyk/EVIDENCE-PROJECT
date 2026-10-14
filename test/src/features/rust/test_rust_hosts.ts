@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require eligible carriers to attach to their module or public declarations.
  * 3. Ignore literal data, require unsupported comments to remain diagnostics and
  *    inherited withdrawal to hide a documented module hierarchy.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes outer and inner doc comments, doc attributes, rustdoc metadata and tagged ordinary carriers and asserts hosts, diagnostics and withdrawal.
+ * @evidence contracts/testing.md#independent-expectations Expected hosts follow rustdoc's documentation forms; inherited withdrawal is checked against the module hierarchy.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every eligible carrier, inert literals, unsupported comments, commented-out code and a withdrawn documented module.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_hosts(): Promise<void> {
   const inventory = await new EvidenceRustAdapter().analyze(

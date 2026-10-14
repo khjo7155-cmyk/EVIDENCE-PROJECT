@@ -26,6 +26,14 @@ import { EvidenceRustModuleResolver } from "./EvidenceRustModuleResolver";
  * EvidenceRustModuleResolver publishes semantic identities across the
  * configured snapshot before doc comments attach to those identities and
  * inherited withdrawal removes eligible hosts.
+ *
+ * @evidence contracts/common.md#principled-implementation File scans keep declaration and documentation candidates; the module resolver builds the selected crate graph, follows pub use chains and impl ownership, and publishes identities before doc comments attach and inherited withdrawals remove hosts.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and rustdoc normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Cargo features, cfg alternatives, macros and #[path] are reported as incomplete; lexical presence alone never makes an item public.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceRustAdapter implements IEvidenceAdapter<"rust"> {
   /**
@@ -44,6 +52,14 @@ export class EvidenceRustAdapter implements IEvidenceAdapter<"rust"> {
    * Module publication precedes annotation materialization. Source and parser
    * failures retain incomplete state, and the parser runtime closes after all
    * accepted file scans finish.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, publishes crate-wide identities and addresses through EvidenceRustModuleResolver, and attaches documentation after withdrawals are known.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

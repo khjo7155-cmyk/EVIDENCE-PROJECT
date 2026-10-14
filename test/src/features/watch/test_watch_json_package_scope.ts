@@ -25,6 +25,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    explicit watchers and require complete reports with the same denominator.
  * 3. Scan TypeScript beside that metadata and require failure; repair the scope
  *    and require successful scanning with the package manifest retained.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks, scans and watches JSON and TypeScript configurations beside malformed package metadata and asserts results and dependencies.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the rule that JSON needs no module scope while TypeScript does; watch denominators must equal the finite check.
+ * @evidence contracts/testing.md#distinguishing-cases Covers JSON with malformed metadata, implicit and explicit watchers, TypeScript failing on that metadata, and repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_json_package_scope is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_json_package_scope(): Promise<void> {
   const config: IEvidenceConfig = {

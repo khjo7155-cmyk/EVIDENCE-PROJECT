@@ -20,6 +20,14 @@ import { EvidenceSourcePath } from "../../internal/EvidenceSourcePath";
  * each resulting public address in the inventory, and reports resolution
  * failures so an incomplete export graph cannot reduce the coverage population
  * silently.
+ *
+ * @evidence contracts/common.md#principled-implementation Exported names are propagated through star exports to a fixed point, then each source and name is resolved through local bindings, imports and re-exports with cycle tracking, and resulting bindings are published as addresses.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver owns the module graph and publication; scanning and host materialization are elsewhere, and private methods split resolution, binding and target lookup.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolved, foreign or out-of-root edges become diagnostics that mark the inventory incomplete, and type-only restrictions travel through barrels.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains its place after scanning; every field and private method is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Star expansion iterates to a fixed point over modules and their star edges; resolutions and specifier targets are memoized, so each source and name is resolved once.
+ * @evidence contracts/performance.md#reuse-equivalent-work Resolution and target caches are shared by every export published in one analysis.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The resolver's maps live for one publication and are discarded with it.
  */
 export class EvidenceEcmaScriptExportResolver {
   /**
@@ -115,6 +123,14 @@ export class EvidenceEcmaScriptExportResolver {
    * The adapter uses the returned set to remove declarations that have no
    * public export. Addresses remain in the shared inventory because aliases can
    * expose one unit through several public module paths.
+   *
+   * @evidence contracts/common.md#principled-implementation Publish expands stars, resolves every exported name of every selected module, publishes addresses for reached units, and returns the reachable unit IDs.
+   * @evidence contracts/common.md#clear-and-simple-design Publish sequences private resolution and binding helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Declaration-free cycles and failures are reported rather than publishing a smaller surface.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the returned reachability set.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in modules and export names after memoization, plus the star fixed point.
+   * @evidence contracts/performance.md#reuse-equivalent-work It relies on the resolver's memoized resolutions.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Addresses are appended to the bound inventory; the returned set is owned by the caller.
    */
   public publish(): Set<string> {
     const published = new Set<string>();

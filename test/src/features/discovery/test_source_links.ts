@@ -26,6 +26,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    symlink-cycle diagnostic.
  * 4. Exclude the cyclic path and require complete discovery with the original
  *    single physical schema still present.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads sources through junctions, hard links and a cycle and asserts physical identity, addresses, fingerprint metadata and cycle diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected addresses and identities come from the authored link layout.
+ * @evidence contracts/testing.md#distinguishing-cases Covers multiple aliases of one file, a linked root, a junction cycle and excluding the cycle.
+ * @evidence contracts/testing.md#execution-ownership The exported test_source_links is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_source_links(): Promise<void> {
   const location: string = join(__dirname, "links-" + randomUUID());

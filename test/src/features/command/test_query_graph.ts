@@ -25,6 +25,11 @@ import { EvidenceTestQueryAnalysis } from "../../internal/EvidenceTestQueryAnaly
  * 3. Insert quotes, a line break, and Mermaid syntax into a graph node target.
  * 4. Require Mermaid and DOT to preserve relation styling while escaping the
  *    hostile text so it cannot add a new graph statement.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds a graph report and renders JSON, Mermaid and DOT with hostile labels, asserting boundaries, edges, reviews, determinism and escaping.
+ * @evidence contracts/testing.md#independent-expectations Expected counts come from the fixture's two references; escaping expectations follow each format's quoting rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers repeated references to one target, evidence and exclusion edges, review records, repeated serialization, and quotes, newlines and Mermaid syntax in labels.
+ * @evidence contracts/testing.md#execution-ownership The exported test_query_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_query_graph(): Promise<void> {
   const location = join(__dirname, `query graph ${randomUUID()}`);

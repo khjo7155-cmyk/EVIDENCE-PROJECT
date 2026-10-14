@@ -8,6 +8,14 @@ import type { IEvidenceSourceLocation } from "./IEvidenceSourceLocation";
  * claim unit. Export retains their physical host as an endpoint so the
  * relationship does not disappear or invent a semantic declaration solely for
  * visualization.
+ *
+ * @evidence contracts/common.md#principled-implementation A carrier node represents an annotation position that has no semantic claim unit, such as an exclusion-only carrier.
+ * @evidence contracts/common.md#clear-and-simple-design The role discriminator separates carriers from semantic nodes in one node union.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Carriers do not change semantic identity or create claim units.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains when the node is used; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphHostNode {
   /**

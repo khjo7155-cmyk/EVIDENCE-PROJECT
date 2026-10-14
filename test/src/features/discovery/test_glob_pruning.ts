@@ -19,6 +19,11 @@ import { EvidenceFileGlob } from "@wrtnlabs/evidence";
  *    the private directory traversable.
  * 4. Append a final private exclusion and require it to override both traversal
  *    and file matching after an earlier reinclusion.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Asks EvidenceFileGlob.couldMatchDescendant about many directories and asserts pruning decisions.
+ * @evidence contracts/testing.md#independent-expectations Expectations are derived from the pattern lists by hand: prune only when no later pattern can select a descendant.
+ * @evidence contracts/testing.md#distinguishing-cases Covers scoped and broad globs, dependency folders, a bare directory, fully excluded subtrees, reinclusion, partial exclusion and a final override.
+ * @evidence contracts/testing.md#execution-ownership The exported test_glob_pruning is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_glob_pruning(): void {
   // Directory names have no implicit ignore policy.

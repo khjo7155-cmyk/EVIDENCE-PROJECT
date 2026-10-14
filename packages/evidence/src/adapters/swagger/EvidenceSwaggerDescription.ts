@@ -10,12 +10,28 @@ const TAG =
  *
  * Fingerprints retain author-facing prose but exclude Evidence directives,
  * which control review state without changing the described API operation.
+ *
+ * @evidence contracts/common.md#principled-implementation Description prose before the first active Evidence directive is the semantic part, so fingerprints ignore review metadata while keeping author prose.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace only splits text; the directive boundary helper shares example masking with tag parsing.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Directive-looking lines inside examples stay prose.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the split; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceSwaggerDescription {
   /**
    * Returns description prose before the first active Evidence directive.
    *
    * Directive-looking lines inside fenced examples remain semantic prose.
+   *
+   * @evidence contracts/common.md#principled-implementation The text before the directive boundary is returned.
+   * @evidence contracts/common.md#clear-and-simple-design Boundary detection is a private helper.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Examples cannot end prose early.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the boundary rule.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in description length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each description is split once per fingerprint.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function semantic(text: string): string {
     const lines: string[] = text.split("\n");
@@ -31,6 +47,14 @@ export namespace EvidenceSwaggerDescription {
    *
    * Callers use this to decide whether the mapped scalar must become a
    * documentation carrier even when the visible prose is empty.
+   *
+   * @evidence contracts/common.md#principled-implementation Any active directive line makes the description a documentation carrier.
+   * @evidence contracts/common.md#clear-and-simple-design It shares the boundary helper with semantic.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Empty visible prose with metadata still becomes a carrier.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains its use.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in description length.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each description is checked once.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function hasMetadata(text: string): boolean {
     return boundary(text) >= 0;

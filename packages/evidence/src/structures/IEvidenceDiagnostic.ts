@@ -8,6 +8,14 @@ import type { IEvidenceSourceLocation } from "./IEvidenceSourceLocation";
  * observed problem and the author's next step. Optional coordinates allow the
  * same structure to represent source-level findings and aggregate failures that
  * have no single source span. Claim names are display labels, not identities.
+ *
+ * @evidence contracts/common.md#principled-implementation A stable code with message, repair and optional coordinates represents source-level and aggregate findings in one shape.
+ * @evidence contracts/common.md#clear-and-simple-design The diagnostic carries attribution identifiers but no rendering; reporters format it.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Severity excludes off, since off policies emit nothing.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains code versus prose and optional coordinates; each field documents its omission meaning.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceDiagnostic {
   /**

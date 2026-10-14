@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    ownership dependencies.
  * 3. Reverse snapshot order and require the same result.
  * 4. Require missing class or implementation inputs to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Combines a package class with external method files in both orders and asserts merged identities, prototype evidence, addresses and failures.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow class-folder ownership; order independence is an independent property.
+ * @evidence contracts/testing.md#distinguishing-cases Covers public, private and additional external methods, reversed snapshot order, and missing class or implementation inputs.
+ * @evidence contracts/testing.md#execution-ownership The exported test_matlab_ownership is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_matlab_ownership(): Promise<void> {
   const cls = EvidenceTestSourceSnapshot.create(

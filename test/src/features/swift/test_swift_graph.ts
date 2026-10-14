@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Evaluate acknowledged and undocumented selectors.
  * 2. Verify exact missing populations and review behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against Swift references for each selector with acknowledged and undocumented units, and a review-only reference.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared Swift units; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each Swift selector covered and missing, and the review-only case that must stay missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_graph(): Promise<void> {
   const reference = await new EvidenceSwiftAdapter().analyze(

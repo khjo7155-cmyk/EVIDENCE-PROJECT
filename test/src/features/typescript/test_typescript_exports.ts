@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze sources with each export form.
  * 2. Verify public identities, aliases, and target resolution.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes TypeScript sources with every export form and asserts public identities, aliases and resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected public declarations follow ECMAScript and TypeScript export semantics.
+ * @evidence contracts/testing.md#distinguishing-cases Covers aliases, defaults, type-only edges, imports, stars and namespaces.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_exports is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_exports(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.combine([

@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require the merged type to include members from both files and two sites for
  *    each partial member.
  * 3. Analyze Sale.cs under two distinct roots and require distinct unit IDs.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes partial declarations within one root and the same file under two roots, asserting merged members, site counts and distinct IDs.
+ * @evidence contracts/testing.md#independent-expectations Expected merging follows the rule that one configured root is one compilation boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers ordinary, partial property and partial indexer members across files, and equal names under unrelated roots.
+ * @evidence contracts/testing.md#execution-ownership The exported test_csharp_partials is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_csharp_partials(): Promise<void> {
   const adapter = new EvidenceCSharpAdapter();

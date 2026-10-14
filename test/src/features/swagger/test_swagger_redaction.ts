@@ -51,6 +51,11 @@ const TOKEN: string = "fixture-token";
  *    secret in either output channel.
  * 5. Publish the first watch cycle for the same config and require the serialized
  *    cycle and active dependencies to contain no credential or query value.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads credential-bearing remote Swagger URLs and runs check, list and watch paths, asserting incompleteness, safe labels and the absence of every secret.
+ * @evidence contracts/testing.md#independent-expectations The secrets are fixed sentinels; every serialized output is searched for them, an oracle independent of the redaction code.
+ * @evidence contracts/testing.md#distinguishing-cases Covers HTTP, fragmented, unsupported-protocol, padded, malformed, repeated-userinfo and percent-encoded URLs, a local filename with query punctuation, three command outputs and a watch cycle.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swagger_redaction is discovered by DynamicExecutor and calls maintained source, including EvidenceCommand.run, in-process; it installs nothing and spawns no CLI, and its URLs use the reserved .invalid domain so no request can reach a real host.
  */
 export async function test_swagger_redaction(): Promise<void> {
   const adapter: EvidenceSwaggerAdapter = new EvidenceSwaggerAdapter();

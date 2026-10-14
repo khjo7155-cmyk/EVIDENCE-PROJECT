@@ -46,6 +46,14 @@ import type { IEvidenceClaimContext } from "../contexts/IEvidenceClaimContext";
  *     plan,
  *     claims,
  *   });
+ *
+ * @evidence contracts/common.md#principled-implementation Orchestration materializes claim and reference inventories, prepares per-reference resolutions, settles statement ownership, evaluates the graph, and summarizes a report while keeping every reference independent.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace is the boundary between configuration and evaluation; loading, ownership, graph policy and reporting are delegated.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Repeated populations never share a resolution or discharge coverage in another claim.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the orchestration with an example; private helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceCheckProgrammer {
   /**
@@ -55,12 +63,29 @@ export namespace EvidenceCheckProgrammer {
    * and reporting use positions as stable claim coordinates. Loading is allowed
    * to run concurrently, but each materialized reference remains attached to
    * exactly the claim entry that declared it.
+   *
+   * @evidence contracts/common.md#principled-implementation Each active claim and its references are loaded concurrently through the owning adapter and keep the plan's order and attachment.
+   * @evidence contracts/common.md#clear-and-simple-design Per-claim loading and unit selection are private helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Selection uses only configured symbol kinds, so structural ancestors never become extra obligations.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains ordering and concurrent loading.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in configured populations; loads run concurrently.
+   * @evidence contracts/performance.md#reuse-equivalent-work Populations with the same type, root and file selection share one load within a materialization, and each consumer receives its own clone, so identical selections are scanned and parsed once.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Inventories are owned by the returned claims; adapters and collectors release their resources before returning. The shared-load map is local to one call and released when it returns.
    */
   export async function materialize(
     plan: IEvidenceConfigPlan,
   ): Promise<IEvidenceMaterializedClaim[]> {
+    // Several claims and references often select the same files. Load each
+    // distinct selection once and give every consumer its own copy, because
+    // later preparation mutates inventories in place.
+    const loads: Map<string, Promise<IEvidenceInventory>> = new Map();
+    function loader(
+      population: IEvidenceClaim | IEvidenceReference,
+    ): Promise<IEvidenceInventory> {
+      return shared(loads, plan.configFile, population);
+    }
     return Promise.all(
-      plan.claims.map((claim) => materializeClaim(plan.configFile, claim)),
+      plan.claims.map((claim) => materializeClaim(loader, claim)),
     );
   }
 
@@ -72,6 +97,14 @@ export namespace EvidenceCheckProgrammer {
    * returned analysis deliberately retains both graph input and graph output so
    * query commands can explain the result without rebuilding or reloading
    * inventories.
+   *
+   * @evidence contracts/common.md#principled-implementation Claims are opened and closed into graph claims with prepared resolutions, statement ownership is settled across claims, non-participating annotations are reported, and the graph is evaluated.
+   * @evidence contracts/common.md#clear-and-simple-design Preparation helpers, ownership and graph evaluation are separate steps; evaluate sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ownership is settled before participation so one claim cannot report another claim's citation as its own error.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why input and output are both retained; the inline comment explains ownership ordering.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in statements and resolutions per claim, plus graph evaluation.
+   * @evidence contracts/performance.md#reuse-equivalent-work Claim-local indexes are built once and shared by every reference of the claim.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Claim contexts are local; the returned analysis is owned by the caller.
    */
   export async function evaluate(
     context: IEvidenceCheckContext,
@@ -100,6 +133,14 @@ export namespace EvidenceCheckProgrammer {
    *
    * Full and focused checks share active-obligation and severity aggregation;
    * presentation windows are applied after these totals are established.
+   *
+   * @evidence contracts/common.md#principled-implementation Counts are aggregated from report claims and diagnostics with the same rules for full and focused checks.
+   * @evidence contracts/common.md#clear-and-simple-design Summarizing delegates to the private count helper shared with report construction.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Totals are computed before any presentation window is applied.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains sharing between full and focused checks.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in obligations and diagnostics.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each report computes its own totals.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function summarize(
     claims: IEvidenceCheckClaim[],
@@ -113,6 +154,14 @@ export namespace EvidenceCheckProgrammer {
    *
    * Returns a new array so focused checks can merge resolution failures without
    * changing the original graph report's deterministic diagnostic order.
+   *
+   * @evidence contracts/common.md#principled-implementation Diagnostics are sorted by configured boundary, source coordinate and identity into a new array.
+   * @evidence contracts/common.md#clear-and-simple-design Ordering reuses the private comparator used for full reports.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts The original report order is never mutated.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains returning a new array.
+   * @evidence contracts/performance.md#efficient-algorithms O(n log n) for n diagnostics.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Ordering is per report.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function orderDiagnostics(
     diagnostics: IEvidenceDiagnostic[],
@@ -129,17 +178,16 @@ export namespace EvidenceCheckProgrammer {
    * concern.
    */
   async function materializeClaim(
-    configFile: string,
+    loader: (
+      population: IEvidenceClaim | IEvidenceReference,
+    ) => Promise<IEvidenceInventory>,
     plan: IEvidenceConfigPlanClaim,
   ): Promise<IEvidenceMaterializedClaim> {
     const [inventory, references] = await Promise.all([
-      load(configFile, plan.population),
+      loader(plan.population),
       Promise.all(
         plan.references.map(async (reference) => {
-          const referenceInventory = await load(
-            configFile,
-            reference.population,
-          );
+          const referenceInventory = await loader(reference.population);
           return {
             plan: reference,
             inventory: referenceInventory,
@@ -162,6 +210,33 @@ export namespace EvidenceCheckProgrammer {
           }),
       references,
     };
+  }
+
+  /**
+   * Loads a population once per distinct selection and returns a private copy.
+   *
+   * The key is everything that decides adapter input: artifact type, root, and
+   * the file globs or Swagger document. Equal keys within one materialization
+   * share a single load, and each caller receives its own clone because claim
+   * preparation mutates inventories in place.
+   */
+  async function shared(
+    loads: Map<string, Promise<IEvidenceInventory>>,
+    configFile: string,
+    population: IEvidenceClaim | IEvidenceReference,
+  ): Promise<IEvidenceInventory> {
+    const key: string = JSON.stringify([
+      population.type,
+      population.root ?? null,
+      "files" in population ? population.files : null,
+      "file" in population ? population.file : null,
+    ]);
+    let pending: Promise<IEvidenceInventory> | undefined = loads.get(key);
+    if (pending === undefined) {
+      pending = load(configFile, population);
+      loads.set(key, pending);
+    }
+    return structuredClone(await pending);
   }
 
   /**

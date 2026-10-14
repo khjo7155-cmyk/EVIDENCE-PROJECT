@@ -18,6 +18,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    requirement; require success and only the three authored project files.
  * 2. Remove the citation and require failing coverage with the same file tree.
  * 3. Restore the citation and require success without new filesystem artifacts.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks a TypeScript-configured project before, without and after a citation, asserting the result and the exact project file list each time.
+ * @evidence contracts/testing.md#independent-expectations The expected file tree is the three authored files; success and failure follow from whether the requirement is cited.
+ * @evidence contracts/testing.md#distinguishing-cases Covers passing, failing and recovered checks to prove no runtime artifacts appear on any path. Grammar cache behavior is owned by the parser acquisition tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_checker_memory is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_checker_memory(): Promise<void> {
   const implementation: string = dedent`

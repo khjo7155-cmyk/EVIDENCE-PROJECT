@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze literal members and anonymous defaults.
  * 2. Verify exact identities and resolution behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes punctuated literal member names and anonymous default declarations and asserts identities and resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected identities keep literal names as one segment and give each anonymous default one address.
+ * @evidence contracts/testing.md#distinguishing-cases Covers punctuated members and anonymous default forms.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_literals is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_literals(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.combine([

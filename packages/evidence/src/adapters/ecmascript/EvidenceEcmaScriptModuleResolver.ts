@@ -20,6 +20,14 @@ import { EvidenceSourcePath } from "../../internal/EvidenceSourcePath";
  * nearest package metadata. The resolver also records consulted manifests as
  * watch dependencies and turns unreadable or conflicting package scopes into
  * inventory diagnostics.
+ *
+ * @evidence contracts/common.md#principled-implementation Explicit .mjs and .cjs extensions decide the mode directly; .js and .jsx inherit the nearest package.json type, read once per directory, defaulting to CommonJS as Node does.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver owns mode selection and manifest dependencies; scanning uses the result.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Unreadable or invalid manifests become diagnostics instead of silently defaulting.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains inheritance and watch dependencies; every member is documented.
+ * @evidence contracts/performance.md#efficient-algorithms Package lookups are memoized per normalized directory, so each manifest is read at most once per analysis.
+ * @evidence contracts/performance.md#reuse-equivalent-work A VariadicSingleton shares in-flight and completed lookups among files in the same directories.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The resolver and its memo live for one analysis.
  */
 export class EvidenceEcmaScriptModuleResolver {
   /**
@@ -80,6 +88,14 @@ export class EvidenceEcmaScriptModuleResolver {
    * Every logical address of one source must select the same mode. A mismatch
    * is reported because parsing one file with either mode alone would make
    * export semantics depend on an arbitrary alias.
+   *
+   * @evidence contracts/common.md#principled-implementation Each selected source's mode is resolved and returned with consulted manifests and diagnostics.
+   * @evidence contracts/common.md#clear-and-simple-design Per-file lookup is a private method using the directory memo.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Conflicting or failing package scopes are reported, not ignored.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the resolution contains.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in sources with memoized directory lookups.
+   * @evidence contracts/performance.md#reuse-equivalent-work The directory memo is shared across all sources in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Manifest reads complete before returning; the resolution is owned by the caller.
    */
   public async resolve(
     sources: IEvidenceSourceFile[],

@@ -20,6 +20,14 @@ import { EvidenceEcmaScriptModulePaths } from "./EvidenceEcmaScriptModulePaths";
  * reads only reachable local export dependencies, marks their addresses as
  * support-only, and retains file candidates for watch recovery. Package
  * resolution and dependency declaration enrollment remain outside this pass.
+ *
+ * @evidence contracts/common.md#principled-implementation Only local files reachable through forwarding export edges are read, marked support-only and scanned, because globs select declaration owners rather than every barrel.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace extends a snapshot; package resolution and dependency enrollment are excluded by design.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Escapes from the root, lexically or through symlinks, never introduce support units.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the support-only boundary.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceEcmaScriptDependencyLoader {
   /**
@@ -28,6 +36,14 @@ export namespace EvidenceEcmaScriptDependencyLoader {
    * The adapter supplies its scanner so dependency files use the same parser
    * session lifecycle as selected files. Physical identities are deduplicated;
    * lexical and symlink root escapes never introduce support units.
+   *
+   * @evidence contracts/common.md#principled-implementation A worklist over analyses follows forwarded export and import specifiers to local candidates, reads each new candidate under the root as a support-only source, scans it, and appends its analysis for further expansion.
+   * @evidence contracts/common.md#clear-and-simple-design Candidate spelling comes from EvidenceEcmaScriptModulePaths and scanning from the caller's callback.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Ordinary implementation imports never expand the population, and package specifiers are left to forwarding rules.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains which specifiers are followed; inline comments explain forwarding-only expansion.
+   * @evidence contracts/performance.md#efficient-algorithms Each reachable support file is read and scanned once thanks to a visited set; work is linear in reachable forwarding edges.
+   * @evidence contracts/performance.md#reuse-equivalent-work Already captured sources and visited candidates are reused instead of being read again.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources Files are read and released per candidate; the snapshot and analyses arrays are extended in place and owned by the caller.
    */
   export async function expand(
     snapshot: IEvidenceSourceSnapshot,

@@ -15,6 +15,14 @@ import type { IEvidenceSourceRoot } from "./IEvidenceSourceRoot";
  * Diagnostics and completeness distinguish an empty successful selection from a
  * failed discovery that happened to return no files; adapters must retain that
  * distinction instead of treating either state as a passing empty inventory.
+ *
+ * @evidence contracts/common.md#principled-implementation Root, files, dependencies, diagnostics and a completeness flag capture one discovery so adapters never reread the filesystem.
+ * @evidence contracts/common.md#clear-and-simple-design Capture is separate from extraction.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Completeness is explicit, so discovery failures cannot become an empty population.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the snapshot; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSourceSnapshot {
   /**

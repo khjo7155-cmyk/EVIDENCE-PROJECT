@@ -29,6 +29,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    incomplete result that retains the original export diagnostic.
  * 4. Resolve a missing path against that incomplete graph and require incomplete
  *    rather than a derivative missing-file result.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves failing targets against TypeScript inventories and asserts each distinct status and diagnostic.
+ * @evidence contracts/testing.md#independent-expectations Expected statuses come from the resolution contract: missing-file, out-of-population, malformed, unsupported-host, hidden, ambiguous and incomplete.
+ * @evidence contracts/testing.md#distinguishing-cases Covers unselected and missing files, malformed accessors, unsupported hosts, withdrawn declarations, competing star exports, and incomplete export graphs taking precedence over missing-file. Successful resolution is owned by test_target_resolution.
+ * @evidence contracts/testing.md#execution-ownership The exported test_target_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_target_failures(): Promise<void> {
   const location = join(__dirname, "failures-" + randomUUID());

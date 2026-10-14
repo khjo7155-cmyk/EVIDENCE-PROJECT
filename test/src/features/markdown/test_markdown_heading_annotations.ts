@@ -29,6 +29,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    tags.
  * 4. Edit annotation prose and require stable fingerprints, then edit ordinary
  *    semantic text and require the file fingerprint to change.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes CRLF Markdown with heading evidence, exclusions and review comments and asserts targets, explanations, parents, hosts and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected explanations and owners follow the heading-annotation rules; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers H2 and H3 evidence, an H4 exclusion, a review comment, inert examples, comment-hidden headings, unsupported visible tags, and both edit kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_markdown_heading_annotations is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_markdown_heading_annotations(): Promise<void> {
   const content: string = dedent`

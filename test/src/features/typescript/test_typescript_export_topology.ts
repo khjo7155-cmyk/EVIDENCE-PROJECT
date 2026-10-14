@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze transitive export graphs with each topology condition.
  * 2. Verify public results and incomplete or ambiguous boundaries.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes transitive TypeScript export graphs with shadowing, ambiguity, cycles and emitted extensions and asserts public results and incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow ECMAScript export semantics written from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each topology condition with its safe or incomplete outcome.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_export_topology is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_export_topology(): Promise<void> {
   const adapter = new EvidenceTypeScriptAdapter();

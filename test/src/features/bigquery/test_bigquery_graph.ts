@@ -22,6 +22,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Evaluate each inventory as both claimant and reference.
  * 3. Require acknowledged graphs to pass and unacknowledged graphs to report every
  *    referenced unit as missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Builds BigQuery and counterpart inventories, evaluates covered and uncovered graphs for each selector kind, and asserts success and the exact missing units.
+ * @evidence contracts/testing.md#independent-expectations Missing units are the fixture's declared units, written independently of the evaluation.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every BigQuery selector kind in covered and missing directions. Extraction details are owned by the units and hosts tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_graph is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_graph(): Promise<void> {
   const adapter = new EvidenceBigQueryAdapter();

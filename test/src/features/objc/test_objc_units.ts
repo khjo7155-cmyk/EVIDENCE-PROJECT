@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze matching headers and implementations with categories and protocols.
  * 2. Verify exact public units, merged sites, parentage, and target resolution.
  * 3. Require diagnostics-free complete extraction.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes headers and implementations with categories and protocols and asserts units, merged sites, parents and target resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers classes, categories, protocols, selectors and merged sites with complete extraction.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_units(): Promise<void> {
   const inventory = await new EvidenceObjcAdapter().analyze(

@@ -10,6 +10,14 @@ import type { IEvidenceSourceLocation } from "./IEvidenceSourceLocation";
  * identity. Its population-qualified ID distinguishes appearances across claims
  * and references, while selection state separates required units from
  * addressable structural ancestors.
+ *
+ * @evidence contracts/common.md#principled-implementation One row per unit and population carries canonical target, aliases, selection and locations for authors choosing a target.
+ * @evidence contracts/common.md#clear-and-simple-design Rows reference scope and unit IDs without embedding inventory records.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Ancestor rows are labeled by selection rather than counted as required units.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the row; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceListItem {
   /**

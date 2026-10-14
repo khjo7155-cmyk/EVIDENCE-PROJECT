@@ -11,6 +11,14 @@ import type { IEvidenceMatlabFileAnalysis } from "./IEvidenceMatlabFileAnalysis"
  * MATLAB distributes one public class surface across files, so semantic
  * ownership must be proven from class-folder paths before units and annotation
  * hosts exist.
+ *
+ * @evidence contracts/common.md#principled-implementation One MATLAB class surface can span a class folder, so external implementations and accessors are attached only when the selected @Class folder paths prove the owner.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns snapshot-wide resolution only; scanning and materialization are separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Pieces whose owner cannot be proven from folder paths are reported rather than attached.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why resolution waits for every file; its function and helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceMatlabOwnership {
   /**
@@ -18,6 +26,14 @@ export namespace EvidenceMatlabOwnership {
    *
    * This order lets a missing external implementation remain an observable
    * dependency and prevents an accessor from becoming a second property unit.
+   *
+   * @evidence contracts/common.md#principled-implementation Class-folder files are matched to their classdef, external method files and property accessors are merged into the declared members, and unmatched pieces are reported.
+   * @evidence contracts/common.md#clear-and-simple-design It mutates the copied file analyses in place before units are materialized.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Pieces whose owner cannot be proven from folder paths are reported rather than attached.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the resolution and its failure cases.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in declarations and references with map lookups; alias chains are followed with cycle detection.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis over all files.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It mutates caller-owned analyses and keeps no state.
    */
   export function resolve(
     analyses: IEvidenceMatlabFileAnalysis[],

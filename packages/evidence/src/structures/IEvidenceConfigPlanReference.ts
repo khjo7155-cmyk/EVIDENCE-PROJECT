@@ -9,6 +9,14 @@ import type { IEvidenceReference } from "./IEvidenceReference";
  * defaults. Materialization uses these resolved settings to construct a target
  * population independently of the claim's host selection or neighboring
  * references.
+ *
+ * @evidence contracts/common.md#principled-implementation The authored reference plus effective severity and symbols lets materialization build each target population independently.
+ * @evidence contracts/common.md#clear-and-simple-design The plan reference holds only its own settings, independent of the claim's host selection.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Resolved settings are stored separately rather than mutating the authored reference.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains independence from neighboring references; each field documents its meaning.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceConfigPlanReference {
   /**

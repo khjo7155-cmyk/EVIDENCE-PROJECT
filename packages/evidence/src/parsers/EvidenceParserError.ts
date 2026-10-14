@@ -10,6 +10,14 @@ import type { EvidenceParserErrorCode } from "../typings/EvidenceParserErrorCode
  * appropriate. A range is available for syntax failures but may be absent
  * before source parsing begins, such as when grammar acquisition cannot
  * complete.
+ *
+ * @evidence contracts/common.md#principled-implementation An Error subclass with a stable code, file, optional range and cause lets adapters build incomplete-inventory diagnostics and watch classify retryable failures.
+ * @evidence contracts/common.md#clear-and-simple-design The class only carries structured failure data.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Callers classify by code rather than parsing the message; ranges are omitted rather than invented when no tree exists.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains how adapters and watch use it; every constructor parameter is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms An error class chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Constructing an error computes nothing worth sharing.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The error holds only its message and cause and no external resource.
  */
 export class EvidenceParserError extends Error {
   /**

@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    accessor spelling.
  * 3. Require exact paths to resolve while flattened or otherwise invalid paths
  *    retain their failure status.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves BigQuery targets with quoted and nested segments through file aliases and asserts resolved and failed statuses.
+ * @evidence contracts/testing.md#independent-expectations Expected statuses follow the BigQuery addressing rules for project, dataset, table and flexible field segments.
+ * @evidence contracts/testing.md#distinguishing-cases Covers exact qualified paths, quoted segments, supported aliases, and flattened or invalid paths that must fail.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_targets(): Promise<void> {
   const reference = await new EvidenceBigQueryAdapter().analyze(

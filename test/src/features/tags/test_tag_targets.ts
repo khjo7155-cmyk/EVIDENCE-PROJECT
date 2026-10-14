@@ -17,6 +17,11 @@ import { EvidenceTestDocumentation } from "../../internal/EvidenceTestDocumentat
  * 2. Verify all eight target strings and the literal-member reason remain exact.
  * 3. Require every valid `@evidence` and `@link` entry to be positive evidence
  *    with no diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses evidence and link tags in many target forms and asserts the exact target strings, reasons, kinds and empty diagnostics.
+ * @evidence contracts/testing.md#independent-expectations The eight expected targets are the literal authored spellings, which the tag parser must preserve unchanged.
+ * @evidence contracts/testing.md#distinguishing-cases Covers TypeScript member paths, a quoted C++ member with a space, Markdown, Prisma and HTTP targets, and the quoted-segment/reason boundary. Malformed targets are owned by test_tag_diagnostics.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_targets(): Promise<void> {
   const fixture = EvidenceTestDocumentation.create(dedent`

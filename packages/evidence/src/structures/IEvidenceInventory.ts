@@ -36,6 +36,14 @@ import type { IEvidenceUnit } from "./IEvidenceUnit";
  *   const population: IEvidencePopulation =
  *     inventory.select(requiredUnitIds);
  *   // population.units contains requirements; scopes additionally includes owners.
+ *
+ * @evidence contracts/common.md#principled-implementation Units, addresses and hosts answer separate questions (what exists, how it is named, where documentation belongs), with statements and reviews kept apart.
+ * @evidence contracts/common.md#clear-and-simple-design Adapters produce plain data; reconciliation and projection belong to EvidenceInventory.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Untagged hosts stay present and completeness is explicit, so policies see every selected host and a failed scan cannot pass.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains each record family and the no-borrowed-resources rule; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceInventory {
   /**

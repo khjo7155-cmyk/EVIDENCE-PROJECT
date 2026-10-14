@@ -24,6 +24,14 @@ import type { IEvidenceConfigPlan } from "../structures/IEvidenceConfigPlan";
  *     "./config/evidence.config.ts",
  *   );
  *   // Population roots are anchored to the resolved configuration file.
+ *
+ * @evidence contracts/common.md#principled-implementation Configuration is located by explicit path or absence-only discovery, read as JSON data or evaluated in an isolated TypeScript process, then validated with typia and the full configuration validator before any artifact I/O.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns locating and loading; evaluation, planning and validation are separate modules, and private helpers handle resolution and error messages.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Only an absent directory entry permits fallback; broken links, directories and access errors fail instead of selecting another configuration.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains both entry points with an example; every function and helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceConfigLoader {
   /**
@@ -37,6 +45,13 @@ export namespace EvidenceConfigLoader {
    * Explicit paths select exactly one file.
    *
    * @param file Configuration path, relative to the current working directory.
+   * @evidence contracts/common.md#principled-implementation The file is located, evaluated by its format, shape-checked with typia, and validated including disabled entries.
+   * @evidence contracts/common.md#clear-and-simple-design Load composes locate, evaluation and validation without planning.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Failures reject instead of returning partially validated configuration.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains discovery, output routing and validation of inactive entries.
+   * @evidence contracts/performance.md#efficient-algorithms Cost is dominated by TypeScript evaluation in a child process for .ts files; JSON is parsed once.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each load re-evaluates so edits are observed; watch depends on that freshness.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The evaluator child process ends before load returns; no handle is retained.
    */
   export async function load(file?: string): Promise<IEvidenceConfig> {
     const filename: string = await locate(file);
@@ -52,6 +67,14 @@ export namespace EvidenceConfigLoader {
    * Disabled and off populations are omitted before artifact I/O while active
    * entries retain their authored indices and configuration-relative roots.
    * Omission uses the same absence-only TS-to-JSON discovery as load.
+   *
+   * @evidence contracts/common.md#principled-implementation The same located and evaluated configuration is turned into a plan with resolved severities and symbol defaults.
+   * @evidence contracts/common.md#clear-and-simple-design Plan delegates validation and filtering to createEvidenceConfigPlan.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Validation precedes filtering, so malformed disabled settings still fail.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains filtering, index retention and discovery.
+   * @evidence contracts/performance.md#efficient-algorithms Same cost as load plus linear planning.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each plan reflects the current file contents.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The evaluator child process ends before plan returns.
    */
   export async function plan(file?: string): Promise<IEvidenceConfigPlan> {
     const filename: string = await locate(file);
@@ -68,6 +91,14 @@ export namespace EvidenceConfigLoader {
    * an absent directory entry permits fallback: broken symlinks, directories,
    * access failures and selected-file errors remain failures. Explicit paths
    * never fall back. Both spellings retain format validation.
+   *
+   * @evidence contracts/common.md#principled-implementation An explicit path is resolved directly; otherwise lstat checks evidence.config.ts then evidence.config.json, continuing only on ENOENT, and the chosen file is resolved to a supported physical file.
+   * @evidence contracts/common.md#clear-and-simple-design Path resolution and format checks are a private helper shared by both branches.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Explicit paths never fall back, and broken symlinks or directories fail.
+   * @evidence contracts/common.md#meaningful-documentation The comment and inline comment explain the absence-only fallback.
+   * @evidence contracts/performance.md#efficient-algorithms At most two lstat calls plus one realpath and stat.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Location must observe the current directory state.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Only a path string is returned; nothing is held.
    */
   export async function locate(
     file?: string,

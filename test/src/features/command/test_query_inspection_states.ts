@@ -24,6 +24,11 @@ import { EvidenceTestQueryAnalysis } from "../../internal/EvidenceTestQueryAnaly
  * 3. Mark the original site withdrawn and require hidden status with exit 1.
  * 4. Mark the reference inventory incomplete and require incomplete status with
  *    operational exit 2.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Inspects a reviewed target through successive fixture mutations and asserts status, provenance, repair text and exit codes.
+ * @evidence contracts/testing.md#independent-expectations Expected states follow the precedence contract: stale review provenance, then ambiguous, hidden (exit 1) and incomplete (exit 2).
+ * @evidence contracts/testing.md#distinguishing-cases Covers a stale authored fingerprint, a cloned identity under one address, withdrawal and an incomplete inventory.
+ * @evidence contracts/testing.md#execution-ownership The exported test_query_inspection_states is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_query_inspection_states(): Promise<void> {
   const location = join(__dirname, `query states ${randomUUID()}`);

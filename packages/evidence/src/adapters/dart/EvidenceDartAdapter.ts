@@ -29,6 +29,14 @@ import { EvidenceDartLibraries } from "./EvidenceDartLibraries";
  * identities. Documentation is attached after those owners exist. Missing
  * library inputs remain dependencies so a later watch cycle can observe their
  * creation.
+ *
+ * @evidence contracts/common.md#principled-implementation Files record directives and physical declarations, reciprocal part directives establish defining-library ownership, units are materialized per library, and show/hide export filters publish aliases without duplicating identities.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and DartDoc normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Package or SDK export URIs are reported as incomplete, and missing library inputs remain watch dependencies instead of being ignored.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceDartAdapter implements IEvidenceAdapter<"dart"> {
   /**
@@ -48,6 +56,14 @@ export class EvidenceDartAdapter implements IEvidenceAdapter<"dart"> {
    * Source, topology, and syntax failures preserve incomplete status, and
    * parser cleanup runs even if publication or documentation materialization
    * throws.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, resolves part ownership, materializes library declarations, publishes export aliases, and attaches DartDoc to the established owners.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

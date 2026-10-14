@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze class interfaces and implementations with properties and accessors.
  * 2. Verify expected merged identities and independent selector addresses.
  * 3. Require conflicting duplicate definitions to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes interfaces and implementations with properties and accessors and asserts merged identities, selector addresses and incompleteness for conflicts.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow the interface-establishes, implementation-contributes rule.
+ * @evidence contracts/testing.md#distinguishing-cases Covers properties, getter selectors, synthesized content and conflicting duplicate definitions.
+ * @evidence contracts/testing.md#execution-ownership The exported test_objc_merges is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_objc_merges(): Promise<void> {
   const adapter = new EvidenceObjcAdapter();

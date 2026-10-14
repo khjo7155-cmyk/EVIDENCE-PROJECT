@@ -8,6 +8,14 @@ import type { EvidenceProgrammingSymbol } from "../../typings/EvidenceProgrammin
  * Lua exports emerge from initialization values rather than declarations, so
  * identity and reachable address remain separate until table ownership is
  * known.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration keeps kind, file-local path, site and public reachability because Lua exports arise from initialization values.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner produces declarations; the adapter materializes them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLuaDeclaration {
   /**

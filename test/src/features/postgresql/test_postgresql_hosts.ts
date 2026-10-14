@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze documented schema units, withdrawals, and inert text.
  * 2. Verify targets, resolution, and withdrawal metadata.
  * 3. Compare fingerprints after documentation and semantic edits.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes PostgreSQL COMMENT annotations, withdrawals and inert strings and asserts targets, resolution, withdrawal metadata and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected targets are written from the authored COMMENT statements; fingerprint expectations are relational across documentation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers documented schema units, withdrawals, unrelated strings that must not acknowledge, and both edit kinds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_postgresql_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_postgresql_hosts(): Promise<void> {
   const source = dedent`

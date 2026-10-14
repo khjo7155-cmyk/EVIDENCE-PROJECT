@@ -13,6 +13,14 @@ import type { EvidenceProgrammingType } from "../typings/EvidenceProgrammingType
  * researched candidates. Selecting a grammar validates both the configured type
  * and the logical filename before any asset acquisition, so an overlapping
  * extension cannot silently select another language's parser.
+ *
+ * @evidence contracts/common.md#principled-implementation Certified programming and database catalogs and research candidates are kept as separate module constants, and grammar selection validates both type and filename before acquisition.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns catalog data and selection; acquisition belongs to assets and parsers.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Overlapping extensions such as .sql and .h never select another language's grammar.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains the separation and validation order.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace's functions scan small constant arrays; it adds no algorithm.
+ * @evidence contracts/performance.md#reuse-equivalent-work Catalogs are module constants shared by every call; callers that need them per statement precompute what they need once (EvidenceArtifactTypes, EvidenceTargetApplicability), so cloning stays at configuration and query time.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The catalog constants are retained for the process and bounded by the fixed list of certified languages and candidates; they hold no external resource.
  */
 export namespace EvidenceLanguageRegistry {
   /**
@@ -22,6 +30,14 @@ export namespace EvidenceLanguageRegistry {
    * mutating the registry. A listed grammar has an Evidence adapter, but its
    * presence does not mean its WASM asset has been acquired by a parser
    * runtime.
+   *
+   * @evidence contracts/common.md#principled-implementation A structured clone of the certified programming catalog lets callers inspect metadata without mutating it.
+   * @evidence contracts/common.md#clear-and-simple-design List only exposes data.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Only languages with certified adapters are listed.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the copy and that acquisition is separate.
+   * @evidence contracts/performance.md#efficient-algorithms Cloning is linear in catalog size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A fresh clone protects the shared catalog; per-statement callers cache derived data instead of calling this repeatedly.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function list(): IEvidenceLanguage[] {
     return structuredClone(LANGUAGES);
@@ -34,6 +50,14 @@ export namespace EvidenceLanguageRegistry {
    * adapters expose model, column, and relation semantics rather than lexical
    * declarations. The copy preserves the registry as the authoritative
    * certification boundary.
+   *
+   * @evidence contracts/common.md#principled-implementation A structured clone of the database catalog keeps model, column and relation languages separate from programming languages.
+   * @evidence contracts/common.md#clear-and-simple-design Databases only exposes data.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts The registry remains the authoritative certification boundary.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the separation from programming types.
+   * @evidence contracts/performance.md#efficient-algorithms Cloning is linear in catalog size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A fresh clone is returned per call.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function databases(): IEvidenceDatabaseLanguage[] {
     return structuredClone(DATABASES);
@@ -46,6 +70,14 @@ export namespace EvidenceLanguageRegistry {
    * They intentionally cannot be selected: publishing an unimplemented
    * candidate as a language would imply an extraction boundary Evidence cannot
    * enforce.
+   *
+   * @evidence contracts/common.md#principled-implementation A structured clone of research candidates exposes blockers without making them selectable.
+   * @evidence contracts/common.md#clear-and-simple-design Candidates only exposes data.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Candidates are never merged into the certified lists.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains why candidates cannot be selected.
+   * @evidence contracts/performance.md#efficient-algorithms Cloning two small records.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A fresh clone is returned per call.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function candidates(): IEvidenceLanguageCandidate[] {
     return structuredClone(CANDIDATES);
@@ -59,6 +91,14 @@ export namespace EvidenceLanguageRegistry {
    * extraction; a grammar is returned as a copy so parser acquisition cannot
    * alter catalog metadata. Unsupported types and extensions throw typed parser
    * errors instead of guessing from a shared extension such as `.sql` or `.h`.
+   *
+   * @evidence contracts/common.md#principled-implementation The configured type is found first, then the basename is matched against exact filenames and extensions of that language's grammars only.
+   * @evidence contracts/common.md#clear-and-simple-design Selection returns a cloned grammar record; acquisition is elsewhere.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unknown types and unmatched files throw typed errors instead of guessing from a shared extension.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains normalization, copying and the typed failures.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in the small catalog and the language's extension list.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Selection runs once per parse request.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The function keeps no state after returning; its result is owned by the caller.
    */
   export function select(
     type: EvidenceProgrammingType | EvidenceDatabaseType,

@@ -18,6 +18,11 @@ import { validateEvidenceConfig } from "@wrtnlabs/evidence";
  * 3. Reject a whitespace-padded Swagger file on an off reference and an active
  *    Markdown reference with exclusion-only globs and an empty selector array.
  * 4. Accept a well-formed off Kotlin claim, proving inactivity itself is valid.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Validates malformed configurations with validateEvidenceConfig and asserts the reported field paths or acceptance.
+ * @evidence contracts/testing.md#independent-expectations Expected paths are written from the configuration contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an empty claim array, invalid settings on a disabled claim, an off reference with a padded Swagger file, invalid active globs and selectors, and a valid off claim.
+ * @evidence contracts/testing.md#execution-ownership The exported test_config_constraints is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_config_constraints(): void {
   const emptyGraph = failure({ claims: [] });

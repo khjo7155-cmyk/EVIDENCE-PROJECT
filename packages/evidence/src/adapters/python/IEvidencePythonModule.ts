@@ -9,6 +9,14 @@ import type { IEvidencePythonOwnedUnit } from "./IEvidencePythonOwnedUnit";
  * It combines file-local extraction with a mutable name index, allowing imports
  * and re-exports to resolve without reopening parser sessions or executing
  * code.
+ *
+ * @evidence contracts/common.md#principled-implementation A module combines file extraction with a mutable name index for resolution without reopening parsers.
+ * @evidence contracts/common.md#clear-and-simple-design The export resolver owns modules.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePythonModule {
   /**

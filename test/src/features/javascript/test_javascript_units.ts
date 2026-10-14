@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze exported declarations and members.
  * 2. Compare identities and symbols.
  * 3. Verify literal names stay one segment.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes exported JavaScript declarations and members and asserts identities, symbols and literal segments.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers declarations, static and prototype members and literal names that stay one segment.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_units(): Promise<void> {
   const inventory = await new EvidenceJavaScriptAdapter().analyze(

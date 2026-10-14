@@ -7,6 +7,14 @@ import type { EvidenceGraphFormat } from "../typings/EvidenceGraphFormat";
  * nodes, acknowledgement edges, and separate review relations. The selected
  * formatter presents that analysis without changing its coverage or
  * completeness status.
+ *
+ * @evidence contracts/common.md#principled-implementation A parsed graph request with cwd, config, format and output is all graph export needs after validation.
+ * @evidence contracts/common.md#clear-and-simple-design The record holds options only; analysis and formatting live elsewhere.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Formatting presents the analysis without changing coverage or completeness.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains what export retains; each option documents resolution and default.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphCommand {
   /**

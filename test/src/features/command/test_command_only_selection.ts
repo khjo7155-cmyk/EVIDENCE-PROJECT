@@ -27,6 +27,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    consistent counts, status, and authored target metadata.
  * 4. Reject unknown, outside-population, missing-file, and empty shallow scopes,
  *    including a bad target beside a valid target.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs focused checks through EvidenceCommand and asserts denominators, status, printing bounds, output files and rejection of bad scopes.
+ * @evidence contracts/testing.md#independent-expectations Expected denominators come from the fixture tree: one covered child, uncovered parent and sibling.
+ * @evidence contracts/testing.md#distinguishing-cases Covers child, parent, shallow parent, overlapping targets, multiple files, a file ancestor, bounds with selection, output files, and unknown, outside, missing and empty-shallow scopes beside valid ones.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_selection is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_only_selection(): Promise<void> {
   const config: IEvidenceConfig = {

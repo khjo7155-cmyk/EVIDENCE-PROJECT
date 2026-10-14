@@ -8,6 +8,14 @@ import type { IEvidenceDeclaration } from "./IEvidenceDeclaration";
  * selected identities covered by its scope. Endpoint node IDs are distinct from
  * semantic unit IDs because the same units can occur in several independent
  * obligations.
+ *
+ * @evidence contracts/common.md#principled-implementation Boundary-qualified endpoint node IDs separate export endpoints from semantic unit IDs, because one unit can appear in several independent obligations.
+ * @evidence contracts/common.md#clear-and-simple-design The edge carries the original declaration and identities only; node records are exported separately.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Edge IDs derive from boundary, declaration and target, never from consumer-specific ordering.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains why endpoints differ from unit IDs; each field documents its role.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphExportEdge {
   /**

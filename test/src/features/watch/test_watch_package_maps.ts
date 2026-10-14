@@ -46,6 +46,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 12. Redirect CJS and ESM owners from a root import map while a nested package
  *     shadows the same name; require Node and watch to select the root entries,
  *     with only edits to those executed entries invalidating their snapshots.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads and scans configurations using package imports and self-references and asserts runtime values, dependencies and rejections.
+ * @evidence contracts/testing.md#independent-expectations Node itself runs the fixtures as the oracle for target selection and rejection; expectations match Node's behavior.
+ * @evidence contracts/testing.md#distinguishing-cases Covers conditional import maps, external redirects, self-reference exports, CommonJS to ESM switches, missing targets, array fallbacks, malformed and escaping maps, scoped names, trailing slashes, dot segments, recovery and nested shadowing packages.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_package_maps is discovered by DynamicExecutor and calls maintained source in-process; besides the product's own read-only configuration evaluator, it spawns plain Node (process.execPath) only to run fixture files as an independent oracle of Node's module resolution, never the evidence CLI, and installs nothing.
  */
 export async function test_watch_package_maps(): Promise<void> {
   const location: string = join(

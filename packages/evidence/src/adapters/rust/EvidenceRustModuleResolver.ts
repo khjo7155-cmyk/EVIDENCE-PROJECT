@@ -20,6 +20,14 @@ import { EvidenceSourcePath } from "../../internal/EvidenceSourcePath";
  *
  * The resolver joins node-free scan results, then materializes semantic units
  * and every supported public address in the supplied Evidence inventory.
+ *
+ * @evidence contracts/common.md#principled-implementation Selected files are placed into crates and modules (inline, name.rs, name/mod.rs), pub use chains are followed to a fixed point, and impl members attach to selected local owners with trait-qualified segments.
+ * @evidence contracts/common.md#clear-and-simple-design The resolver owns crate assembly and publication; scanning and documentation are separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Missing or dual module files, ambiguous names, unresolved exports, blanket impls and external owners mark the inventory incomplete.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the joining step; members are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Linear in modules, declarations and use bindings per pass, iterated to a fixed point for re-exports.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Publication runs once per analysis.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The resolver writes into the inventory and keeps only per-call graph maps.
  */
 export class EvidenceRustModuleResolver {
   private readonly declarations = new Map<
@@ -83,6 +91,14 @@ export class EvidenceRustModuleResolver {
    * Resolution runs in dependency order: file-backed modules establish crate
    * scope before exports and impl members can receive public addresses. The
    * returned map links scanner declaration IDs to their published unit IDs.
+   *
+   * @evidence contracts/common.md#principled-implementation The crate graph is built, public occurrences are computed, and units and addresses are materialized; the map links scanner IDs to unit IDs.
+   * @evidence contracts/common.md#clear-and-simple-design Graph building and materialization are private phases.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unresolvable structure is reported.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned map.
+   * @evidence contracts/performance.md#efficient-algorithms Linear per resolution pass, iterated to a fixed point.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The returned map is owned by the caller.
    */
   public publish(): Map<string, string> {
     this.resolveExternalTargets();

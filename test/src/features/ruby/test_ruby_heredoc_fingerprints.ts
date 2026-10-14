@@ -26,6 +26,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    implementation fingerprint.
  * 5. Require unresolved nested delayed bodies to mark extraction incomplete even
  *    when the upstream grammar reports no syntax error.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes nested constants and a method with delayed heredoc bodies and compares fingerprints across independent body, documentation and line-ending edits.
+ * @evidence contracts/testing.md#independent-expectations Fingerprint expectations are relational: each body edit changes only its owner and ancestors; prose and CRLF edits change nothing.
+ * @evidence contracts/testing.md#distinguishing-cases Covers same-line and multiple-operand heredocs, tag-shaped data and interpolation in a body, real prose edits, CRLF normalization and unresolved nested bodies that must be incomplete.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_heredoc_fingerprints is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_heredoc_fingerprints(): Promise<void> {
   const original: IEvidenceInventory = await inventory(

@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    produces no diagnostics.
  * 3. Analyze a mutually importing pair and verify its finite exported address set
  *    completes without diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a Python package with __all__, star, renamed and namespace imports, shadowing and a mutual import pair and asserts public addresses.
+ * @evidence contracts/testing.md#independent-expectations Expected addresses follow Python import and __all__ semantics written from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers barrel, namespace and shadowed addresses, renamed identity preservation and a finite cycle.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_exports is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_exports(): Promise<void> {
   const adapter = new EvidencePythonAdapter();

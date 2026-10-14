@@ -20,6 +20,11 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  *    into value and part as a different, missing accessor.
  * 4. Require both the unselected lookalike and the unrelated declaration to remain
  *    missing from lookup within this selected population.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Selects a literal dotted child and asserts the scope closure and which accessors resolve.
+ * @evidence contracts/testing.md#independent-expectations Expected closure and statuses follow explicit-parent semantics, not name prefixes.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the literal dotted segment, a split accessor, a parentless lookalike and an unrelated declaration.
+ * @evidence contracts/testing.md#execution-ownership The exported test_inventory_scopes is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_inventory_scopes(): Promise<void> {
   const input = EvidenceTestInventory.create();

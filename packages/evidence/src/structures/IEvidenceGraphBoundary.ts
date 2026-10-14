@@ -9,6 +9,14 @@ import type { IEvidenceQueryScope } from "./IEvidenceQueryScope";
  * Selected unit IDs establish its denominator; checklist mode additionally
  * keeps each claim host's answer ledger so answers cannot be pooled between
  * hosts.
+ *
+ * @evidence contracts/common.md#principled-implementation One exported ledger per claim/reference pair keeps policy, denominator and checklist answers attributable to that obligation.
+ * @evidence contracts/common.md#clear-and-simple-design Nodes, edges and reviews reference the boundary by id rather than duplicating its policy.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Checklist host ledgers prevent answers from being pooled across hosts.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the boundary's role; each field documents its meaning.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphBoundary {
   /**

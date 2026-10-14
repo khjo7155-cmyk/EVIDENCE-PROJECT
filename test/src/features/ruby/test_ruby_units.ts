@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    containers, methods, constants, aliases, attributes, and reopenings.
  * 2. Require the exact public unit identities, parent ownership, physical sites,
  *    and property selections while excluding non-public surfaces.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks the registered Ruby metadata and analyzes public and hidden containers, methods, constants, aliases, attributes and reopenings, asserting identities and sites.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared public surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers visibility, instance and singleton sides, constants, attribute properties, reopening sites and excluded non-public forms.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_units(): Promise<void> {
   // Certified metadata identifies the pinned grammar and declared source boundary.

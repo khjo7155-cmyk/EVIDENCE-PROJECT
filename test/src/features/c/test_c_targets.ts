@@ -22,6 +22,11 @@ interface IEvidenceCTargetStatus {
  * 2. Resolve evidence targets using exact names and supported aliases.
  * 3. Require valid targets to resolve and invalid or ambiguous forms to keep their
  *    reported status.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves C targets for tags, typedef aliases and aggregate members and asserts resolved, missing and ambiguous statuses.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow the C addressing rules (exact tag segments and safe aliases).
+ * @evidence contracts/testing.md#distinguishing-cases Covers exact tag targets, typedef aliases, aggregate members, and invalid or ambiguous spellings.
+ * @evidence contracts/testing.md#execution-ownership The exported test_c_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_c_targets(): Promise<void> {
   const adapter = new EvidenceCAdapter();

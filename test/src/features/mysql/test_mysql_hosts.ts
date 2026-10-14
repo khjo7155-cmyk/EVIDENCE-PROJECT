@@ -21,6 +21,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    metadata.
  * 3. Compare review fingerprints after annotation and semantic edits.
  * 4. Require ambiguous schema input to remain incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes MySQL COMMENT annotations, reviews, withdrawals and inert text and asserts attachment, CRLF coordinates, resolution and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected coordinates are computed by hand; fingerprint expectations are relational across annotation and semantic edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers table and column COMMENTs, reviews, withdrawals, comment-shaped strings, and ambiguous schema input.
+ * @evidence contracts/testing.md#execution-ownership The exported test_mysql_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_mysql_hosts(): Promise<void> {
   const source = dedent`

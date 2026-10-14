@@ -30,6 +30,14 @@ import type { IEvidenceStatementStanding } from "./IEvidenceStatementStanding";
  * at least the severity the disowned claim would. Ties stay with every claim,
  * so an annotation that no claim accepts, such as a mistyped file, still fails
  * instead of vanishing.
+ *
+ * @evidence contracts/common.md#principled-implementation Each claim's resolution of a shared annotation is ranked by how far it got (unselected, outside the file set, missing member, owned), and a claim yields an annotation only to a strictly higher claim that resolves cleanly or reports at least the same severity.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns only ownership arbitration; private helpers measure, lift, compare and key standings.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Ties stay with every claim, so a citation no claim accepts still fails instead of vanishing; a weaker-severity claim cannot downgrade an error.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment lists the four levels and the disowning rule; every helper is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceStatementOwnership {
   /**
@@ -39,6 +47,14 @@ export namespace EvidenceStatementOwnership {
    * disowned annotation loses its reference resolutions and its participation
    * entry, so neither the graph nor the participation report evaluates it for
    * that claim. Both arrays are indexed by claim position.
+   *
+   * @evidence contracts/common.md#principled-implementation Standings are measured for every claim, then each claim drops the declarations and reviews another claim outranks, removing them from its context indexes and reference resolutions.
+   * @evidence contracts/common.md#clear-and-simple-design Release mutates contexts and graph claims in place; measuring and ranking are separate helpers.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Only strictly outranked annotations are withdrawn; nothing is withdrawn to make a check pass.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the in-place mutation and positional indexing.
+   * @evidence contracts/performance.md#efficient-algorithms Measuring is linear in each claim's statements and resolutions; comparison is O(C x K) for C claims and K annotation keys, with constant-time map lookups.
+   * @evidence contracts/performance.md#reuse-equivalent-work Standings are computed once per claim and reused for every comparison.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Standing maps and lost-key sets are local to the call; no state is retained.
    */
   export function release(
     contexts: IEvidenceClaimContext[],

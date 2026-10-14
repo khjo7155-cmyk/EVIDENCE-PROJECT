@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze each unsupported export form.
  * 2. Require incompleteness and diagnostics.
  * 3. Verify no uncertain case passes.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes unsupported JavaScript export forms and asserts incompleteness with diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's static-surface boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers computed keys, conditional mutation, dynamic replacement values, shadowed bindings and escaped aliases.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_failures(): Promise<void> {
   const adapter = new EvidenceJavaScriptAdapter();

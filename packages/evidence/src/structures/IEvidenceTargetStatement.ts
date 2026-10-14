@@ -7,6 +7,14 @@ import type { IEvidenceSourceLocation } from "./IEvidenceSourceLocation";
  * authored form. Artifact-specific resolution later interprets the token from
  * the host's source context. Sharing these fields does not let a review satisfy
  * coverage: the derived record still determines the statement's role.
+ *
+ * @evidence contracts/common.md#principled-implementation Host, authored target and location are the fields acknowledgements and reviews share.
+ * @evidence contracts/common.md#clear-and-simple-design Shared fields live once here; each statement kind extends it.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts The authored target text is preserved until resolution.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the shared role; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceTargetStatement {
   /**

@@ -12,6 +12,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze coordinate-sensitive LuaDoc. 2. Compare attached hosts and ranges. 3.
  *    Reject examples and detached annotations.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes coordinate-sensitive LuaDoc with examples and detached comments and asserts hosts, ranges and rejections.
+ * @evidence contracts/testing.md#independent-expectations Expected ranges are computed by hand from the source.
+ * @evidence contracts/testing.md#distinguishing-cases Covers attached LuaDoc, examples and detached annotations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_hosts is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_lua_hosts(): Promise<void> {
   const content = dedent`

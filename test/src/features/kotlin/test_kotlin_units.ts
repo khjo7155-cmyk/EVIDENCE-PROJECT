@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze public Kotlin forms. 2. Compare unit identities and symbols. 3.
  *    Verify overload and alias ownership.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes public Kotlin declarations across owners, overloads and file aliases and asserts identities and symbols.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared Kotlin surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers owners, companions, overload sites and file aliases that must not merge unrelated declarations.
+ * @evidence contracts/testing.md#execution-ownership The exported test_kotlin_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_kotlin_units(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.combine([

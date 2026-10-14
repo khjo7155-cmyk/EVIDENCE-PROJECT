@@ -18,6 +18,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Add users, then corrupt its table definition and require success followed by
  *    incompleteness.
  * 3. Repair the users source and require the fourth cycle to recover.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher while a missing DBML endpoint file is added, corrupted and repaired, asserting each cycle.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run; per-cycle expectations follow the endpoint's presence and validity.
+ * @evidence contracts/testing.md#distinguishing-cases Covers an incomplete missing endpoint, its addition, corruption and repair.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

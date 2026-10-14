@@ -8,6 +8,14 @@ import type { EvidenceSymbol } from "../typings/EvidenceSymbol";
  * Language and kind filter displayed rows after the complete check is analyzed.
  * They do not narrow evaluation or erase diagnostics from populations omitted
  * by the list filters.
+ *
+ * @evidence contracts/common.md#principled-implementation Listing takes the shared analysis options plus optional language and kind filters.
+ * @evidence contracts/common.md#clear-and-simple-design The record holds options only; filtering happens after the full check.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Filters narrow rows only and never the analyzed populations.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the request; each field documents its effect.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceListCommand {
   /**

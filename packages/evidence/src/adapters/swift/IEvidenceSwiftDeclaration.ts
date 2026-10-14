@@ -8,6 +8,14 @@ import type { EvidenceProgrammingSymbol } from "../../typings/EvidenceProgrammin
  * Extensions, aliases, and nominal declarations are recorded separately so the
  * adapter can attach members to their real type without losing their source
  * site.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration records whether it is nominal, an extension or an alias, keeping its source site while module-wide reconciliation finds its real owner.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner records declarations; ownership resolution and the adapter consume them.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSwiftDeclaration {
   /**

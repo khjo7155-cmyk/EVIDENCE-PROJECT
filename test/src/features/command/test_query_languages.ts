@@ -19,6 +19,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 2. Run list against a missing config in the same directory and require exit 2.
  * 3. Parse the failure report and require its command field to remain list rather
  *    than being attributed to the configuration-free languages operation.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs languages and a failing list in an empty directory and asserts exit codes and the failure's command name.
+ * @evidence contracts/testing.md#independent-expectations Expectations come from the command contract: languages needs no configuration and failures keep their own command.
+ * @evidence contracts/testing.md#distinguishing-cases Contrasts a configuration-free success with a configuration-dependent failure in the same directory.
+ * @evidence contracts/testing.md#execution-ownership The exported test_query_languages is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_query_languages(): Promise<void> {
   const location = join(__dirname, `query languages ${randomUUID()}`);

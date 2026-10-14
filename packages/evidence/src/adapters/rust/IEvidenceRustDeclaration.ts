@@ -10,6 +10,14 @@ import type { EvidenceRustVisibility } from "./EvidenceRustVisibility";
  * EvidenceRustModuleResolver combines this lexical record with the selected
  * crate graph; scanners do not assume that a visible spelling is externally
  * reachable.
+ *
+ * @evidence contracts/common.md#principled-implementation A declaration keeps form, visibility, path and site without assuming its spelling is externally reachable.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner records declarations; the module resolver decides reachability.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields hold values derived from parsed syntax; no project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceRustDeclaration {
   /**

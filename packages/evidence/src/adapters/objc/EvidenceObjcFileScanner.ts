@@ -18,6 +18,14 @@ import type { EvidenceObjcDeclarationForm } from "./EvidenceObjcDeclarationForm"
  *
  * Headers, implementations, categories, and extensions retain independent sites
  * here because the adapter must prove their common semantic identity later.
+ *
+ * @evidence contracts/common.md#principled-implementation Interfaces, protocols, categories, methods with exact class or instance selectors, properties, public ivars and external C functions are recorded per file, with adjacent Doxygen collected.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns per-file extraction; snapshot-wide ownership and publication happen after every file is scanned.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Nested aggregate definitions that could hide public declarations are rejected, and static C functions stay out of the surface.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members and documented private steps describe each rule.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceObjcFileScanner {
   /**
@@ -72,6 +80,14 @@ export class EvidenceObjcFileScanner {
    * Comment classification precedes top-level traversal, allowing Doxygen to
    * attach only to the adjacent declaration before reconciliation merges
    * sites.
+   *
+   * @evidence contracts/common.md#principled-implementation Scan walks declaration scopes once, records declarations, documentation carriers and diagnostics, and returns a node-free analysis.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is split into private methods.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported constructs become diagnostics and incompleteness instead of being skipped.
+   * @evidence contracts/common.md#meaningful-documentation The comment states what the returned analysis contains.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceObjcFileAnalysis {
     this.comments();

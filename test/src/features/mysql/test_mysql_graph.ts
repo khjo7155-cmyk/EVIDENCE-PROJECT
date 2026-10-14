@@ -14,6 +14,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 1. Build graph configurations for each supported MySQL selector and role.
  * 2. Check covered and missing-evidence outcomes for each configuration.
  * 3. Require the graph result and missing population to match the selected role.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker on configurations with MySQL as claim and as reference for each selector and asserts coverage and missing populations.
+ * @evidence contracts/testing.md#independent-expectations Expected missing units are the authored schema units for each selector and role.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every selector in both roles, covered and uncovered.
+ * @evidence contracts/testing.md#execution-ownership The exported test_mysql_graph is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator. It installs nothing and spawns no CLI.
  */
 export async function test_mysql_graph(): Promise<void> {
   for (const symbol of ["model", "column", "relation"] as const)

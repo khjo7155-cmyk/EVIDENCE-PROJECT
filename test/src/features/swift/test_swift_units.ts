@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze the supported declaration matrix.
  * 2. Verify units, ownership, and target resolution.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes the supported Swift declaration matrix and asserts units, ownership and target resolution.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared public surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers visibility, overloads, protocols, aliases and extensions.
+ * @evidence contracts/testing.md#execution-ownership The exported test_swift_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_swift_units(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.combine([

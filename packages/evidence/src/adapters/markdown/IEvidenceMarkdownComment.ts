@@ -3,6 +3,14 @@
  *
  * Offsets and lines let attachment rules distinguish adjacent documentation
  * from comments that belong to fenced content or another structural region.
+ *
+ * @evidence contracts/common.md#principled-implementation Offsets and opening and closing lines of a closed HTML comment are what attachment rules need to tell adjacent documentation from comments in other regions.
+ * @evidence contracts/common.md#clear-and-simple-design The record is scanner-internal data; comment attachment rules use it without owning logic.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts No document-specific values are encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains its purpose; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceMarkdownComment {
   /**

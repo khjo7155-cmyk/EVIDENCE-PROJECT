@@ -20,6 +20,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Analyze selected destructuring and a declaration-free cycle and verify their
  *    incomplete diagnostics.
  * 4. Analyze malformed source and verify parse failure is reported as incomplete.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes dynamic __all__ updates, failed exports, conditional bindings, destructuring, cycles and malformed source and asserts selective incompleteness.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented static-surface boundary; ordinary declarations are preserved beside each failure.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each unsupported form, __all__ exclusions and explicit private selection that decide whether a failure applies, and a parse failure.
+ * @evidence contracts/testing.md#execution-ownership The exported test_python_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_python_failures(): Promise<void> {
   const adapter = new EvidencePythonAdapter();

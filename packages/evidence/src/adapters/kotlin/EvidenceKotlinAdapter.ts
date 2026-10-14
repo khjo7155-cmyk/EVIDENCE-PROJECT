@@ -29,6 +29,14 @@ import { EvidenceKotlinReceivers } from "./EvidenceKotlinReceivers";
  * attachments join the resulting units through physical declaration sites,
  * preserving the distinction between a receiver-qualified public path and its
  * original source.
+ *
+ * @evidence contracts/common.md#principled-implementation Files are scanned with aliases, type parameters and receiver candidates kept, nominal receivers are resolved across the selected snapshot, and only then are declarations grouped into overload families with KDoc hosts joined by physical site.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and KDoc normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Extensions whose receivers need compiler lookup are reported as incomplete instead of being placed under a guessed owner.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceKotlinAdapter implements IEvidenceAdapter<"kotlin"> {
   /**
@@ -47,6 +55,14 @@ export class EvidenceKotlinAdapter implements IEvidenceAdapter<"kotlin"> {
    * All files are scanned before receiver lookup. Resolution findings
    * contribute to completeness before units and documentation are published,
    * and the parser closes after both successful and failed materialization.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, resolves extension receivers snapshot-wide, groups package-scoped overloads into units, and attaches KDoc by declaration site.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

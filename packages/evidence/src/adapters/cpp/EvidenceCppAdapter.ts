@@ -35,6 +35,14 @@ import type { IEvidenceCppResolvedAlias } from "./IEvidenceCppResolvedAlias";
  * The pipeline carries conflicts and unsupported source forms into incomplete
  * output. It does not replace C++ lookup, preprocessing, or instantiation with
  * name-based guesses merely to produce a smaller public inventory.
+ *
+ * @evidence contracts/common.md#principled-implementation Lexical declarations and qualified out-of-class definitions are grouped across the configured snapshot by fully qualified identity (with template arity segments), using and namespace aliases are resolved to unique selected units, and Doxygen attaches afterwards.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and Doxygen normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Inheritance, friends, specializations, macros and modules are reported as incomplete instead of being replaced by name-based guesses.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidenceCppAdapter implements IEvidenceAdapter<"cpp"> {
   /**
@@ -55,6 +63,14 @@ export class EvidenceCppAdapter implements IEvidenceAdapter<"cpp"> {
    * annotation materialization and common inventory validation. Failures retain
    * diagnostics, and the invocation's parser closes regardless of the
    * extraction outcome.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, materializes declaration families, resolves public aliases, and attaches Doxygen to the established owners.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

@@ -17,6 +17,11 @@ import assert from "node:assert/strict";
  * 2. Allow shallow before or after only, and preserve watch selection.
  * 3. Reject missing or empty targets, duplicate selectors or shallow flags,
  *    shallow without targets, and selector options on other commands.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses focused check arguments with EvidenceCommand.parse and asserts command objects and rejections.
+ * @evidence contracts/testing.md#independent-expectations Expected command objects are written from the documented option grammar.
+ * @evidence contracts/testing.md#distinguishing-cases Covers implicit and explicit check, several targets with surrounding options, shallow before or after only, watch, and missing, empty, duplicate and misplaced selector options.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_parse is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export function test_command_only_parse(): void {
   const expected: IEvidenceCheckCommand = {

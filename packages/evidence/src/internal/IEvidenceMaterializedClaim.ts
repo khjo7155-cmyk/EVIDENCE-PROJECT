@@ -10,6 +10,14 @@ import type { IEvidenceMaterializedReference } from "./IEvidenceMaterializedRefe
  * This record belongs to a single analysis pass. It retains configuration order
  * and selected identities so later graph construction never needs to rediscover
  * files or reinterpret a mutable user configuration.
+ *
+ * @evidence contracts/common.md#principled-implementation A plan, extracted inventory, selected host IDs, optional carrier IDs and materialized references are what graph input construction needs per claim.
+ * @evidence contracts/common.md#clear-and-simple-design Planning output and extraction output stay in separate fields.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Carrier IDs narrow eligibility only, never add hosts.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the materialized stage; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceMaterializedClaim {
   /**

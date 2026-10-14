@@ -30,6 +30,11 @@ import { EvidenceTestQueryAnalysis } from "../../internal/EvidenceTestQueryAnaly
  *    even though the other reference still resolves.
  * 4. Mark one reference incomplete and then withdraw the target in both; require
  *    incomplete exit 2 and hidden-target exit 1 respectively.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs focused query checks across repeated references and asserts unit counts, staleness, ambiguity, incompleteness and hidden results.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow identity rules: aliases count once per obligation, literal dots are not parents, and uncertainty in one reference is not covered by another.
+ * @evidence contracts/testing.md#distinguishing-cases Covers two aliases of one property, the type ancestor, a duplicated identity in one reference, an incomplete reference (exit 2) and a withdrawn target (exit 1).
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_identity is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_only_identity(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

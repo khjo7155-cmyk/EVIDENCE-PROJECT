@@ -19,6 +19,14 @@ import type { IEvidenceTargetStatement } from "./IEvidenceTargetStatement";
  *   // @evidence ../api.ts#send Exercises successful delivery.
  *   // @evidenceReview ../api.ts#send #<current-fingerprint> Checked delivery errors.
  *   // The review supplements the evidence statement instead of replacing it.
+ *
+ * @evidence contracts/common.md#principled-implementation A review extends the target statement with the acknowledgement kind it validates, an optional fingerprint and a description.
+ * @evidence contracts/common.md#clear-and-simple-design Reviews are a separate type from acknowledgements, so they never supply coverage.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts A missing fingerprint is represented explicitly and diagnosed, not guessed.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains pairing and freshness; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceReview extends IEvidenceTargetStatement {
   /**

@@ -23,6 +23,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 3. Verify namespace members retain their public nested paths, including
  *    `IShoppingSale.ICreate.title`.
  * 4. Require the resulting inventory to remain complete and diagnostic-free.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes overloads, class and interface merges, function namespaces and an interface with a companion namespace and asserts units, sites and nested paths.
+ * @evidence contracts/testing.md#independent-expectations Expected merging follows TypeScript declaration merging, written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each merge form, nested namespace paths and a complete diagnostic-free inventory.
+ * @evidence contracts/testing.md#execution-ownership The exported test_typescript_merges is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_typescript_merges(): Promise<void> {
   const content = dedent`

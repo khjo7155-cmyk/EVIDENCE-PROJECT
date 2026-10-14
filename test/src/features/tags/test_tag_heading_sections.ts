@@ -21,6 +21,11 @@ import type { IEvidenceTestDocumentation } from "../../internal/IEvidenceTestDoc
  * 2. Keep prose across fenced examples without accepting example tags.
  * 3. Require ordinary peer headings and foreign tags to end their reasons.
  * 4. Verify links, review kinds, fingerprints, legacy tags, and original ranges.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses CRLF JSDoc with H2-H4 tagged sections and asserts each annotation's kind, target, multiline explanation, boundaries and original ranges.
+ * @evidence contracts/testing.md#independent-expectations Expected explanations and section ends are written from the heading rules (ordinary same-or-higher headings and foreign tags end reasons; tagged deeper headings start new annotations).
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested tagged headings, fenced examples inside explanations, peer-heading and foreign-tag termination, links, review kinds, fingerprints and legacy line tags. Failures are owned by test_tag_heading_failures.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_heading_sections is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_heading_sections(): Promise<void> {
   const fixture: IEvidenceTestDocumentation = EvidenceTestDocumentation.create(

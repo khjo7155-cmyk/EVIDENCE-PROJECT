@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Analyze conflicting container, superclass, constant, attribute, and method
  *    replacements; require incompleteness, every conflict code, and both method
  *    sites.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes compatible Ruby reopenings and conflicting replacements and asserts merged identity, sites, incompleteness and conflict codes.
+ * @evidence contracts/testing.md#independent-expectations Expected merging follows Ruby's reopening semantics; every conflict code is listed by hand from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers two compatible class bodies and conflicting container, superclass, constant, attribute and method replacements.
+ * @evidence contracts/testing.md#execution-ownership The exported test_ruby_definitions is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_ruby_definitions(): Promise<void> {
   const compatible = await new EvidenceRubyAdapter().analyze(

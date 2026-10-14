@@ -19,6 +19,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 4. Break and delete JSON, requiring failures, then recreate it and recover.
  * 5. Run an explicit-JSON watcher with broken TS present; deleting JSON must fail,
  *    and repairing it must restore the original explicit selection.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher through config creation, breakage and deletion and asserts each published cycle's status.
+ * @evidence contracts/testing.md#independent-expectations Expected statuses follow the discovery contract: TS has priority, a broken preferred entry fails without JSON fallback, explicit paths stay fixed.
+ * @evidence contracts/testing.md#distinguishing-cases Covers no config, JSON only, disabled TS priority, broken and deleted TS, broken and deleted JSON, recreation, and an explicit JSON watcher beside broken TS.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_config_discovery is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_config_discovery(): Promise<void> {
   const config: IEvidenceConfig = {

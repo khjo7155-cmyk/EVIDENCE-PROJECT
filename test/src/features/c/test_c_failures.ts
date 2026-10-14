@@ -16,6 +16,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    conflicts.
  * 2. Analyze malformed C syntax.
  * 3. Require each inventory to be incomplete and to retain actionable diagnostics.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C with unsupported preprocessing, declaration conflicts and malformed syntax and asserts incompleteness and diagnostics.
+ * @evidence contracts/testing.md#independent-expectations Expected incompleteness follows the adapter's documented C boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers conditional preprocessing, declaration-position macros, conflicting tag kinds, incompatible declarations, multiple definitions and parse errors.
+ * @evidence contracts/testing.md#execution-ownership The exported test_c_failures is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_c_failures(): Promise<void> {
   const adapter = new EvidenceCAdapter();

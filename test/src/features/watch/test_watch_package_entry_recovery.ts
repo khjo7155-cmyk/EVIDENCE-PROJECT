@@ -30,6 +30,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    new scan to recover.
  * 6. Corrupt and restore the manifest, requiring the manifest dependency to
  *    survive the failure and normal package resolution to resume after repair.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads, scans and snapshots configurations while the package main changes, asserting selected entries, snapshot changes and recovery.
+ * @evidence contracts/testing.md#independent-expectations Expectations come from the fresh evaluator's actual selection and an unchanged positive control snapshot.
+ * @evidence contracts/testing.md#distinguishing-cases Covers switching main back and forth, a missing entry and its creation, and a corrupted then restored manifest.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_package_entry_recovery is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator started by the code under test. It installs nothing and spawns no CLI.
  */
 export async function test_watch_package_entry_recovery(): Promise<void> {
   const location: string = join(

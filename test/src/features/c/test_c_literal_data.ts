@@ -15,6 +15,11 @@ import type { IEvidenceLiteralFixture } from "../../internal/IEvidenceLiteralFix
  *    annotations, reviews, additional accepted ranges or diagnostics.
  * 3. Attach real documentation and require its acknowledgement alone; edit literal
  *    data independently and require a changed owner fingerprint.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes C sources whose string expressions hold tag-shaped text through assertEvidenceLiteralData and asserts unchanged identities, hosts and addresses, no annotations or diagnostics, real documentation still acknowledged, and a changed owner fingerprint when the literal changes.
+ * @evidence contracts/testing.md#independent-expectations The expected inventory is the same source analyzed without tag-shaped content, an independent baseline built by the shared helper rather than a stored snapshot.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every annotation category inside string expressions, escaped quotes, multiline prefixes and CRLF, plus a real attached comment and a literal-only edit. Attachment rules are owned by test_c_hosts.
+ * @evidence contracts/testing.md#execution-ownership The exported test_c_literal_data is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_c_literal_data(): Promise<void> {
   const fixtures: IEvidenceLiteralFixture[] = [

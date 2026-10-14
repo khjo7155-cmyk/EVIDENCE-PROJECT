@@ -16,6 +16,14 @@ import { EvidenceSqliteSyntax } from "./EvidenceSqliteSyntax";
  * The scanner does not execute migrations or queries. It records only syntax
  * that establishes a stable schema and reports other constructs so they cannot
  * make a partial inventory appear complete.
+ *
+ * @evidence contracts/common.md#principled-implementation Declarative CREATE TABLE statements yield tables, columns and inline or table-level foreign keys, with leading comment runs attached.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner owns SQLite extraction; identifier rules come from EvidenceSqliteSyntax.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Migrations, queries and other statements are reported rather than executed or ignored.
+ * @evidence contracts/common.md#meaningful-documentation The class comment states the boundary; public members are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The scanner copies names and ranges into node-free records before the parse session closes.
  */
 export class EvidenceSqliteFileScanner {
   /**
@@ -58,6 +66,14 @@ export class EvidenceSqliteFileScanner {
    *
    * Every unsupported statement records a diagnostic before the result reports
    * completion, preventing a reduced schema from passing coverage checks.
+   *
+   * @evidence contracts/common.md#principled-implementation Each statement is classified and supported table declarations are recorded with their documentation carriers.
+   * @evidence contracts/common.md#clear-and-simple-design Per-construct handling is private.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Unsupported statements become diagnostics.
+   * @evidence contracts/common.md#meaningful-documentation The comment states the returned analysis.
+   * @evidence contracts/performance.md#efficient-algorithms Scanning is one traversal of the parsed file, linear in its size.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each file is scanned once per analysis.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The scan copies names and ranges into node-free records before the parse session closes.
    */
   public scan(): IEvidenceSqlFileAnalysis {
     for (const statement of this.session.root.namedChildren) {

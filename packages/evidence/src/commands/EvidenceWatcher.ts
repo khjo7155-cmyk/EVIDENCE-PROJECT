@@ -9,6 +9,7 @@ import type { IEvidenceWatchAttempt } from "../internal/IEvidenceWatchAttempt";
 import { EvidenceSourcePath } from "../internal/EvidenceSourcePath";
 import { EvidenceWatchDependencySet } from "../internal/EvidenceWatchDependencySet";
 import { EvidenceWatchDependencySnapshot } from "../internal/EvidenceWatchDependencySnapshot";
+import type { IEvidenceWatchContentDigest } from "../internal/IEvidenceWatchContentDigest";
 import type { IEvidenceCheckAnalysis } from "../structures/IEvidenceCheckAnalysis";
 import type { IEvidenceSourceDependency } from "../structures/IEvidenceSourceDependency";
 import type { IEvidenceWatchCheckCycle } from "../structures/IEvidenceWatchCheckCycle";
@@ -44,6 +45,14 @@ import { EvidenceQuery } from "../graph/EvidenceQuery";
  *   // When the application shuts down:
  *   await watcher.close();
  *   await watching;
+ *
+ * @evidence contracts/common.md#principled-implementation Polling captures content-and-metadata snapshots of every dependency, debounces until stable, reevaluates configuration and sources, and publishes only when inputs stayed unchanged during analysis; parser acquisition failures also retry on a timer.
+ * @evidence contracts/common.md#clear-and-simple-design The watcher owns scheduling and stability; analysis, snapshots and dependency merging are delegated.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Failed attempts keep their dependencies so repairs trigger reevaluation, and partial discovery never shrinks the observed set.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the lifecycle with an example; every field, method and helper is documented.
+ * @evidence contracts/performance.md#efficient-algorithms An idle poll stats every dependency and rereads only files whose metadata changed or is too recent to trust, so steady-state polling is O(dependencies) rather than O(bytes); a detected change reruns the full analysis, since inventories are not yet reused incrementally across cycles (stated limitation).
+ * @evidence contracts/performance.md#reuse-equivalent-work The watcher keeps a content-digest map across captures so unchanged files are not reread; analysis itself is rerun in full on each detected change because inventories are not yet reused incrementally across cycles (stated limitation).
+ * @evidence contracts/performance.md#bound-retention-and-release-resources Close aborts this watcher's asset subscriptions and wakes pending delays; the watch loop's finally marks the watcher closed and releases its wake handle; remembered digests are pruned to the committed dependency set on every published cycle.
  */
 export class EvidenceWatcher {
   /**
@@ -150,6 +159,14 @@ export class EvidenceWatcher {
   private cycles = 0;
 
   /**
+   * Content digests remembered across this watcher's snapshot captures.
+   *
+   * Polling reuses a digest only while the file's metadata proves it unchanged,
+   * so an idle poll costs a stat per file instead of a full read.
+   */
+  private readonly digests = new Map<string, IEvidenceWatchContentDigest>();
+
+  /**
    * Captures the configuration anchor and validates observation timing.
    *
    * Construction prepares fallback dependencies but does not evaluate
@@ -182,6 +199,14 @@ export class EvidenceWatcher {
    *
    * Before the first analysis this contains configuration fallback paths; after
    * evaluation it includes discovered inputs and repair dependencies.
+   *
+   * @evidence contracts/common.md#principled-implementation A structured clone of the active dependency set exposes what the watcher observes.
+   * @evidence contracts/common.md#clear-and-simple-design It only reads state.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts The clone keeps mutable watcher state private.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains contents before and after the first analysis.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in dependency count.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work A snapshot must be current.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources The copy is owned by the caller.
    */
   public dependencies(): IEvidenceSourceDependency[] {
     return structuredClone(this.active);
@@ -194,6 +219,14 @@ export class EvidenceWatcher {
    * The publisher is awaited, preserving cycle order and applying backpressure.
    * Starting twice or after close rejects. Analysis failures become cycle data;
    * a publisher exception escapes and closes the loop in cleanup.
+   *
+   * @evidence contracts/common.md#principled-implementation The first stable evaluation is published, then a poll loop compares snapshots, settles changes, reevaluates and publishes in order, also retrying parser acquisition on a deadline.
+   * @evidence contracts/common.md#clear-and-simple-design The loop sequences capture, settle and evaluate helpers; the publisher only receives cycles.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Starting twice or after close rejects, analysis failures become cycle data, and publisher exceptions escape and close the loop.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains ordering, backpressure and failure handling; inline comments explain the retry deadline.
+   * @evidence contracts/performance.md#efficient-algorithms Per interval: one snapshot capture of active dependencies; per change: a full analysis.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Each cycle reflects current inputs.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The finally block marks the watcher closed and clears its wake callback when the loop ends.
    */
   public async watch(publish: EvidenceWatchPublisher): Promise<void> {
     if (this.started)
@@ -206,6 +239,7 @@ export class EvidenceWatcher {
       let attempt = await this.evaluate();
       if (this.isClosed()) return;
       this.active = attempt.dependencies;
+      this.forget();
       this.cycles = attempt.cycle.cycle;
       await publish(attempt.cycle);
       let baseline = attempt.snapshot;
@@ -220,6 +254,7 @@ export class EvidenceWatcher {
         if (this.isClosed()) break;
         const changed = await EvidenceWatchDependencySnapshot.capture(
           this.active,
+          this.digests,
         );
         if (changed.equals(baseline) && Date.now() < retryAt) continue;
 
@@ -228,6 +263,7 @@ export class EvidenceWatcher {
         attempt = await this.evaluate();
         if (this.isClosed()) break;
         this.active = attempt.dependencies;
+        this.forget();
         this.cycles = attempt.cycle.cycle;
         await publish(attempt.cycle);
         baseline = attempt.snapshot;
@@ -247,6 +283,14 @@ export class EvidenceWatcher {
    * Asset subscriptions owned by this watcher are cancelled. This method does
    * not join the active watch loop; await its watch promise to finish
    * outstanding analysis or publication work.
+   *
+   * @evidence contracts/common.md#principled-implementation Close sets the closed flag, aborts the watcher's cancellation controller and wakes any pending delay.
+   * @evidence contracts/common.md#clear-and-simple-design Close requests shutdown; the watch promise joins outstanding work.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Only this watcher's asset subscriptions are cancelled.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains that close does not join the loop.
+   * @evidence contracts/performance.md#efficient-algorithms Constant work.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Shutdown is per watcher.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources It aborts owned acquisitions and releases delay timers through the wake callback.
    */
   public async close(): Promise<void> {
     this.closed = true;
@@ -285,6 +329,7 @@ export class EvidenceWatcher {
       if (this.isClosed()) {
         const snapshot = await EvidenceWatchDependencySnapshot.capture(
           this.active,
+          this.digests,
         );
         return {
           cycle: failureCycle(
@@ -303,7 +348,10 @@ export class EvidenceWatcher {
         this.active,
         beforeConfig.dependencies,
       );
-      const before = await EvidenceWatchDependencySnapshot.capture(candidates);
+      const before = await EvidenceWatchDependencySnapshot.capture(
+        candidates,
+        this.digests,
+      );
 
       let analysis: IEvidenceCheckAnalysis | undefined;
       let analysisCause: unknown;
@@ -360,6 +408,7 @@ export class EvidenceWatcher {
       }
       const after = await EvidenceWatchDependencySnapshot.capture(
         EvidenceWatchDependencySet.merge(candidates, active),
+        this.digests,
       );
       // Compare the same pre-analysis boundary. A report built across two source
       // versions must be retried rather than published as a stable cycle.
@@ -392,6 +441,23 @@ export class EvidenceWatcher {
   }
 
   /**
+   * Drops remembered digests of files outside the committed dependency set.
+   *
+   * Every published cycle commits a new active set, so pruning there bounds the
+   * digest map by the files the next poll can read. A file that returns is
+   * simply hashed again.
+   */
+  private forget(): void {
+    const live: Set<string> = new Set(
+      this.active.map(
+        (dependency: IEvidenceSourceDependency): string => dependency.path,
+      ),
+    );
+    for (const file of [...this.digests.keys()])
+      if (!live.has(file)) this.digests.delete(file);
+  }
+
+  /**
    * Waits until watched inputs remain unchanged for one quiet interval.
    *
    * Further edits restart the interval. Shutdown and zero debounce skip
@@ -407,6 +473,7 @@ export class EvidenceWatcher {
       if (this.isClosed()) return previous;
       const current = await EvidenceWatchDependencySnapshot.capture(
         this.active,
+        this.digests,
       );
       if (current.equals(previous)) return current;
       previous = current;

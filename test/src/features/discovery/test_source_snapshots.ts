@@ -22,6 +22,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    relative display path from the nested configuration.
  * 4. Select an unknown extension and require complete retention so adapters can
  *    decide whether that explicit input is supported.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Loads the same population through relative and absolute roots and an exact source, asserting equality, preserved bytes, digests and retention.
+ * @evidence contracts/testing.md#independent-expectations Expected equality and preserved content come from the authored files.
+ * @evidence contracts/testing.md#distinguishing-cases Covers relative versus absolute roots, BOM and CRLF content, an edited exact source, and an unknown extension.
+ * @evidence contracts/testing.md#execution-ownership The exported test_source_snapshots is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_source_snapshots(): Promise<void> {
   const location = join(__dirname, "sources " + randomUUID());

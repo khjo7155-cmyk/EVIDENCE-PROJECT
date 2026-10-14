@@ -12,6 +12,14 @@ import type { IEvidenceDartFileAnalysis } from "./IEvidenceDartFileAnalysis";
  * Physical scans cannot decide whether a part belongs to a library or whether
  * an exported spelling denotes an existing unit, so this pass establishes those
  * relationships before inventory publication and documentation attachment.
+ *
+ * @evidence contracts/common.md#principled-implementation Part ownership must be reciprocal between part and part-of directives, and exported names follow transitive show and hide combinators in source order, all without running package tooling.
+ * @evidence contracts/common.md#clear-and-simple-design The namespace owns snapshot-wide resolution only; scanning and materialization are separate.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Non-reciprocal parts and unresolved URIs are reported as incomplete instead of guessing ownership.
+ * @evidence contracts/common.md#meaningful-documentation The namespace comment explains why resolution waits for every file; its function and helpers are documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms The namespace only groups its exported functions, which each own their processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work The namespace owns no cached result; any reuse belongs to its member functions or module singletons documented there.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources Grouping functions acquires no resource; member functions own any resource they use.
  */
 export namespace EvidenceDartLibraries {
   /**
@@ -21,6 +29,14 @@ export namespace EvidenceDartLibraries {
    * A missing or conflicting part makes the analysis incomplete because
    * treating it as absent could remove public declarations from the coverage
    * denominator.
+   *
+   * @evidence contracts/common.md#principled-implementation Each part is matched to the library that declares it and points back to it, and missing URI paths are kept as watch dependencies.
+   * @evidence contracts/common.md#clear-and-simple-design It mutates the copied file analyses in place before units are materialized.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Non-reciprocal parts and unresolved URIs are reported as incomplete instead of guessing ownership.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the resolution and its failure cases.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in declarations and references with map lookups; alias chains are followed with cycle detection.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work It runs once per analysis over all files.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It mutates caller-owned analyses and keeps no state.
    */
   export function resolve(
     analyses: IEvidenceDartFileAnalysis[],
@@ -204,6 +220,14 @@ export namespace EvidenceDartLibraries {
    *
    * One declaration can have several public paths while retaining a single unit
    * identity.
+   *
+   * @evidence contracts/common.md#principled-implementation Library declarations are projected to public addresses through transitive export directives, applying show and hide filters in order and stopping at cycles.
+   * @evidence contracts/common.md#clear-and-simple-design Publication is separate from part-ownership resolution.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Exports naming no existing unit or crossing package boundaries are reported rather than invented.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains transitive filtering.
+   * @evidence contracts/performance.md#efficient-algorithms Linear in libraries times their export chains, with visited sets for cycles.
+   * @evidenceExclude contracts/performance.md#reuse-equivalent-work Publication runs once per analysis.
+   * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources It writes addresses into the caller's inventory and keeps no state.
    */
   export function publish(
     analyses: IEvidenceDartFileAnalysis[],

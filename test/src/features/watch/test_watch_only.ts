@@ -27,6 +27,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    uniqueness failure, then remove it and require recovery.
  * 4. Mutate the caller's target array after construction and verify the watcher
  *    retained its original selection through all five cycles.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a focused watcher through removal, restoration and duplicate citations and asserts focused reports and retained selection.
+ * @evidence contracts/testing.md#independent-expectations The first focused report is compared with the finite focused command; later expectations follow uniqueness and selection rules.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a passing focus beside an unrelated miss, removal and recovery, a duplicate citation from another source, and caller mutation of the target array.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_only is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_only(): Promise<void> {
   const config: IEvidenceConfig = {

@@ -21,6 +21,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    cycle whose report equals a fresh checker result.
  * 4. Create the missing root and covered implementation, then require recovery
  *    without restarting the watcher.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher through a helper type error, a missing active root and repair, asserting cycles, dependencies and report equality.
+ * @evidence contracts/testing.md#independent-expectations Each published check report (every cycle that is not an operational failure) is compared with a fresh one-shot EvidenceChecker run on the same files, an independent oracle for what the watcher must publish.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the initial success, an omitted disabled root, a failing helper, an incomplete missing root, and in-place recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_watch_config_recovery is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_watch_config_recovery(): Promise<void> {
   const location = join(__dirname, `config recovery ${randomUUID()}`);

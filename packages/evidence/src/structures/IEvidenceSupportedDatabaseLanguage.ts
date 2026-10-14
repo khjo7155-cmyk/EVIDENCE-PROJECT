@@ -8,6 +8,14 @@ import type { IEvidenceLanguageGrammar } from "./IEvidenceLanguageGrammar";
  * Supported-database queries use this narrower shape after excluding
  * grammar-only entries. The required adapter contract lets callers inspect
  * extraction and target-address boundaries without another availability check.
+ *
+ * @evidence contracts/common.md#principled-implementation A database entry with a required adapter field guarantees certified extraction at the type level.
+ * @evidence contracts/common.md#clear-and-simple-design It narrows IEvidenceDatabaseLanguage for capability reports.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Uncertified entries cannot satisfy this type.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the guarantee; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceSupportedDatabaseLanguage {
   /**

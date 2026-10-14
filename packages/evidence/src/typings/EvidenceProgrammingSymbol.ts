@@ -58,5 +58,13 @@
  * Types and namespaces contain their declared descendants. Ordinary citations
  * and permitted exclusions cover selected descendants, and unselected ancestors
  * remain addressable.
+ *
+ * @evidence contracts/common.md#principled-implementation Three cross-language kinds give every programming adapter one classification target while each adapter maps its own declarations onto them.
+ * @evidence contracts/common.md#clear-and-simple-design The alias defines only the shared kinds; the TypeScript classification and addressing it documents are implemented by the TypeScript adapter.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Exclusions such as enums, accessors and computed names are stated as contract boundaries, not consumer-specific omissions.
+ * @evidence contracts/common.md#meaningful-documentation The comment documents TypeScript classification, address spelling, type-only export visibility, and descendant coverage.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export type EvidenceProgrammingSymbol = "type" | "function" | "property";

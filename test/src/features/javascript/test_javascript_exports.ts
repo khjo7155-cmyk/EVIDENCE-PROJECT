@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze the module graph.
  * 2. Resolve exported paths.
  * 3. Verify shadowing and cycles do not merge distinct owners.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes a JavaScript module graph with aliases, defaults, imports, stars, shadowing and cycles and resolves exported paths.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow ESM export semantics written from the fixture.
+ * @evidence contracts/testing.md#distinguishing-cases Covers renamed and default exports, imported re-exports, star exports, explicit shadowing and finite cycles.
+ * @evidence contracts/testing.md#execution-ownership The exported test_javascript_exports is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_javascript_exports(): Promise<void> {
   const adapter = new EvidenceJavaScriptAdapter();

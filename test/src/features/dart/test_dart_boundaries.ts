@@ -14,6 +14,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require the matching incomplete diagnostic and repair for each rejected case.
  * 3. Accept supported external imports and local forms, reject an unadvertised
  *    extension, and retain an unreadable-source failure.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Dart sources with missing parts, invalid URIs, conditional exports, augmentation, malformed syntax and duplicates, asserting diagnostics and repairs.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostics follow the adapter's documented Dart boundary.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each unsupported topology form, accepted external imports and local forms, an unadvertised extension and an unreadable source.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_boundaries is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_boundaries(): Promise<void> {
   const adapter = new EvidenceDartAdapter();

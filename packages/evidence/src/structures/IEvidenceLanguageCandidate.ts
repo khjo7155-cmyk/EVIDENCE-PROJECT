@@ -9,6 +9,14 @@ import type { EvidenceLanguageCandidateKind } from "../typings/EvidenceLanguageC
  * visibility, declaration boundaries, and blockers describe the semantic work
  * still required. Candidate records are not configuration support or adapter
  * certification.
+ *
+ * @evidence contracts/common.md#principled-implementation A research record captures grammar, license, WASM availability, visibility model, blockers and next step for an uncertified language.
+ * @evidence contracts/common.md#clear-and-simple-design Candidate data is separate from selectable language entries.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Candidates cannot be selected, so research cannot overstate support.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the record's purpose; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceLanguageCandidate {
   /**

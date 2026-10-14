@@ -11,6 +11,11 @@ import { EvidenceSqlCertificationFixture } from "./EvidenceSqlCertificationFixtu
  * 1. Construct the SQL certification fixture.
  * 2. Run shared database certification and its mutation checks.
  * 3. Require every removal and behavior gate to be rejected.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs the shared database certification for the SQL fixture (inventory, graph, failure, fingerprint and ambiguity checks) and asserts that unit, kind, host and address mutations of the inventory are rejected.
+ * @evidence contracts/testing.md#independent-expectations The fixture declares the expected surface independently of the adapter, and each mutation must make validation fail.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the healthy certification plus four structural mutations; per-feature behavior is owned by the language's other tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_sql_certification is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_sql_certification(): Promise<void> {
   const fixture = EvidenceSqlCertificationFixture.create();

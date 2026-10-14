@@ -29,6 +29,14 @@ import { EvidencePhpFileScanner } from "./EvidencePhpFileScanner";
  * Local imports and directives can change declaration meaning without changing
  * its own source span, so complete inventories incorporate that context into
  * content digests after normalization.
+ *
+ * @evidence contracts/common.md#principled-implementation Declarations are grouped into units with PHP's case-insensitive identity where the language defines it, public addresses keep source spelling, and file context such as imports and directives is folded into content digests.
+ * @evidence contracts/common.md#clear-and-simple-design The adapter owns snapshot-wide resolution and materialization; per-file syntax belongs to the scanner and PHPDoc normalization to the documentation reader.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Dynamic surface changes such as trait composition, include, eval and class_alias are reported as incomplete rather than evaluated.
+ * @evidence contracts/common.md#meaningful-documentation The class comment explains the pipeline; its public members and private materializers are documented.
+ * @evidence contracts/performance.md#efficient-algorithms Each selected file is parsed once with one parser per analysis, and snapshot-wide resolution uses map lookups, so analysis grows roughly linearly with declarations.
+ * @evidence contracts/performance.md#reuse-equivalent-work One parser pool serves every file of an analysis.
+ * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed after scanning; node-free analyses are released when the call returns.
  */
 export class EvidencePhpAdapter implements IEvidenceAdapter<"php"> {
   /**
@@ -48,6 +56,14 @@ export class EvidencePhpAdapter implements IEvidenceAdapter<"php"> {
    * Input is validated and cloned before scanning. Only a complete normalized
    * inventory receives context-sensitive digests, and parser resources close in
    * cleanup.
+   *
+   * @evidence contracts/common.md#principled-implementation Analyze scans every file, groups declarations into units and addresses, applies lexical withdrawals, parses PHPDoc, and adds file context to digests.
+   * @evidence contracts/common.md#clear-and-simple-design Each phase is delegated to the scanner, resolvers, or private materializers; analyze sequences them.
+   * @evidence contracts/common.md#prohibited-implementation-shortcuts Discovery, parse and unsupported-construct failures stay diagnostics and mark the inventory incomplete.
+   * @evidence contracts/common.md#meaningful-documentation The comment explains the phases and failure retention.
+   * @evidence contracts/performance.md#efficient-algorithms Roughly linear in selected source size.
+   * @evidence contracts/performance.md#reuse-equivalent-work One parser pool is shared by every file in the call.
+   * @evidence contracts/performance.md#bound-retention-and-release-resources The parser is closed in cleanup; the reconciled inventory is owned by the caller.
    */
   public async analyze(
     snapshot: IEvidenceSourceSnapshot,

@@ -15,6 +15,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 1. Analyze functions and receiver methods.
  * 2. Resolve supported targets.
  * 3. Require wrong owner or file paths to remain unresolved.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Resolves Go functions and receiver methods through declaration and owner files and asserts resolved and unresolved statuses.
+ * @evidence contracts/testing.md#independent-expectations Expected resolutions follow receiver ownership and file-relative addressing.
+ * @evidence contracts/testing.md#distinguishing-cases Covers functions, receiver methods via both files, and wrong owners or files.
+ * @evidence contracts/testing.md#execution-ownership The exported test_go_targets is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_go_targets(): Promise<void> {
   const adapter = new EvidenceGoAdapter();

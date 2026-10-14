@@ -28,6 +28,11 @@ import { EvidenceTestQueryAnalysis } from "../../internal/EvidenceTestQueryAnaly
  *    original check denominator and exit status remain unchanged.
  * 5. Run JSON list and inspect commands, parse their public reports, and require
  *    the command-provided canonical target to round-trip to the same unit ID.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Lists targets, inspects each listed reference target, and runs JSON list and inspect commands, asserting rows, aliases, round-trips and unchanged status.
+ * @evidence contracts/testing.md#independent-expectations The round trip is an independent oracle: every listed canonical target must resolve back to its own listed unit ID; alias expectations come from the fixture's barrel.
+ * @evidence contracts/testing.md#distinguishing-cases Covers selected and ancestor rows, literal accessor escaping, shared-source and barrel aliases, language and kind filters, and API versus command facades.
+ * @evidence contracts/testing.md#execution-ownership The exported test_query_list_and_inspect is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_query_list_and_inspect(): Promise<void> {
   const location = join(__dirname, `query list ${randomUUID()}`);

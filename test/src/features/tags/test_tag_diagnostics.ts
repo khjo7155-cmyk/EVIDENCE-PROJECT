@@ -18,6 +18,11 @@ import { EvidenceTestDocumentation } from "../../internal/EvidenceTestDocumentat
  * 3. Require malformed reviews to create no review records.
  * 4. Parse unattached and unsupported hosts, then require a host diagnostic and no
  *    guessed declaration attachment.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Parses invalid annotations and unsupported hosts and asserts the diagnostic codes, preserved target text and absence of review or declaration records.
+ * @evidence contracts/testing.md#independent-expectations Expected diagnostic codes come from the documented tag contract for missing targets, missing reasons, inline links and malformed reviews.
+ * @evidence contracts/testing.md#distinguishing-cases Covers targetless and reasonless evidence, inline {@link}, malformed review fingerprints and descriptions, and unattached and unsupported hosts, while leaving artifact-specific target syntax to resolver tests.
+ * @evidence contracts/testing.md#execution-ownership The exported test_tag_diagnostics is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_tag_diagnostics(): Promise<void> {
   const fixture = EvidenceTestDocumentation.create(dedent`

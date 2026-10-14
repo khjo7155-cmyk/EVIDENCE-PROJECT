@@ -15,6 +15,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    table.
  * 2. Replace its source with malformed SQL and require an incomplete report.
  * 3. Repair the schema and require the expected population to return.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceWatcher over a BigQuery project while BigQuery schema files are added, broken and repaired, asserting each published report.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run on the same files; status expectations per cycle follow the authored population changes (new units, incompleteness, recovery).
+ * @evidence contracts/testing.md#distinguishing-cases Covers a newly contributing file, a malformed file that must produce an incomplete report instead of a smaller population, and recovery.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

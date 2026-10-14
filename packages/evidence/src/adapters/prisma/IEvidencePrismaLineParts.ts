@@ -5,6 +5,14 @@ import type { IEvidencePrismaPendingComment } from "./IEvidencePrismaPendingComm
  *
  * `EvidencePrismaFileScanner` carries the block-comment state to the next line
  * while using `code` alone to locate declarations and braces.
+ *
+ * @evidence contracts/common.md#principled-implementation One line is split into code and comment state so braces are counted in code only.
+ * @evidence contracts/common.md#clear-and-simple-design The scanner carries block-comment state between lines.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Fields are copied from parsed schema data; no schema- or project-specific value is encoded.
+ * @evidence contracts/common.md#meaningful-documentation The comment states what the record represents and its role in the adapter; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidencePrismaLineParts {
   /**

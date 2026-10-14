@@ -23,6 +23,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *    claims for each target.
  * 3. Require only evidence and current required reviews to pass, while absent and
  *    review-only cases retain the selected unit as missing.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Evaluates TypeScript claims against DBML model, column and relation targets with evidence, review-only, absent, reviewed and stale-review annotations.
+ * @evidence contracts/testing.md#independent-expectations Fingerprints are computed independently with EvidenceFingerprint before the claims are written; pass and fail follow the review contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers each DBML selector with all five annotation states.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dbml_reference_graphs is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dbml_reference_graphs(): Promise<void> {
   const reference = await new EvidenceDbmlAdapter().analyze(

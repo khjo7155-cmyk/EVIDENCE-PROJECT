@@ -35,6 +35,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 3. Require an aggregate review for a focused child, write its current full
  *    fingerprint, and verify success, then mutate a sibling and require
  *    staleness.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs focused checks that depend on full policy context and asserts duplicate ownership, cardinality, exclusion refusal and review staleness.
+ * @evidence contracts/testing.md#independent-expectations Expectations follow the policy contract; the review fingerprint is computed with EvidenceFingerprint for the aggregate scope, then a sibling mutation must invalidate it.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a child acknowledged by two aggregate citations, an exclusion under permissive and strict references, and a fresh then stale aggregate review.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_policies is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_only_policies(): Promise<void> {
   const reference: IEvidenceMarkdownReference = {

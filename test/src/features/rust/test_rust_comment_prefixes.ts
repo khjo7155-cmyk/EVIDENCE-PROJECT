@@ -18,6 +18,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Require only the documentation carrier to attach, ordinary tagged comments to
  *    remain unsupported, and content edits to affect the intended
  *    fingerprints.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes outer documentation, attributes and ordinary comments before one public item and asserts attachment, diagnostics and fingerprints.
+ * @evidence contracts/testing.md#independent-expectations Expected attachment follows rustdoc's outer-documentation rule; fingerprint expectations are relational across content edits.
+ * @evidence contracts/testing.md#distinguishing-cases Covers whitespace-separated comments between documentation and attributes and tagged ordinary comments that must stay unsupported.
+ * @evidence contracts/testing.md#execution-ownership The exported test_rust_comment_prefixes is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_rust_comment_prefixes(): Promise<void> {
   const source = dedent`

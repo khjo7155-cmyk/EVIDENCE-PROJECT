@@ -35,6 +35,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    checklist item remains unanswered.
  * 4. Require reviews and give both child answers current fingerprints; require the
  *    child to pass while unreviewed parent answers fail a shallow check.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs focused checks on checklist items and asserts per-item pass and fail results, finding contents and review freshness.
+ * @evidence contracts/testing.md#independent-expectations Expectations derive from checklist semantics: every host answers every selected item; fingerprints are taken from EvidenceFingerprint for the exact cited scope.
+ * @evidence contracts/testing.md#distinguishing-cases Covers a shallow parent passing while its subtree fails, a focused child naming only its missing host, recovery, an unrelated unanswered item, and reviewed versus unreviewed answers.
+ * @evidence contracts/testing.md#execution-ownership The exported test_command_only_checklist is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_command_only_checklist(): Promise<void> {
   const config: IEvidenceConfig = {

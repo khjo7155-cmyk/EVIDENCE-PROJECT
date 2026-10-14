@@ -15,6 +15,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  * 1. Build configurations for each PostgreSQL selector in both roles.
  * 2. Check covered and missing-evidence graph outcomes.
  * 3. Verify review-only evidence remains uncovered.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs EvidenceChecker on configurations with PostgreSQL as claim and as reference for each selector and asserts coverage, missing populations and review-only outcomes.
+ * @evidence contracts/testing.md#independent-expectations Expected missing units are the authored schema units for each selector and role; reviews never cover by contract.
+ * @evidence contracts/testing.md#distinguishing-cases Covers every selector in both roles, covered and uncovered, with ordinary prose and review-only markers that must stay missing.
+ * @evidence contracts/testing.md#execution-ownership The exported test_postgresql_graph is discovered by DynamicExecutor and calls maintained source in-process; the only child process is the product's own read-only configuration evaluator. It installs nothing and spawns no CLI.
  */
 export async function test_postgresql_graph(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

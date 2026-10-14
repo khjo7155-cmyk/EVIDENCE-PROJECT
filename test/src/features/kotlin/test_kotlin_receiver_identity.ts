@@ -13,6 +13,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze qualified receivers and aliases. 2. Resolve their extension targets.
  *    3. Compare the resulting unit identities.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Kotlin extensions with qualified receivers and aliases and asserts resolved targets and identities.
+ * @evidence contracts/testing.md#independent-expectations Expected identities follow receiver resolution through selected aliases.
+ * @evidence contracts/testing.md#distinguishing-cases Covers equivalent receiver spellings that must resolve to one extension without duplicates.
+ * @evidence contracts/testing.md#execution-ownership The exported test_kotlin_receiver_identity is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_kotlin_receiver_identity(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.combine([

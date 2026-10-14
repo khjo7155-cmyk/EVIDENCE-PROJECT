@@ -17,6 +17,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    declaration.
  * 3. Change the generated declaration and require the following watch result to
  *    reflect it.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Runs a watcher while a missing generated Dart part appears and changes, asserting published reports through the library alias.
+ * @evidence contracts/testing.md#independent-expectations Every completed check cycle's report is compared with a fresh one-shot EvidenceChecker run; per-cycle expectations follow the part's authored declarations.
+ * @evidence contracts/testing.md#distinguishing-cases Covers the absent part, its creation and a change to its declaration.
+ * @evidence contracts/testing.md#execution-ownership The exported test_dart_part_watch is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_dart_part_watch(): Promise<void> {
   await EvidenceTestFileSystem.experiment(

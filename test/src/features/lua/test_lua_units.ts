@@ -17,6 +17,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  *
  * 1. Analyze module tables and members. 2. Compare symbols and identities. 3.
  *    Verify method, alias, copy, and file-isolation behavior.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes Lua module tables and members and asserts symbols, identities, methods, aliases, copies and file isolation.
+ * @evidence contracts/testing.md#independent-expectations Expected units are the declared module surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers module tables, colon and dot methods, literal aliases, scalar copies and per-file isolation.
+ * @evidence contracts/testing.md#execution-ownership The exported test_lua_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_lua_units(): Promise<void> {
   const snapshot = EvidenceTestSourceSnapshot.create(

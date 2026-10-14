@@ -12,6 +12,14 @@ import type { IEvidenceGraphClaimResult } from "./IEvidenceGraphClaimResult";
  * A result succeeds only when every active boundary is complete and no findings
  * remain. Merely obtaining an empty missing-unit list from partial input does
  * not establish success.
+ *
+ * @evidence contracts/common.md#principled-implementation Success, per-claim results and deduplicated diagnostics are the complete serializable outcome of evaluation.
+ * @evidence contracts/common.md#clear-and-simple-design Report shaping is left to the check programmer.
+ * @evidence contracts/common.md#prohibited-implementation-shortcuts Success requires completeness and no findings; it is not derived from counts alone.
+ * @evidence contracts/common.md#meaningful-documentation The comment explains the outcome; each field is documented.
+ * @evidenceExclude contracts/performance.md#efficient-algorithms A type declaration chooses no processing strategy.
+ * @evidenceExclude contracts/performance.md#reuse-equivalent-work A type declaration computes nothing, so there is no work to share.
+ * @evidenceExclude contracts/performance.md#bound-retention-and-release-resources A type declaration acquires and holds no runtime resource.
  */
 export interface IEvidenceGraphResult {
   /**

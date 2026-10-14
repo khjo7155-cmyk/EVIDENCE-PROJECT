@@ -19,6 +19,11 @@ import { EvidenceTestSourceSnapshot } from "../../internal/EvidenceTestSourceSna
  * 2. Compare the complete unit identities and symbols against the declared schema
  *    surface.
  * 3. Verify nested fields and constraints retain the model as their owner.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Analyzes qualified tables with scalar, nested, repeated and flexible-name fields and keys and asserts identities, symbols and owners.
+ * @evidence contracts/testing.md#independent-expectations Expected identities are the declared schema surface written in the test.
+ * @evidence contracts/testing.md#distinguishing-cases Covers nested and repeated fields, flexible names, key constraints and explicit project qualifiers.
+ * @evidence contracts/testing.md#execution-ownership The exported test_bigquery_units is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_bigquery_units(): Promise<void> {
   const content = dedent`

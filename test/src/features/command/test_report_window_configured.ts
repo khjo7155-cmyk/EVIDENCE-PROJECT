@@ -30,6 +30,11 @@ import { EvidenceTestFileSystem } from "../../internal/EvidenceTestFileSystem";
  *    and require the untouched count to still apply.
  * 4. Configure a zero and a fractional bound and require an exit-2 failure naming
  *    each offending setting.
+ *
+ * @evidence contracts/testing.md#behavioral-verification Checks projects with configured report bounds and command overrides and asserts the narrowed findings, echoed bounds and failures for malformed bounds.
+ * @evidence contracts/testing.md#independent-expectations Expected results are prefixes of the complete report captured without bounds, and malformed values must fail with exit 2.
+ * @evidence contracts/testing.md#distinguishing-cases Covers JSON unit bounds, TypeScript count bounds, option overrides per bound, and zero and fractional configured bounds.
+ * @evidence contracts/testing.md#execution-ownership The exported test_report_window_configured is discovered by DynamicExecutor under test/src/features and calls maintained source in-process; it installs no consumer, packs nothing and spawns no CLI.
  */
 export async function test_report_window_configured(): Promise<void> {
   const base: IEvidenceConfig = {
