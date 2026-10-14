@@ -88,9 +88,14 @@ export async function test_objc_units(): Promise<void> {
   TestValidator.equals(
     "exact public surface",
     inventory.units
-      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
+      )
       .sort((left, right) => left.localeCompare(right)),
     [
+      "file:alias/Widget.h",
       "type:Widget",
       'type:["Widget(Extras)"]',
       'type:["protocol(Widget)"]',

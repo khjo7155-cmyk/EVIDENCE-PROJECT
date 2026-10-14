@@ -255,8 +255,10 @@ A **unit** is one declaration, even when several public addresses expose it. A f
 
 ### 3.1. Coverage
 
-- `@evidence` covers its target and the target's selected descendants: a class covers its methods, a file its sections, a model its columns.
-- `@evidenceExclude` covers the same way while recording that the target does not apply. The two cannot overlap in one obligation.
+- `@evidence` covers its target and the target's selected descendants: a class covers its methods, a model its columns, a Markdown file its sections, and a source or schema file such as `src/order.ts` each top-level declaration sited only in it, together with that declaration's members.
+- `@evidenceExclude` covers the same way while recording that the target does not apply, so one tag on a file or owner retires everything beneath it. The two cannot overlap in one obligation.
+- A declaration merged from several files, such as a C# partial class, belongs to no single file. Cite or exclude it through its own target.
+- Source and schema file targets are specific to this package; `@ttsc/evidence` addresses only Markdown files.
 - `noEvidenceExclude` refuses exclusions.
 - `uniqueEvidence` allows at most one positive host per unit.
 - `singleEvidencePerSymbol` requires every host, tagged or not, to cite exactly one unit.

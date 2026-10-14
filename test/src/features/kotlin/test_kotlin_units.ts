@@ -76,9 +76,15 @@ export async function test_kotlin_units(): Promise<void> {
   TestValidator.equals(
     "exact declarations",
     inventory.units
-      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
+      )
       .sort((a, b) => a.localeCompare(b)),
     [
+      "file:alias/Contract.kt",
+      "file:src/Additional.kt",
       "type:example.Contract",
       "property:example.Contract.value",
       "property:example.Contract.readable",
@@ -120,7 +126,10 @@ export async function test_kotlin_units(): Promise<void> {
   TestValidator.equals(
     "all public sites retain eligible hosts",
     inventory.hosts.length,
-    inventory.units.reduce((sum, unit) => sum + unit.sites.length, 0),
+    inventory.units
+      // The structural file scope is not a declaration.
+      .filter((unit) => unit.symbol !== "file")
+      .reduce((sum, unit) => sum + unit.sites.length, 0),
   );
   const selected = inventory.units.map((unit) => unit.id);
   const graph = new EvidenceInventory([inventory]);

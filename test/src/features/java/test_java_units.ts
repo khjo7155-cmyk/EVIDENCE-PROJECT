@@ -155,9 +155,18 @@ export async function test_java_units(): Promise<void> {
   TestValidator.equals(
     "Java declaration units",
     inventory.units
-      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${unit.identity.join(".")}`,
+      )
       .sort(compare),
     [
+      "file:src/com/example/Label.java",
+      "file:src/com/example/Point.java",
+      "file:src/com/example/Sale.java",
+      "file:src/com/example/Service.java",
+      "file:src/com/example/State.java",
       "function:com.example.Point.distance",
       "function:com.example.Sale.Nested.open",
       "function:com.example.Sale.calculate",

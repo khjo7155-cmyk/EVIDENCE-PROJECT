@@ -84,7 +84,9 @@ export namespace EvidenceAdapterCertification {
         source.addresses.map((address) => [address.absolute, address.relative]),
       ),
     );
+    assertFileScopes(certification.type, inventory);
     const units = inventory.units
+      .filter((unit) => unit.symbol !== "file")
       .map((unit) => normalizeUnit(inventory, unit, keys, files))
       .sort(compareKey);
     const hosts = inventory.hosts
@@ -486,7 +488,10 @@ export namespace EvidenceAdapterCertification {
       key: unitKey(unit),
       symbol: declarationSymbol(unit.symbol),
       identity: unit.identity,
-      ...(unit.parentId === undefined
+      // Fixtures declare semantic owners; the structural file scope is certified
+      // separately by assertFileScopes.
+      ...(unit.parentId === undefined ||
+      requireKey(keys, unit.parentId).startsWith("file:")
         ? {}
         : { parent: requireKey(keys, unit.parentId) }),
       sites: unit.sites.length,
@@ -543,7 +548,66 @@ export namespace EvidenceAdapterCertification {
   }
 
   function unitKey(unit: IEvidenceUnit): string {
-    return `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`;
+    return unit.symbol === "file"
+      ? `file:${unit.name}`
+      : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`;
+  }
+
+  /**
+   * Requires every single-file top-level declaration to be owned by its file
+   * scope, and no other declaration to be.
+   *
+   * The file unit lets one file-level citation or exclusion cover everything
+   * the file declares. It must carry one empty-accessor address per selected
+   * spelling of its source and no content of its own, while a declaration
+   * merged from several files stays unowned so one file cannot retire it.
+   */
+  function assertFileScopes(type: string, inventory: IEvidenceInventory): void {
+    const units = new Map(inventory.units.map((unit) => [unit.id, unit]));
+    const scopes = inventory.units.filter((unit) => unit.symbol === "file");
+    for (const scope of scopes) {
+      const file = scope.sites[0]?.file;
+      const source = inventory.sources.find(
+        (candidate) => candidate.physicalPath === file,
+      );
+      TestValidator.equals(
+        `${type} file scope ${scope.name} shape`,
+        {
+          parent: scope.parentId,
+          sites: scope.sites.length,
+          content: scope.sites[0]?.content.length,
+          identity: scope.identity,
+        },
+        { parent: undefined, sites: 1, content: 0, identity: [] },
+      );
+      TestValidator.equals(
+        `${type} file scope ${scope.name} addresses`,
+        inventory.addresses
+          .filter((address) => address.unitId === scope.id)
+          .map((address) => [address.file, address.segments.length])
+          .sort(compareValue),
+        (source?.addresses ?? [])
+          .filter((address) => address.selected !== false)
+          .map((address) => [address.absolute, 0])
+          .sort(compareValue),
+      );
+    }
+    for (const unit of inventory.units) {
+      if (unit.symbol === "file") continue;
+      const parent =
+        unit.parentId === undefined ? undefined : units.get(unit.parentId);
+      if (parent !== undefined && parent.symbol !== "file") continue;
+      const files = new Set(unit.sites.map((site) => site.file));
+      const owner =
+        files.size === 1
+          ? scopes.find((scope) => files.has(scope.sites[0]?.file ?? ""))
+          : undefined;
+      TestValidator.equals(
+        `${type} file scope of ${unitKey(unit)}`,
+        parent?.id,
+        owner?.id,
+      );
+    }
   }
 
   function replace(

@@ -63,9 +63,15 @@ export async function test_zig_units(): Promise<void> {
   TestValidator.equals(
     "exact selectors and identities",
     inventory.units
-      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
+      )
       .sort((left, right) => left.localeCompare(right)),
     [
+      "file:alias/Contract.zig",
+      "file:other/Contract.zig",
       "type:Internal",
       "property:Internal.value",
       "function:Internal.run",

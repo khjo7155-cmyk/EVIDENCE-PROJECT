@@ -15,7 +15,8 @@ import { EvidenceTestInventory } from "../../internal/EvidenceTestInventory";
  * 1. Create Box, its explicit child named value.part, a parentless lookalike named
  *    Box.value, and an unrelated declaration; select only the literal dotted
  *    child.
- * 2. Require the scope closure to contain exactly Box and that selected child.
+ * 2. Require the scope closure to contain exactly Box, that selected child and the
+ *    file scope that owns Box.
  * 3. Resolve the literal value.part segment successfully, but reject splitting it
  *    into value and part as a different, missing accessor.
  * 4. Require both the unselected lookalike and the unrelated declaration to remain
@@ -64,7 +65,7 @@ export async function test_inventory_scopes(): Promise<void> {
   TestValidator.equals(
     "actual ancestor closure",
     selected.scopes.map((unit) => unit.id),
-    ["box", "member"],
+    ["box", "member", "typescript:source:file"],
   );
   TestValidator.equals(
     "literal dotted member is addressable",

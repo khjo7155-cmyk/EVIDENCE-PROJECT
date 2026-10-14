@@ -163,6 +163,7 @@ export async function test_csharp_failures(): Promise<void> {
       .map((unit) => unit.identity.join("."))
       .sort(compare),
     [
+      "", // The file scope's empty identity.
       "IAddition`1",
       "IAddition`1.explicit operator int",
       "IAddition`1.operator +",
@@ -196,7 +197,7 @@ export async function test_csharp_failures(): Promise<void> {
     generatedBoundary.units
       .map((unit) => unit.identity.join("."))
       .sort(compare),
-    ["Model", "Model.Id"],
+    ["", "Model", "Model.Id"], // The empty identity is the file scope.
   );
 
   // Tree-sitter syntax errors never become a healthy partial inventory.

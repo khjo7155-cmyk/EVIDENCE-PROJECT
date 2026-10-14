@@ -53,7 +53,12 @@ export async function test_typescript_literals(): Promise<void> {
   TestValidator.equals(
     "literal member segments",
     inventory.addresses
-      .filter((address) => address.file === "/project/src/literals.ts")
+      // Declaration addresses only; the file scope's address is empty.
+      .filter(
+        (address) =>
+          address.file === "/project/src/literals.ts" &&
+          address.segments.length !== 0,
+      )
       .map((address) => address.segments)
       .sort(compareSegments),
     [
@@ -70,7 +75,12 @@ export async function test_typescript_literals(): Promise<void> {
   TestValidator.equals(
     "anonymous default class addresses",
     inventory.addresses
-      .filter((address) => address.file === "/project/src/default-class.ts")
+      // Declaration addresses only; the file scope's address is empty.
+      .filter(
+        (address) =>
+          address.file === "/project/src/default-class.ts" &&
+          address.segments.length !== 0,
+      )
       .map((address) => address.segments.join("."))
       .sort(compare),
     ["default", "default.prototype.member"],
@@ -78,7 +88,12 @@ export async function test_typescript_literals(): Promise<void> {
   TestValidator.equals(
     "anonymous default function address",
     inventory.addresses
-      .filter((address) => address.file === "/project/src/default-function.ts")
+      // Declaration addresses only; the file scope's address is empty.
+      .filter(
+        (address) =>
+          address.file === "/project/src/default-function.ts" &&
+          address.segments.length !== 0,
+      )
       .map((address) => address.segments.join(".")),
     ["default"],
   );

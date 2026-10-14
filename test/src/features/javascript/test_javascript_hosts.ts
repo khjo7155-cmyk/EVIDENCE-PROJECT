@@ -64,12 +64,15 @@ export async function test_javascript_hosts(): Promise<void> {
   // Every public declaration remains available to documentation policies.
   TestValidator.predicate(
     "every unit has a policy host",
-    inventory.units.every((unit) =>
-      inventory.hosts.some(
-        (host) =>
-          host.attachment === "attached" && host.unitIds.includes(unit.id),
+    inventory.units
+      // The structural file scope is not a declaration and has no host.
+      .filter((unit) => unit.symbol !== "file")
+      .every((unit) =>
+        inventory.hosts.some(
+          (host) =>
+            host.attachment === "attached" && host.unitIds.includes(unit.id),
+        ),
       ),
-    ),
   );
 }
 

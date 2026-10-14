@@ -51,9 +51,14 @@ export async function test_javascript_units(): Promise<void> {
   TestValidator.equals(
     "JavaScript declaration units",
     inventory.units
-      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${unit.identity.join(".")}`,
+      )
       .sort(compare),
     [
+      "file:src/contracts.mjs",
       "function:Service.execute",
       "function:Service.handler",
       "function:Service.prototype.execute",
@@ -104,7 +109,12 @@ export async function test_javascript_units(): Promise<void> {
   TestValidator.equals(
     "anonymous default expressions",
     defaults.units.map((unit) => `${unit.symbol}:${unit.name}`).sort(compare),
-    ["function:default", "property:default"],
+    [
+      "file:src/default-arrow.mjs",
+      "file:src/default-value.mjs",
+      "function:default",
+      "property:default",
+    ],
   );
   TestValidator.equals(
     "complete default expressions",

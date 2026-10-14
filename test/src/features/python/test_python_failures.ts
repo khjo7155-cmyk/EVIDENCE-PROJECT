@@ -44,7 +44,7 @@ export async function test_python_failures(): Promise<void> {
   TestValidator.equals(
     "dynamic __all__ preserves declarations",
     dynamic.units.map((unit) => unit.name),
-    ["public"],
+    ["src/dynamic.py", "public"],
   );
   TestValidator.equals(
     "dynamic __all__ diagnostic",

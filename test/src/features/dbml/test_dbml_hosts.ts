@@ -86,7 +86,14 @@ export async function test_dbml_hosts(): Promise<void> {
   const merged = await new EvidenceDbmlAdapter().analyze(
     EvidenceTestSourceSnapshot.combine([first, aliased]),
   );
-  TestValidator.equals("one physical table inventory", merged.units.length, 2);
+  // Two spellings of one physical file share one table, column and file scope.
+  TestValidator.equals(
+    "one physical table inventory",
+    merged.units
+      .map((unit) => unit.symbol)
+      .sort((x, y) => x.localeCompare(y, "en")),
+    ["column", "file", "model"],
+  );
   const resolver = new EvidenceInventory([merged]);
   const primary = resolver.resolve(
     {

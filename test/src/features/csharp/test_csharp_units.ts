@@ -161,9 +161,14 @@ export async function test_csharp_units(): Promise<void> {
   TestValidator.equals(
     "C# declaration units",
     inventory.units
-      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${unit.identity.join(".")}`,
+      )
       .sort(compare),
     [
+      "file:src/Contracts.cs",
       "function:Shop.Contracts.IService.DefaultMethod",
       "function:Shop.Contracts.IService.PublicDefault",
       "function:Shop.Contracts.IService.DefaultNested.Open",

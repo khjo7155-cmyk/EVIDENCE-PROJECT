@@ -100,7 +100,7 @@ export async function test_lua_boundaries(): Promise<void> {
   TestValidator.equals(
     "local keyword survives line breaks",
     multiline.units.map((unit) => unit.name),
-    ["visible"],
+    ["visible", "module.lua"],
   );
   for (const file of ["module.LUA", "module.txt"]) {
     const unsupported = await adapter.analyze(

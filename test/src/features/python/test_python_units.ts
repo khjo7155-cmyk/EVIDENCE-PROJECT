@@ -93,9 +93,14 @@ export async function test_python_units(): Promise<void> {
   TestValidator.equals(
     "Python declaration units",
     inventory.units
-      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${unit.identity.join(".")}`,
+      )
       .sort(compare),
     [
+      "file:src/sale.py",
       "function:Sale.load",
       "function:Sale.parse",
       "function:Sale.prototype.total",

@@ -81,9 +81,15 @@ export async function test_scala_units(): Promise<void> {
   TestValidator.equals(
     "exact independent surface",
     inventory.units
-      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
+      )
       .sort((a, b) => a.localeCompare(b, "en")),
     [
+      "file:alias/Scala2.scala",
+      "file:src/Scala3.scala",
       "type:demo.Contract",
       "property:demo.Contract.value",
       "property:demo.Contract.readable",

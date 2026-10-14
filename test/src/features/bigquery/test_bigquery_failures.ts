@@ -100,6 +100,8 @@ export async function test_bigquery_failures(): Promise<void> {
   TestValidator.equals(
     "temporary schema is not published",
     temporary.units
+      // The structural file scope is not a schema declaration.
+      .filter((unit) => unit.symbol !== "file")
       .map((unit) => unit.identity.join("."))
       .sort((left, right) => left.localeCompare(right, "en")),
     ["ds.orders", "ds.orders.id"],

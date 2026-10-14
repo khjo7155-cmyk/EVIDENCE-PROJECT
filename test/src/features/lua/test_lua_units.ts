@@ -46,9 +46,14 @@ export async function test_lua_units(): Promise<void> {
   TestValidator.equals(
     "exact public denominator",
     inventory.units
-      .map((unit) => `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${EvidenceAccessor.format(unit.identity)}`,
+      )
       .sort((left, right) => left.localeCompare(right)),
     [
+      "file:alias/contract.lua",
       "property:module",
       "property:module.value",
       "property:module.nested",
@@ -101,7 +106,12 @@ export async function test_lua_units(): Promise<void> {
   );
   TestValidator.equals(
     "same name in different files remains distinct",
-    new Set(files.units.map((unit) => unit.id)).size,
+    new Set(
+      files.units
+        // The structural file scope is not a declaration.
+        .filter((unit) => unit.symbol !== "file")
+        .map((unit) => unit.id),
+    ).size,
     2,
   );
   const longKey = await new EvidenceLuaAdapter().analyze(
@@ -115,7 +125,8 @@ export async function test_lua_units(): Promise<void> {
     longKey.addresses
       .map((address) => address.segments)
       .sort((left, right) => left.length - right.length),
-    [["module"], ["module", "name\npart"]],
+    // The empty accessor is the file scope's own address.
+    [[], ["module"], ["module", "name\npart"]],
   );
   TestValidator.equals(
     "long string key stays complete",

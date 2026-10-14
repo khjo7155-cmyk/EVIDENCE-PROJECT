@@ -117,9 +117,14 @@ export async function test_ruby_units(): Promise<void> {
   TestValidator.equals(
     "Ruby declaration units",
     inventory.units
-      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${unit.identity.join(".")}`,
+      )
       .sort(compare),
     [
+      "file:lib/shop.rb",
       "function:Shop.Sale.[]",
       "function:Shop.Sale.hidden",
       "function:Shop.Sale.self.find",

@@ -92,9 +92,14 @@ export async function test_rust_units(): Promise<void> {
   TestValidator.equals(
     "Rust declaration units",
     inventory.units
-      .map((unit) => `${unit.symbol}:${unit.identity.join(".")}`)
+      .map((unit) =>
+        unit.symbol === "file"
+          ? `file:${unit.name}`
+          : `${unit.symbol}:${unit.identity.join(".")}`,
+      )
       .sort(compare),
     [
+      "file:src/lib.rs",
       "function:Service.run",
       "function:Sale.impl Service.run",
       "function:Sale.discount",
